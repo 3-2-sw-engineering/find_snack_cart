@@ -1,0 +1,21 @@
+{
+  "name": "find_snack_cart",
+  "version": "1.0.0",
+  "description": "3-2 소프트웨어 공학 프로젝트",
+  "main": "index.js",
+  "scripts": {
+    "frontend": "npm run start --prefix frontend",
+    "backend": "npm run start --prefix backend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qf9ar8nv/find_snack_cart.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qf9ar8nv/find_snack_cart/issues"
+  },
+  "homepage": "https://github.com/qf9ar8nv/find_snack_cart#readme"
+}
