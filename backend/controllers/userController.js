@@ -3,9 +3,9 @@ const User = require('../models/userModel');
 async function CreateUser(req, res) {
 	try {
 		// http request body에 {user_id, user_pw, user_name} 세가지 parameter를 받음.
-		const { user_id, user_pw, user_name, } = req.body;
+		const { user_id, user_pw, user_name, user_email } = req.body;
 
-		await User.create(user_id, user_pw, user_name);
+		await User.create(user_id, user_pw, user_name, user_email);
 		res.status(201).json({ result: true });
 	} catch (err) {
 		console.log(err);

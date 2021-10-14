@@ -21,7 +21,7 @@ var User = new Schema({
 	},
 	user_email: {
 		type: String,
-		require: true,
+		required: true,
 		trim: true,
 		unique: true,
 	},
@@ -30,7 +30,7 @@ var User = new Schema({
 	}
 });
 
-User.statics.create = async function (user_id, user_pw, user_name) {
+User.statics.create = async function (user_id, user_pw, user_name, user_email) {
 	const find_user = await this.findOne({ "user_id": user_id });
 	if (find_user) {
 		throw 'already user exists';
@@ -40,6 +40,8 @@ User.statics.create = async function (user_id, user_pw, user_name) {
 		user_id: user_id,
 		user_pw: user_pw,
 		user_name: user_name,
+		user_email: user_email,
+		favorite: []
 	});
 
 	console.log('user 생성: ' + user_id);
