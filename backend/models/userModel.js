@@ -40,12 +40,12 @@ var User = new Schema({
 	}
 });
 
-User.pre("save", function(next){
+User.pre("save", function (next) {
 	var user = this;
 	bcrypt.genSalt(user.salt, (err, salt) => {
-		if(err) throw err;
+		if (err) throw err;
 		bcrypt.hash(user.user_pw, salt, (err, hash) => {
-			if(err) throw err;
+			if (err) throw err;
 			user.user_pw = hash;
 			next();
 		});
@@ -114,6 +114,20 @@ User.statics.changePw = async function (user_id, current_pw, change_pw) {
 	} else {
 		throw "not exist user";
 	}
+}
+
+User.statics.loginCheck = async function (user_id, user_pw) {
+	const user = await this.findOne({ "user_id": user_id });
+	console.log("user :" + user);
+	if (user === null)
+		return null
+	const result = bcrypt.compare(user_pw, user.user_pw);
+	console.log(result);
+	if(result){
+		return user;
+	}
+	// (false) wrong password
+	return result 
 }
 
 

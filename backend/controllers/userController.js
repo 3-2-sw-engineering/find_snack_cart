@@ -1,4 +1,7 @@
 const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
+
+const SecretKey = process.env.SECRET_KEY;
 
 async function CreateUser(req, res) {
 	try {
@@ -47,11 +50,36 @@ async function ChangePassword(req, res) {
 		const { user_id, current_pw, change_pw } = req.body;
 
 		await User.changePw(user_id, current_pw, change_pw);
-		res.status(201).json({result: true});
+		res.status(201).json({ result: true });
 	} catch (err) {
 		console.log(err);
 		res.status(401).json({ error: err });
 	}
+}
+
+async function Login(req, res) {
+	try {
+		const { user_id, user_pw } = req.body;
+
+		const user = await User.loginCheck(user_id, user_pw);
+		if (user === null) {
+			throw "id doesn't exist."
+		} else if (user === false) {
+			throw "password isn't correct."
+		} else {
+			const token = jwt.sign({
+				user_id: user.user_id
+			}, SecretKey, {
+				expiresIn: '1h'
+			});
+			res.cookie('user', token, { sameSite: 'none', secure: true });
+			res.status(201).json({result: true});
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(401).json({ error: err });
+	}
+
 }
 
 module.exports = {
@@ -59,4 +87,5 @@ module.exports = {
 	deleteUser: DeleteUser,
 	getUserInfo: GetUserInfo,
 	changePassword: ChangePassword,
+	login: Login,
 }
