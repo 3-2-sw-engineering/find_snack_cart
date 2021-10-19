@@ -35,22 +35,10 @@ var User = new Schema({
 		default: 0,
 	},
 	salt: {
-		type: Number,
+		type: String,
 		required: true,
 	}
 });
-
-User.pre("save", function (next) {
-	var user = this;
-	bcrypt.genSalt(user.salt, (err, salt) => {
-		if (err) throw err;
-		bcrypt.hash(user.user_pw, salt, (err, hash) => {
-			if (err) throw err;
-			user.user_pw = hash;
-			next();
-		});
-	});
-})
 
 User.statics.create = async function (user_id, user_pw, user_name, user_email, role) {
 	const find_user = await this.findOne({ "user_id": user_id });
@@ -58,16 +46,17 @@ User.statics.create = async function (user_id, user_pw, user_name, user_email, r
 		throw 'already user exists';
 	}
 
-	const saltRound = Math.floor(Math.random() * 10) + 1;
+	const salt = await bcrypt.genSalt(10);
+	const hash = await bcrypt.hash(user_pw, salt);
 
 	const user = new this({
 		user_id: user_id,
-		user_pw: user_pw,
+		user_pw: hash,
 		user_name: user_name,
 		user_email: user_email,
 		favorite: [],
 		role: role,
-		salt: saltRound
+		salt: salt
 	});
 
 	console.log('user 생성: ' + user_id);
@@ -95,39 +84,31 @@ User.statics.findUserById = async function (user_id) {
 	}
 }
 
-User.statics.changePw = async function (user_id, current_pw, change_pw) {
+User.statics.changePw = async function (user_id, change_pw) {
 	const user = await this.findOne({ "user_id": user_id });
+	const hash = await bcrypt.hash(change_pw, user.salt);
 
-	if (user) {
-		// 비밀번호 확인
-		const result = await bcrypt.compare(current_pw, user.user_pw);
-
-		this.findOneAndUpdate({ "user_id": user_id }, {
-			$set: {
-				user_pw: change_pw
-			}
-		}, { new: true, useFindAndModify: false }, (err, doc) => {
-			if (err) {
-				throw err;
-			}
-		})
-	} else {
-		throw "not exist user";
-	}
+	this.findOneAndUpdate({ "user_id": user_id }, {
+		$set: {
+			user_pw: hash
+		}
+	}, { new: true, useFindAndModify: false }, (err, doc) => {
+		if (err) {
+			throw "false change password";
+		}
+	})
 }
 
 User.statics.loginCheck = async function (user_id, user_pw) {
 	const user = await this.findOne({ "user_id": user_id });
-	console.log("user :" + user);
 	if (user === null)
 		return null
-	const result = bcrypt.compare(user_pw, user.user_pw);
-	console.log(result);
-	if(result){
+	const result = await bcrypt.compare(user_pw, user.user_pw);
+	if (result) {
 		return user;
 	}
 	// (false) wrong password
-	return result 
+	return result
 }
 
 
