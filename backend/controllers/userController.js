@@ -56,7 +56,7 @@ async function ChangePassword(req, res) {
 			throw "id doesn't exist."
 		} else if (user === false) {
 			throw "password isn't correct."
-		}else{
+		} else {
 			User.changePw(user_id, change_pw);
 		}
 		res.status(201).json({ result: true });
@@ -89,8 +89,40 @@ async function Login(req, res) {
 		console.log(err);
 		res.status(401).json({ error: err });
 	}
+}
+
+async function LogOut(req, res) {
+	try {
+		res.cookie("user", "", { sameSite: 'none', secure: true });
+		res.status(201).json({ logoutSuccess: true });
+	} catch (err) {
+		res.status(401).json({ error: err });
+	}
+}
+
+async function AddFavorite(req, res) {
+	try {
+		const { user_id, market_id } = req.body;
+
+		await User.addFavor(user_id, market_id);
+		res.status(201).json({ result: true });
+	} catch (err) {
+		res.status(401).json({ error: err })
+	}
 
 }
+
+async function RemoveFavorite(req, res) {
+	try {
+		const { user_id, market_id } = req.body;
+
+		await User.removeFavor(user_id, market_id);
+		res.status(201).json({ result: true });
+	} catch (err) {
+		res.status(401).json({ error: err })
+	}
+}
+
 
 module.exports = {
 	createUser: CreateUser,
@@ -98,4 +130,7 @@ module.exports = {
 	getUserInfo: GetUserInfo,
 	changePassword: ChangePassword,
 	login: Login,
+	logout: LogOut,
+	addFavorite: AddFavorite,
+	removeFavorite: RemoveFavorite,
 }

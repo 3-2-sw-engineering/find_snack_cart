@@ -37,10 +37,13 @@ var User = new Schema({
 	salt: {
 		type: String,
 		required: true,
+	},
+	managing: {
+		type: String,
 	}
 });
 
-User.statics.create = async function (user_id, user_pw, user_name, user_email, role) {
+User.statics.create = async function (user_id, user_pw, user_name, user_email, role, managing) {
 	const find_user = await this.findOne({ "user_id": user_id });
 	if (find_user) {
 		throw 'already user exists';
@@ -56,7 +59,8 @@ User.statics.create = async function (user_id, user_pw, user_name, user_email, r
 		user_email: user_email,
 		favorite: [],
 		role: role,
-		salt: salt
+		salt: salt,
+		managing: managing
 	});
 
 	console.log('user 생성: ' + user_id);
@@ -94,7 +98,7 @@ User.statics.changePw = async function (user_id, change_pw) {
 		}
 	}, { new: true, useFindAndModify: false }, (err, doc) => {
 		if (err) {
-			throw "false change password";
+			throw "fail change password";
 		}
 	})
 }
@@ -111,5 +115,42 @@ User.statics.loginCheck = async function (user_id, user_pw) {
 	return result
 }
 
+User.statics.addFavor = async function (user_id, market_id) {
+	const user = await this.findOne({ "user_id": user_id });
+	if (user === null) throw "not exist user";
+
+	// market_id를 통해 market_id 조회 후 없으면 throw
+	var markets = user.favorite;
+	markets.push(market_id);
+
+	this.findOneAndUpdate({ "user_id": user_id }, {
+		$set: {
+			favorite: markets
+		}
+	}, { new: true, useFindAndModify: false }, (err, doc) => {
+		if (err) {
+			throw "fail add favorite";
+		}
+	})
+}
+
+User.statics.removeFavor = async function (user_id, market_id) {
+	const user = await this.findOne({ "user_id": user_id });
+	if (user === null) throw "not exist user";
+	
+	// market_id를 통해 market_id 조회 후 없으면 throw
+	var markets = user.favorite;
+	markets.remove(market_id);
+
+	this.findOneAndUpdate({ "user_id": user_id }, {
+		$set: {
+			favorite: markets
+		}
+	}, { new: true, useFindAndModify: false }, (err, doc) => {
+		if (err) {
+			throw "fail remove favorite";
+		}
+	})
+}
 
 module.exports = mongoose.model('users', User);
