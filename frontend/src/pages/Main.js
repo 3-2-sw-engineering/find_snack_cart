@@ -1,5 +1,5 @@
 import { Route } from 'react-router-dom';
-import { SwipeableDrawer, ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, Grid, List, ListItemIcon, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
+import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, Grid, List, ListItemIcon, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -43,7 +43,7 @@ function Main(props) {
                         <MenuIcon></MenuIcon>
                     </IconButton>
 
-                    <Typography variant="h5" component="div">
+                    <Typography className="main-header-text" variant="h5" component="div">
                         {`${headerText} 사장님, 어디 계세요?!`}
                     </Typography>
                 </Toolbar>
