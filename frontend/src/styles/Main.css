@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+}
+
+.main-layout {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.45);
+    background-image: url("../images/background.jpeg");
+    background-blend-mode: lighten;
+}
+
+.main-split {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    height: auto;
+}
+
+.main-split-element {
+    flex-basis: 0;
+    flex-grow: 1;
+    
+}
+
+.main-map {
+    width: 100%;
+    height: 100%;
+}
