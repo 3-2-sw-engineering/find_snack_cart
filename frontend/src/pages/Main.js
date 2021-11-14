@@ -1,5 +1,5 @@
 import { Route } from 'react-router-dom';
-import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, Grid, List, ListItemIcon, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
+import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, List, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -8,6 +8,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
 
 function Main(props) {
@@ -15,23 +16,24 @@ function Main(props) {
         "전체", "붕어빵/잉어빵", "타코야끼", "풀빵", "호떡", "군고구마", "꼬치", "분식", "기타"
     ];
 
+    const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
 
     function viewLogin() {
-        
+        navigate("login");
     }
 
     function viewFavorite() {
-
+        navigate("favorite");
     }
 
     function viewReport() {
-        
+        navigate("report");
     }
 
     function viewManage() {
-        
+        navigate("manage");
     }
 
     return (
