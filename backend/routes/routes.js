@@ -10,6 +10,12 @@ router.delete('/user', userController.deleteUser);
 router.get('/user/:user_id', userController.getUserInfo);
 router.patch('/password', userController.changePassword);
 
+router.post('/login', userController.login);
+router.post('/logout', userController.logout);
+
+router.patch('/user/favor/add', userController.addFavorite);
+router.patch('/user/favor/remove', userController.removeFavorite);
+
 router.get('/market', marketController.getMarket);
 router.get('/market/:market_index', marketController.getMarketInfo);
 router.post('/market', marketController.createMarket);
