@@ -26,9 +26,9 @@ async function DeleteMarket(req, res) {
 
 async function EditMarket(req, res) {
     try {
-        const { market_index, change_location, change_food, change_category, change_payment_method, change_explanation, change_image, change_authority, change_fixed, change_phone_number} = req.body;
+        const { market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number} = req.body;
 
-        await Market.edit(market_index, change_location, change_food, change_category, change_payment_method, change_explanation, change_image, change_authority, change_fixed, change_phone_number);
+        await Market.edit(market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
         res.status(201).json({result:true});
     } catch (err) {
         console.log(err);
