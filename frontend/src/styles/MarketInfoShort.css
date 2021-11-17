@@ -1,0 +1,60 @@
+@font-face {
+    font-family: "Gosanja";
+    src: url("../fonts/Gosanja.ttf");
+} 
+ 
+ /* .card:hover {
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  } */
+  
+  /* Add some padding inside the card container */
+  .container {
+	overflow: hidden;
+	text-align: left;
+  }
+
+  .card {
+	border-radius: 20px;
+	background-color:#F8ECDC;;
+	text-align: center;
+	font-family: "Gosanja";
+	width: 400px;
+	height: 350px;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	transition: 0.3s;
+	padding:15px
+  }
+  .btn-group{
+	  text-align: center;
+  }
+
+  .btn-group button {
+	background-color:white;
+	width: 100px; /* Green background */
+	color: black; /* White text */
+	font-family: "Gosanja";
+	padding: 10px 24px;
+	margin:0px 5px 0px 5px; /* Some padding */
+	cursor: pointer; /* Pointer/hand icon */
+	border-width: 0px;
+	border-radius:5px;
+  }
+  
+  /* Clear floats (clearfix hack) */
+  .btn-group:after {
+	content: "";
+	clear: both;
+	display: table;
+  }
+  
+  /* Add a background color on hover */
+  .btn-group button:hover {
+	background-color: #EDEDED;
+  }
+  
+  /* Add rounded corners to the top left and the top right corner of the image */
+  .card-image {
+	border-radius: 20px;
+	width: 100%;
+	height: 50%;
+  }

@@ -9,6 +9,7 @@ import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MarketInfoShort from './MarketInfoShort.js';
 import "../styles/Main.css"
 
 function Main(props) {
@@ -67,7 +68,7 @@ function Main(props) {
                             <ListSubheader component="div">
                                 카테고리
                             </ListSubheader>}>
-                            
+
                             {categories.map(cate => (
                                 <ListItem button sx={{ pl: 10 }}>
                                     <ListItemText primary={cate}></ListItemText>
@@ -107,11 +108,16 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-                    
+
                 </div>
 
                 <div className="main-split-element">
-                    <Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map>
+                    <Map className='main-map'
+                        center={{ lat: 37.55635, lng: 126.795841 }}
+                        lelve={7}
+                    >
+                        <MarketInfoShort />
+                    </Map>
                 </div>
             </div>
         </div>
