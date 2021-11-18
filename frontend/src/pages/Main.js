@@ -10,6 +10,7 @@ import { Box } from '@mui/system';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MarketInfoShort from './MarketInfoShort.js';
+import MarketInfoDetailed from './MarketInfoDetailed.js';
 import "../styles/Main.css"
 
 function Main(props) {
@@ -108,9 +109,8 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-
+                    <MarketInfoDetailed />
                 </div>
-
                 <div className="main-split-element">
                     <Map className='main-map'
                         center={{ lat: 37.55635, lng: 126.795841 }}

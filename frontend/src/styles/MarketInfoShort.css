@@ -8,12 +8,12 @@
   } */
   
   /* Add some padding inside the card container */
-  .container {
+  .short-contents {
 	overflow: hidden;
 	text-align: left;
   }
 
-  .card {
+  .short {
 	border-radius: 20px;
 	background-color:#F8ECDC;;
 	text-align: center;
@@ -24,11 +24,11 @@
 	transition: 0.3s;
 	padding:15px
   }
-  .btn-group{
+  .short-buttons{
 	  text-align: center;
   }
 
-  .btn-group button {
+  .short-buttons button {
 	background-color:white;
 	width: 100px; /* Green background */
 	color: black; /* White text */
@@ -41,19 +41,19 @@
   }
   
   /* Clear floats (clearfix hack) */
-  .btn-group:after {
+  .short-buttons:after {
 	content: "";
 	clear: both;
 	display: table;
   }
   
   /* Add a background color on hover */
-  .btn-group button:hover {
+  .short-buttons button:hover {
 	background-color: #EDEDED;
   }
   
   /* Add rounded corners to the top left and the top right corner of the image */
-  .card-image {
+  .short-image {
 	border-radius: 20px;
 	width: 100%;
 	height: 50%;
