@@ -16,7 +16,8 @@
   .short {
 	border-radius: 20px;
 	background-color:#F8ECDC;;
-	text-align: center;
+	display: flex;
+	flex-direction: column;
 	font-family: "Gosanja";
 	width: 400px;
 	height: 350px;
@@ -25,26 +26,20 @@
 	padding:15px
   }
   .short-buttons{
-	  text-align: center;
-  }
+	  display: flex;
+	  justify-content: space-around;
+	}
 
   .short-buttons button {
+	flex:1;
+	margin:10px;
+	padding: 10px;
 	background-color:white;
-	width: 100px; /* Green background */
 	color: black; /* White text */
 	font-family: "Gosanja";
-	padding: 10px 24px;
-	margin:0px 5px 0px 5px; /* Some padding */
 	cursor: pointer; /* Pointer/hand icon */
 	border-width: 0px;
 	border-radius:5px;
-  }
-  
-  /* Clear floats (clearfix hack) */
-  .short-buttons:after {
-	content: "";
-	clear: both;
-	display: table;
   }
   
   /* Add a background color on hover */

@@ -36,13 +36,21 @@
 	text-align: left;
 }
 
-.detailed-contents button {
+
+
+.detailed-buttons{
+	display: flex;
+	justify-content: space-around;
+  }
+
+.detailed-buttons button {
+  flex:1;
+  margin:0px 10px 0px 10px;
+  padding: 10px;
   background-color:white;
-  width: 100px; /* Green background */
   color: black; /* White text */
   font-family: "Gosanja";
-  padding: 10px 24px;
-  margin:0px 5px 0px 5px; /* Some padding */
+  font-size: 1em;
   cursor: pointer; /* Pointer/hand icon */
   border-width: 0px;
   border-radius:5px;

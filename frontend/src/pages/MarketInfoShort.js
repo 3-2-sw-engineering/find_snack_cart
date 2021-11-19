@@ -21,6 +21,7 @@ function MarketInfoShort() {
 					<div><BsTelephone size='20' color='#93BDF9'/></div>전화하기</button>
 					<button><div><BiNavigation size='20' color='#93BDF9'/></div>길찾기</button>
 					<button><div><BsShare size='20' color='#93BDF9'/></div>공유하기</button>
+					<button><div><BsShare size='20' color='#93BDF9'/></div>공유하기</button>
 				</div>
 			</div>
 		</CustomOverlayMap>
