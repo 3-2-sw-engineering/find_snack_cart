@@ -10,6 +10,10 @@ import { Box } from '@mui/system';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
+import Login from "./Login"
+import SignUp from "./SignUp"
+import Report from "./Report"
+import Manage from "./Manage"
 
 function Main(props) {
     const categories = [
@@ -67,7 +71,7 @@ function Main(props) {
                             <ListSubheader component="div">
                                 카테고리
                             </ListSubheader>}>
-                            
+
                             {categories.map(cate => (
                                 <ListItem button sx={{ pl: 10 }}>
                                     <ListItemText primary={cate}></ListItemText>
@@ -107,7 +111,7 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-                    
+                    <Manage />
                 </div>
 
                 <div className="main-split-element">

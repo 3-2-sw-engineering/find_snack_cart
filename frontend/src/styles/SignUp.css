@@ -1,4 +1,4 @@
-.sign-layout{
+.sign-layout {
     font-family: "Simplehae" !important;
     font-size: 1rem;
     margin: 2.5%;
@@ -6,19 +6,18 @@
     height: 95%;
     max-height: 95%;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     background-size: cover;
-    background-color: rgba(255, 255, 255, 0.4); 
+    background-color: rgba(255, 255, 255, 0.4);
     background-blend-mode: lighten;
     border-radius: 3rem;
     white-space: nowrap;
     overflow: auto;
-
-    
 }
-.sign-title{
+
+.sign-title {
     display: flex;
     font-size: 2rem;
     align-self: flex-start;
@@ -26,7 +25,8 @@
     margin-top: 0.7rem;
     justify-self: flex-start;
 }
-.sign-up-item{
+
+.sign-up-item {
     width: 80%;
     max-width: 100%;
     height: 6%;
@@ -39,22 +39,24 @@
     flex-wrap: nowrap;
 }
 
-.item-info{
+.item-info {
     width: 20%;
     display: flex;
-    margin:inherit;
+    margin: inherit;
     min-width: 5rem;
     justify-content: flex-end;
-    white-space:normal;
+    white-space: normal;
     flex-grow: 2;
 }
-.item-input-report{
+
+.item-input-report {
     width: 35%;
     min-width: 35%;
-    margin:inherit;
+    margin: inherit;
     flex-grow: 4;
 }
-.item-input{
+
+.item-input {
     width: 100%;
     height: 2rem;
     min-height: 2rem;
@@ -63,42 +65,45 @@
     border-radius: 0.5rem 0.0rem 0.5rem 0.5rem;
     background-color: rgba(255, 255, 255, 0.4);
 }
-.item-report{
-    margin:inherit;
+
+.item-report {
+    margin: inherit;
     width: 100%;
     font-size: 0.8em;
     text-align: right;
 }
 
-.item-button{
+.item-button {
     width: 15%;
     height: 2rem;
     min-height: 2rem;
     min-width: 5rem;
-    margin:inherit;
+    margin: inherit;
     flex-grow: 1;
     background: #F9F8FD;
     border-radius: 0.0rem 0.5rem 0.5rem 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    white-space:normal;
+    white-space: normal;
 }
-.item-button-none{
+
+.item-button-none {
     width: 15%;
     height: 2rem;
     min-width: 5rem;
     min-height: 2rem;
-    margin:inherit;
+    margin: inherit;
     flex-grow: 1;
-    
+
 }
-.check-agree{
+
+.check-agree {
     display: flex;
     align-self: flex-end;
 }
 
-.sign-up-button{
+.sign-up-button {
     width: 80%;
     height: 3rem;
     min-height: 3rem;
@@ -111,10 +116,10 @@
     border-radius: 0.5rem;
 }
 
-.agreement{
+.agreement {
     width: 80%;
-    margin:0.2rem;
+    margin: 0.2rem;
     background: #F9F8FD;
-    overflow:auto;
+    overflow: auto;
     border-radius: 0.5rem;
 }
