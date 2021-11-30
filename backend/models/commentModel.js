@@ -68,7 +68,7 @@ Comment.statics.delete = async function (comment_id) {
         return this.findOneAndDelete({"comment_id": comment_id});
     }
     else {
-        throw 'comment not exists';
+        throw new Error('comment not exists');
     }
 }
 
@@ -93,7 +93,7 @@ Comment.statics.findCommentById = async function (comment_id) {
     if(comment) {
         return comment;
     } else {
-        throw "comment not exists"
+        throw new Error("comment not exists");
     }
 }
 

@@ -51,14 +51,14 @@ Market.statics.findMarketByIndex = async function (market_index) {
     if(market) {
         return market;
     } else {
-        throw "market not exists"
+        throw new Error("market not exists");
     }
 }
 
 Market.statics.create = async function (market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number){
     const find_market = await this.findOne({ "market_index": market_index});
     if(find_market) {
-        throw 'market exists';
+        throw new Error('market exists');
     }
 
     const market = new this({
@@ -87,7 +87,7 @@ Market.statics.delete = async function (market_index) {
         return this.findOneAndDelete({ "market_index": market_index});
     } 
     else {
-        throw 'market not exists';
+        throw new Error('market not exists');
     }
 }
 
