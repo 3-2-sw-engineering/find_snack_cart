@@ -19,9 +19,8 @@ var Comment = new Schema({
         type: Number,
     },
     comment_reviewer: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "users",
+        type: String,
+        required: true
     },
     comment_time: {
         type: Date,
@@ -29,9 +28,8 @@ var Comment = new Schema({
         default: Date.now(),
     },
     comment_target: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "markets"
+        type: Number,
+        required: true
     },
 });
 
@@ -56,12 +54,12 @@ Comment.statics.create = async function (comment_review, comment_score, comment_
         comment_target: comment_target,
     });
 
-    const user = await users.findOne({'_id' : comment_reviewer})
+    const user = await users.findOne({'user_id' : comment_reviewer})
     if(!user) {
         throw new Error('user not exists');
     }
 
-    const market = await markets.findOne({'_id' : comment_target})
+    const market = await markets.findOne({'market_index' : comment_target})
     if(!market) {
         throw new Error('market not exists');
     }

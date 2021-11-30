@@ -1,6 +1,15 @@
 const Market = require('../models/marketModel');
 const CookieManager = require("../shared/cookieManager");
 
+async function GetAllMarkets(req, res) {
+    try {
+        res.status(201).json({markets: (await Market.find())});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error: err});
+    }
+}
+
 async function CreateMarket(req, res) {
     try {
         const {
@@ -112,6 +121,7 @@ async function GetMarketInfo(req, res) {
 }
 
 module.exports = {
+    getAllMarkets: GetAllMarkets,
     createMarket: CreateMarket,
     deleteMarket: DeleteMarket,
     editMarket: EditMarket,

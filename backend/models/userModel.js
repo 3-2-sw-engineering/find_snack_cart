@@ -27,7 +27,7 @@ var User = new Schema({
 		unique: true,
 	},
 	favorite: {
-		type: [String],
+		type: [Number],
 	},
 	role: {
 		type: Number,

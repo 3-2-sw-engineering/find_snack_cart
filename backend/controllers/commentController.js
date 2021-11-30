@@ -1,6 +1,22 @@
 const Comment = require('../models/commentModel');
 const CookieManager = require("../shared/cookieManager");
 
+async function GetCommentsByMarketIdx(req, res) {
+    try {
+        const {market_index} = req.params;
+
+        if (market_index === undefined) {
+            res.status(400).json({error: "market_index is required. The params were: " + JSON.stringify(req.params)});
+            return;
+        }
+
+        res.status(200).json({comments: (await Comment.find({comment_target: market_index}))});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error: err});
+    }
+}
+
 async function CreateComment(req, res) {
     try {
         const {
@@ -107,6 +123,7 @@ async function EditComment(req, res) {
 }
 
 module.exports = {
+    getCommentsByMarketIdx: GetCommentsByMarketIdx,
     createComment: CreateComment,
     deleteComment: DeleteComment,
     getCommentInfo: GetCommentInfo,

@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Market = require('../models/marketModel');
 const CookieManager = require('../shared/cookieManager');
 
 async function CreateUser(req, res) {
@@ -116,6 +117,23 @@ async function LogOut(req, res) {
 	}
 }
 
+async function GetAllFavorites(req, res) {
+	try {
+		const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
+			return;
+        }
+
+		const user = await User.findUserById(current);
+		const promises = user.favorite.map((mIdx) => Market.findMarketByIndex(mIdx));
+		res.status(201).json({ favorites: (await Promise.all(promises)) });
+	} catch (err) {
+		res.status(500).json({ error: err })
+	}
+}
+
 async function AddFavorite(req, res) {
 	try {
 		const { user_id, market_id } = req.body;
@@ -168,6 +186,7 @@ module.exports = {
 	changePassword: ChangePassword,
 	login: Login,
 	logout: LogOut,
+	getAllFavorites: GetAllFavorites,
 	addFavorite: AddFavorite,
 	removeFavorite: RemoveFavorite,
 }
