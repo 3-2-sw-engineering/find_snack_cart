@@ -1,7 +1,5 @@
 const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
-
-const SecretKey = process.env.SECRET_KEY;
+const CookieManager = require('../shared/cookieManager');
 
 async function CreateUser(req, res) {
 	try {
@@ -100,12 +98,7 @@ async function Login(req, res) {
 		} else if (user === false) {
 			res.status(401).json({ error: "password isn't correct." });
 		} else {
-			const token = jwt.sign({
-				user_id: user.user_id
-			}, SecretKey, {
-				expiresIn: '1h'
-			});
-			res.cookie('user', token, { sameSite: 'none', secure: true });
+			CookieManager.refreshCookie(res, user.user_id)
 			res.status(201).json({ result: true });
 		}
 	} catch (err) {
@@ -116,7 +109,7 @@ async function Login(req, res) {
 
 async function LogOut(req, res) {
 	try {
-		res.cookie("user", "", { sameSite: 'none', secure: true });
+		CookieManager.clearCookie(res);
 		res.status(201).json({ result: true });
 	} catch (err) {
 		res.status(500).json({ error: err });
@@ -130,6 +123,13 @@ async function AddFavorite(req, res) {
 		if (user_id === undefined || market_id === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
 		}
+
+		const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
+			return;
+        }
 
 		await User.addFavor(user_id, market_id);
 		res.status(201).json({ result: true });
@@ -145,6 +145,13 @@ async function RemoveFavorite(req, res) {
 		if (user_id === undefined || market_id === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
 		}
+
+		const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
+			return;
+        }
 
 		await User.removeFavor(user_id, market_id);
 		res.status(201).json({ result: true });

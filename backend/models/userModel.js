@@ -79,13 +79,7 @@ User.statics.delete = async function (user_id) {
 }
 
 User.statics.findUserById = async function (user_id) {
-	const user = await this.findOne({ "user_id": user_id });
-
-	if (user) {
-		return user;
-	} else {
-		throw new Error("not exist user");
-	}
+	return await this.findOne({ "user_id": user_id });
 }
 
 User.statics.changePw = async function (user_id, change_pw) {

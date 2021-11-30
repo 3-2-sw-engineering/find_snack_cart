@@ -1,15 +1,16 @@
 const Market = require('../models/marketModel');
+const CookieManager = require("../shared/cookieManager");
 
 async function CreateMarket(req, res) {
     try {
         const {
-            market_index, market_location, market_food,
+            market_location, market_food,
             market_category, market_payment_method, market_explanation,
             market_image, market_authority, market_fixed,
             market_phone_number
         } = req.body;
 
-        if (market_index === undefined || market_location === undefined || market_food === undefined ||
+        if (market_location === undefined || market_food === undefined ||
             market_category === undefined || market_payment_method === undefined || market_food === undefined ||
             market_image === undefined || market_authority === undefined || market_fixed === undefined ||
             market_phone_number === undefined) {
@@ -17,7 +18,14 @@ async function CreateMarket(req, res) {
             return;
         }
 
-        await Market.create(market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
+        const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
+            return;
+        }
+
+        await Market.create(market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
         res.status(201).json({ result: true });
     } catch (err) {
         console.log(err);
@@ -31,6 +39,13 @@ async function DeleteMarket(req, res) {
 
         if (market_index === undefined) {
             res.status(400).json({error: "market_index is required. The body was: " + JSON.stringify(req.body)});
+            return;
+        }
+
+        const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
 
@@ -56,6 +71,13 @@ async function EditMarket(req, res) {
             market_image === undefined || market_authority === undefined || market_fixed === undefined ||
             market_phone_number === undefined) {
             res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+            return;
+        }
+
+        const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
 

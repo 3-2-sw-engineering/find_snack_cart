@@ -1,20 +1,28 @@
 const Comment = require('../models/commentModel');
+const CookieManager = require("../shared/cookieManager");
 
 async function CreateComment(req, res) {
     try {
         const {
-            comment_id, comment_review, comment_score,
+            comment_review, comment_score,
             comment_reviewer, comment_time, comment_target
         } = req.body;
 
-        if (comment_id === undefined || comment_review === undefined || 
+        if (comment_review === undefined || 
             comment_score === undefined || comment_reviewer === undefined || 
             comment_time === undefined || comment_target === undefined) {
             res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
             return;
         }
 
-        await Comment.create(comment_id, comment_review, comment_score, comment_reviewer, comment_time, comment_target);
+        const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
+            return;
+        }
+
+        await Comment.create(comment_review, comment_score, comment_reviewer, comment_time, comment_target);
         res.status(201).json({result: true});
     } catch (err) { 
         console.log(err);
@@ -28,6 +36,19 @@ async function DeleteComment(req, res) {
 
         if (comment_id === undefined) {
             res.status(400).json({error: "comment_id is required. The body was: " + JSON.stringify(req.body)});
+            return;
+        }
+
+        const comment = await Comment.findCommentById(comment_id);
+        if (comment === null) {
+            res.status(404).json({error: "comment with id ${comment_id} is not found."});
+            return;
+        }
+
+        const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
 
@@ -67,6 +88,13 @@ async function EditComment(req, res) {
         if (comment_id === undefined || comment_review === undefined || 
             comment_score === undefined || comment_time === undefined) {
             res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+            return;
+        }
+
+        const current = CookieManager.checkCurrentSession(req, res);
+        // 현재 로그인이 되어있는지 확인.
+        if (current === undefined) {
+            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
 
