@@ -119,14 +119,13 @@ async function LogOut(req, res) {
 
 async function GetAllFavorites(req, res) {
 	try {
-		const current = CookieManager.checkCurrentSession(req, res);
-        // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
-            res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
-			return;
-        }
+		const { user_id } = req.params;
 
-		const user = await User.findUserById(current);
+		if (user_id === undefined) {
+			res.status(400).json({error: "user_id is required. The params were: " + JSON.stringify(req.params)});
+		}
+
+		const user = await User.findUserById(user_id);
 		const promises = user.favorite.map((mIdx) => Market.findMarketByIndex(mIdx));
 		res.status(201).json({ favorites: (await Promise.all(promises)) });
 	} catch (err) {
