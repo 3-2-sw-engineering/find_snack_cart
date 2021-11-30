@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const markets = require('./marketModel');
+const users = require('./userModel');
 
 var Comment = new Schema({
     _id: Schema.Types.ObjectId,
 
     comment_id: {
         type: Number,
-      //  required: true,
+        required: true,
         unique: true,
     },
     comment_review: {
@@ -17,7 +19,8 @@ var Comment = new Schema({
     },
     comment_reviewer: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        required: true,
+        ref: "users",
     },
     comment_time: {
         type: Date,
@@ -26,7 +29,8 @@ var Comment = new Schema({
     },
     comment_target: {
         type: Schema.Types.ObjectId,
-        ref: "market"
+        required: true,
+        ref: "markets"
     },
 });
 
@@ -42,6 +46,15 @@ Comment.statics.create = async function (comment_id, comment_review, comment_sco
         comment_target: comment_target,
     });
 
+    const user = await users.findOne({'_id' : comment_reviewer})
+    if(!user) {
+        throw 'user not exists';
+    }
+
+    const market = await markets.findOne({'_id' : comment_target})
+    if(!market) {
+        throw 'market not exists';
+    }
 
     console.log('코멘트 작성: ' + comment_id);
 

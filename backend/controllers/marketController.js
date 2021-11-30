@@ -2,7 +2,7 @@ const Market = require('../models/marketModel');
 
 async function CreateMarket(req, res) {
     try {
-        const { market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number} = req.body;
+        const {market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number} = req.body;
 
         await Market.create(market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
         res.status(201).json({ result: true });
@@ -14,7 +14,7 @@ async function CreateMarket(req, res) {
 
 async function DeleteMarket(req, res) {
     try {
-        const {market_index } = req.body;
+        const {market_index} = req.body;
 
         await Market.delete(market_index);
         res.status(201).json({result: true});
@@ -26,23 +26,14 @@ async function DeleteMarket(req, res) {
 
 async function EditMarket(req, res) {
     try {
-        const { market_index, change_location, change_food, change_category, change_payment_method, change_explanation, change_image, change_authority, change_fixed, change_phone_number} = req.body;
+        const {market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number} = req.body;
 
-        await Market.edit(market_index, change_location, change_food, change_category, change_payment_method, change_explanation, change_image, change_authority, change_fixed, change_phone_number);
+        await Market.edit(market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
         res.status(201).json({result:true});
     } catch (err) {
         console.log(err);
         res.status(401).json({error:err});
     }
-}
-
-async function GetMarket(req, res) {
-	try {
-		res.status(200).json({result: "market"});
-	} catch (err) {
-		console.log(err);
-		res.status(401).json({error: err});
-	}
 }
 
 async function GetMarketInfo(req, res) {
@@ -66,6 +57,5 @@ module.exports = {
     createMarket: CreateMarket,
     deleteMarket: DeleteMarket,
     editMarket: EditMarket,
-    getMarket: GetMarket,
-    getMarketInfo: GetMarketInfo,
+    getMarketInfo: GetMarketInfo
 }

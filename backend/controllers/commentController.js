@@ -2,7 +2,7 @@ const Comment = require('../models/commentModel');
 
 async function CreateComment(req, res) {
     try {
-        const { comment_id, comment_review, comment_score, comment_reviewer, comment_time, comment_target} = req.body;
+        const {comment_id, comment_review, comment_score, comment_reviewer, comment_time, comment_target} = req.body;
 
         await Comment.create(comment_id, comment_review, comment_score, comment_reviewer, comment_time, comment_target);
         res.status(201).json({reault: true});
@@ -22,15 +22,6 @@ async function DeleteComment(req, res) {
             console.log(err);
             res.status(401).json({error: err});
         }
-}
-
-async function GetComment(req, res) {
-    try {
-        res.status(200).json({result: "comment"});
-    } catch (err) {
-        console.log(err);
-        res.status(401).json({error: err});
-    }
 }
 
 async function GetCommentInfo(req, res) {
@@ -63,7 +54,6 @@ async function EditComment(req, res) {
 module.exports = {
     createComment: CreateComment,
     deleteComment: DeleteComment,
-    getComment: GetComment,
     getCommentInfo: GetCommentInfo,
     editComment: EditComment
 }
