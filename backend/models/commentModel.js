@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Increment = require('./incrementModel');
 const Schema = mongoose.Schema;
 const markets = require('./marketModel');
 const users = require('./userModel');
@@ -18,9 +19,8 @@ var Comment = new Schema({
         type: Number,
     },
     comment_reviewer: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "users",
+        type: String,
+        required: true
     },
     comment_time: {
         type: Date,
@@ -28,17 +28,25 @@ var Comment = new Schema({
         default: Date.now(),
     },
     comment_target: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "markets"
+        type: Number,
+        required: true
     },
 });
 
+Comment.pre('save', async function(next) {
+    if (this.isNew) {
+        const max = await Increment.getNext('Comment');
+        this.comment_id = max;
+        next();
+    } else {
+        next();
+    }
+});
 
-Comment.statics.create = async function (comment_id, comment_review, comment_score, comment_reviewer, comment_time, comment_target){  
+Comment.statics.create = async function (comment_review, comment_score, comment_reviewer, comment_time, comment_target){  
     const comment = new this({
         _id: new mongoose.Types.ObjectId(),
-        comment_id: comment_id,
+        comment_id: 0, // save pre hook에서 설정될 예정이므로 dummy 값 저장.
         comment_review: comment_review,
         comment_score: comment_score,
         comment_reviewer: comment_reviewer,
@@ -46,17 +54,15 @@ Comment.statics.create = async function (comment_id, comment_review, comment_sco
         comment_target: comment_target,
     });
 
-    const user = await users.findOne({'_id' : comment_reviewer})
+    const user = await users.findOne({'user_id' : comment_reviewer})
     if(!user) {
-        throw 'user not exists';
+        throw new Error('user not exists');
     }
 
-    const market = await markets.findOne({'_id' : comment_target})
+    const market = await markets.findOne({'market_index' : comment_target})
     if(!market) {
-        throw 'market not exists';
+        throw new Error('market not exists');
     }
-
-    console.log('코멘트 작성: ' + comment_id);
 
     return comment.save()
 }
@@ -68,7 +74,7 @@ Comment.statics.delete = async function (comment_id) {
         return this.findOneAndDelete({"comment_id": comment_id});
     }
     else {
-        throw 'comment not exists';
+        throw new Error('comment not exists');
     }
 }
 
@@ -88,15 +94,7 @@ Comment.statics.edit = async function (comment_id, change_review, change_score) 
 }
 
 Comment.statics.findCommentById = async function (comment_id) {
-    const comment = await this.findOne({"comment_id": comment_id});
-
-    if(comment) {
-        return comment;
-    } else {
-        throw "comment not exists"
-    }
+    return await this.findOne({"comment_id": comment_id});
 }
-
-
 
 module.exports = mongoose.model('comments', Comment);
