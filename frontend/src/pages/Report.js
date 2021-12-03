@@ -12,6 +12,17 @@ function Report() {
     function viewBack() {
         navigate('../');
     }
+
+    const Chips = ({text_list, color, deleteFunction}) =>{
+        return(
+            text_list.map((text)=>
+            <div className="chip">
+                <Chip label={text} color={color} onDelete={()=>deleteFunction} />       
+            </div>
+            )
+        )
+    }
+
     function handleDelete() { }
     return (
         <div className="layout" >
@@ -35,15 +46,7 @@ function Report() {
                 <div className="content">
                     <input className="input" />
                     <div className="categories">
-                        <div className="chip" >
-                            <Chip label="붕어빵/잉어빵" color="primary" onDelete={handleDelete} />
-                        </div>
-                        <div className="chip" >
-                            <Chip label="타코야끼" color="primary" onDelete={handleDelete} />
-                        </div>
-                        <div className="chip" >
-                            <Chip label="기타" color="primary" onDelete={handleDelete} />
-                        </div>
+                        <Chips text_list={["붕어빵/잉어빵","타코야끼","기타"]} color="primary" deleteFunction={()=>handleDelete} />
                     </div>
                 </div>
             </div>
@@ -56,12 +59,7 @@ function Report() {
                         <Map className="map" center={{ lat: 37.413294, lng: 126.79581 }} level={7}></Map>
                     </div>
                     <div className="locations">
-                        <div className="chip">
-                            <Chip label="서울특별시 동대문구 서울시립대로 163" color="warning" onDelete={handleDelete} /></div>
-                        <div className="chip">
-                            <Chip label="서울특별시 마포구 ㅁㅇㄴㄻㅇㄹ" color="warning" onDelete={handleDelete} /></div>
-                        <div className="chip">
-                            <Chip label="제주특별자치도 서귀포시 ㅁㄴㄻㄴㅇ" color="warning" onDelete={handleDelete} /></div>
+                        <Chips text_list={["서울특별시 동대문구 서울시립대로 163"]} color="warning" deleteFunction={()=>handleDelete} />
 
                     </div>
 
