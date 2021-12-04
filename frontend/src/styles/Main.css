@@ -27,12 +27,14 @@ body {
     display: flex;
     flex-direction: row;
     height: auto;
+    overflow: hidden;
+
 }
 
 .main-split-element {
     flex-basis: 0;
     flex-grow: 1;
-    
+
 }
 
 .main-map {

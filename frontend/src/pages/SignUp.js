@@ -3,118 +3,159 @@
 
 import { FormGroup, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import React, {StrictMode, useState} from 'react';
+import React, { StrictMode, useState } from 'react';
 import '../styles/SignUp.css'
+import { createUser } from '../shared/BackendRequests';
 
 function SignUp() {
     const navigate = useNavigate();
     const [signUpData, setSignUpData] = useState({
-        id:"",
-        pw:"",
-        pwCheck:"",
-        nickname:"",
-        email:"",
-        code:""
+        id: "",
+        pw: "",
+        pwCheck: "",
+        nickname: "",
+        email: "",
+        code: ""
     });
 
-    const [checkData, setCheckData]=useState({
-        isIdValid:false,
-        isCodeValid:false,
-        isOwner:false,
-        isConsentient:false,
+    const [checkData, setCheckData] = useState({
+        isIdValid: false,
+        isCodeValid: false,
+        isOwner: false,
+        isConsentient: false,
 
-    }) 
+    })
     const [guideStr, setGuideStr] = useState({
         id: '',
         pwcheck: '',
-        email:'',
-        code:''
+        email: '',
+        code: ''
     });
- 
+    const OK = 201, FAILED = 401;
 
-    function viewBack() {
-        navigate('../');
-    }
 
-    const checkIdValid=()=>{
+
+    const checkIdValid = () => {
         const id = signUpData.id;
-        var checkResult=false;
+        var checkResult = true;
 
         setCheckData({
             ...checkData,
-            isIdValid:checkResult
-        }); 
+            isIdValid: checkResult
+        });
         setGuideStr({
             ...guideStr,
-            id: checkResult? '사용할 수 있는 ID입니다.':'사용할 수 없는 ID입니다.'
+            id: checkResult ? '사용할 수 있습니다.' : '사용할 수 없는 ID입니다. 다른 ID를 입력해주세요'
         });
     }
-    const onInputChange= (e) =>{        
-        const {value, name} = e.target;
+    const onInputChange = (e) => {
+        const { value, name } = e.target;
+        if (name === 'id') {
+            setCheckData({
+                ...checkData,
+                isIdValid: false
+            });
+        } else if (name === 'email') {
+            setCheckData({
+                ...checkData,
+                isCodeValid: false
+            });
+        }
         setSignUpData({
             ...signUpData,
-            [name]:value
+            [name]: value
         });
     }
-    const onPwChange = (e)=>{
-        const {value, name} = e.target;
-        const pw = signUpData.pw;
-        const pwCheck = signUpData.pwCheck;
-        var ret=false;
+    const onPwChange = (e) => {
+        const { value, name } = e.target;
+        const pw = (name === 'pw') ? value : signUpData.pw;
+        const pwCheck = (name === 'pwCheck') ? value : signUpData.pwCheck;
+        var ret = true;
         setSignUpData({
             ...signUpData,
-            [name]:value
+            [name]: value
         });
-        if((name === 'pw' && value === pwCheck)||(name === 'pwCheck'&& value ===pw)){
-            ret=true;
-        }else{
-            ret=false;
+        var guide = ''
+        var num = pw.search(/[0-9]/g);
+        var eng = pw.search(/[a-z]/ig);
+        if (pw.length < 6) {
+            guide += "너무 짧습니다. ";
+            ret = false;
+        } else if (pw.search(/\s/) !== -1) {
+            guide += "공백이 없어야 합니다. ";
+            ret = false;
+        } else if (num < 0 || eng < 0) {
+            guide += "영문과 숫자를 혼합해야 합니다. "
+            ret = false;
+        }
+        if (pw !== pwCheck) {
+            ret = false;
+            guide += '일치하지 않습니다.'
         }
         setCheckData({
             ...checkData,
-            isPwValid:ret
+            isPwValid: ret
         })
         setGuideStr({
             ...guideStr,
-            pwcheck: ret?'일치합니다.':'일치하지 않습니다.'
+            pwcheck: ret ? '일치합니다.' : guide
         })
     }
 
-    const sendEmail = ()=>{
+    const sendEmail = () => {
         const email = signUpData.email;
         setGuideStr({
             ...guideStr,
-            email:'위 이메일 주소로 인증번호를 보냈습니다.'
+            email: '위 이메일 주소로 인증번호를 보냈습니다.'
         });
     }
 
-    const checkCode = ()=>{
-        const code=signUpData.code;
-        var ret=false;
+    const checkCode = () => {
+        const code = signUpData.code;
+        var ret = true;
 
         setCheckData({
             ...checkData,
-            isCodeValid:ret
+            isCodeValid: ret
         });
         setGuideStr({
             ...guideStr,
-            code:ret? '인증번호가 일치합니다.':'인증번호가 일치하지 않습니다.'
+            code: ret ? '인증번호가 일치합니다.' : '인증번호가 일치하지 않습니다.'
         });
     }
 
-    const onCheckChange=(e)=>{
-        const {id, checked} = e.target;
+    const onCheckChange = (e) => {
+        const { id, checked } = e.target;
         setCheckData({
             ...checkData,
-            [id]:checked
-        }); 
+            [id]: checked
+        });
     }
 
-    const signUpClick = ()=>{
-        if(checkData.isIdValid && checkData.isCodeValid && checkData.isConsentient){
-            //
+    const onSignUpClick = async () => {
+        if (!checkData.isIdValid) {
+            alert("ID 중복확인해주세요.");
+        }
+        else if (!checkData.isCodeValid) {
+            alert("이메일을 인증해주세요.")
+        } else if (!checkData.isConsentient) {
+            alert("이용약관에 동의해주세요.");
+        }
+        else {
+            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email);
+            // console.log(ret);
+            if (ret === OK) {
+                alert("회원가입 성공! 로그인해 주세요.");
+                navigate('../login');
+                return;
+            } else {
+                alert("회원가입할 수 없습니다.");
+            }
         }
     }
+
+
+
     return (
         <div className="sign-layout">
             <div className="sign-title">회원가입</div>
@@ -128,12 +169,12 @@ function SignUp() {
                 </div>
                 <div className="item-button" onClick={checkIdValid}>중복확인</div>
             </div>
-            
+
             {/* pw */}
             <div className="sign-up-item">
                 <div className="item-info">password</div>
                 <div className="item-input-report">
-                    <input name="pw" className="item-input" type="password" onChange = {onPwChange}/>
+                    <input name="pw" className="item-input" type="password" onChange={onPwChange} />
                     <div className="item-report"> 영어, 숫자 혼용 6자리 이상</div>
                 </div>
                 <div className="item-button-none"></div>
@@ -143,8 +184,8 @@ function SignUp() {
             <div className="sign-up-item">
                 <div className="item-info">password 확인</div>
                 <div className="item-input-report">
-                    <input name="pwCheck" className="item-input" type="password" onChange = {onPwChange}/>
-                    <div  className="item-report"> {guideStr.pwcheck}</div>
+                    <input name="pwCheck" className="item-input" type="password" onChange={onPwChange} />
+                    <div className="item-report"> {guideStr.pwcheck}</div>
                 </div>
                 <div className="item-button-none"></div>
             </div>
@@ -153,7 +194,7 @@ function SignUp() {
             <div className="sign-up-item">
                 <div className="item-info">닉네임</div>
                 <div className="item-input-report">
-                    <input name="nickname" className="item-input"onChange={onInputChange}  />
+                    <input name="nickname" className="item-input" onChange={onInputChange} />
                     <div className="item-report"></div>
                 </div>
                 <div className="item-button-none"></div>
@@ -173,7 +214,7 @@ function SignUp() {
             <div className="sign-up-item">
                 <div className="item-info">인증번호</div>
                 <div className="item-input-report">
-                    <input name = "code" className="item-input" onChange={onInputChange} />
+                    <input name="code" className="item-input" onChange={onInputChange} />
                     <div className="item-report"> {guideStr.code} </div>
                 </div>
                 <div className="item-button" onClick={checkCode}>인증하기</div>
@@ -186,11 +227,11 @@ function SignUp() {
 
             {/* usage regulation check */}
             <FormGroup className="check-agree">
-                <FormControlLabel  control={<Checkbox id="isConsentient" onChange={onCheckChange}/>} label="이용약관에 동의합니다." />
+                <FormControlLabel control={<Checkbox id="isConsentient" onChange={onCheckChange} />} label="이용약관에 동의합니다." />
             </FormGroup>
 
             {/* Sign up button */}
-            <div className="sign-up-button"> 회원가입</div>
+            <div className="sign-up-button" onClick={onSignUpClick}> 회원가입</div>
 
             {/* contents of regulation? */}
             <div className="agreement">
