@@ -4,7 +4,12 @@ import jwt from "jsonwebtoken"
 /*
  * User 관련
  */
-
+/* (jaesun comment) neccessary functions
+   isIdAvailable(id) ->boolean : check the new ID is available (Sign Up)
+   sendSignUpCode(email)->(???): send a code for signing up to e-mail, (return: send succeeded, email duplicated, error)
+   checkSignUpCode(code)->boolean: check the code is right
+    createUser(..., isOwner): add an argument that present whether new user is onwer or not
+*/
 // 새 사용자 계정을 생성합니다.
 export async function createUser(id, pw, name, email) {
     const reqBody = {
@@ -41,7 +46,7 @@ export async function deleteUser(id) {
 // 계정의 상세 정보를 가져옵니다.
 export async function getUserInfo(id) {
     try {
-        let res = await axios.get("/api/user/"+id, { withCredentials: true });
+        let res = await axios.get("/api/user/" + id, { withCredentials: true });
         return res.data.user;
     } catch (err) {
         console.error("In getUserInfo: " + err?.response?.data);
@@ -107,7 +112,7 @@ export async function checkCurrentUserID(cookies) {
         const userToken = cookies.get('user');
         const decoded = jwt.decode(userToken);
         return decoded.user_id;
-    } catch(err) {
+    } catch (err) {
         return undefined;
     }
 }
@@ -119,7 +124,7 @@ export async function checkCurrentUserID(cookies) {
 // 특정 id를 가진 사용자의 즐겨찾기 목록을 가져옵니다.
 export async function getAllFavorites(id) {
     try {
-        let res = await axios.get("/api/favor/"+id, { withCredentials: true });
+        let res = await axios.get("/api/favor/" + id, { withCredentials: true });
         return res.data.favorites;
     } catch (err) {
         console.error("In getAllFavorites: " + err?.response?.data);
@@ -177,7 +182,7 @@ export async function getAllMarkets() {
 // 특정 index에 해당하는 포장마차의 정보를 가져옵니다.
 export async function getMarketInfo(marketIdx) {
     try {
-        let res = await axios.get("/api/market/"+marketIdx, { withCredentials: true });
+        let res = await axios.get("/api/market/" + marketIdx, { withCredentials: true });
         return res.data.market;
     } catch (err) {
         console.error("In getMarketInfo: " + err?.response?.data);
@@ -186,14 +191,14 @@ export async function getMarketInfo(marketIdx) {
 }
 
 // 새로운 포장마차를 등록합니다.
-// location: 장소 (string)
-// food: 파는 음식들 (string의 배열)
-// category: 포장마차의 카테고리 (string)
+// location: 장소 (string) --> 'string의 배열'로 변경 (jaesun comment)
+// food: 파는 음식들 (string의 배열) --> categories로 변경 (jaesun comment)
+// category: 포장마차의 카테고리 (string) --> 삭제 (jaesun comment)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
-// fixed: 0이면 이동형, 1이면 고정형
+// fixed: 0이면 이동형, 1이면 고정형 -->삭제 (jaesun comment)
 // phone: 전화번호 (string)
 export async function createMarket(location, food, category, paymentMethods, explanation, images, authority, fixed, phone) {
     const reqBody = {
@@ -256,7 +261,7 @@ export async function editMarket(marketIdx, location, food, category, paymentMet
         market_fixed: fixed,
         market_phone_number: phone
     };
-    
+
     try {
         let res = await axios.patch("/api/market", reqBody, { withCredentials: true });
         return res.data;
@@ -273,7 +278,7 @@ export async function editMarket(marketIdx, location, food, category, paymentMet
 // 특정 포장마차에 달린 모든 댓글을 가져옵니다.
 export async function getCommentsByMarketIdx(marketIdx) {
     try {
-        let res = await axios.get("/api/comment/attached/"+marketIdx, { withCredentials: true });
+        let res = await axios.get("/api/comment/attached/" + marketIdx, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In getCommentsByMarketIdx: " + err?.response?.data);
@@ -284,7 +289,7 @@ export async function getCommentsByMarketIdx(marketIdx) {
 // 특정 Comment-ID에 해당하는 댓글을 가져옵니다.
 export async function getCommentInfo(commentId) {
     try {
-        let res = await axios.get("/api/comment/"+commentId, { withCredentials: true });
+        let res = await axios.get("/api/comment/" + commentId, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In getCommentInfo: " + err?.response?.data);
