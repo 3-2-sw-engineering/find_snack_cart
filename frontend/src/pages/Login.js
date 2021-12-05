@@ -4,14 +4,17 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import '../styles/Login.css'
-import { login } from '../shared/BackendRequests';
+import { getUserInfo, login } from '../shared/BackendRequests';
+import { setUserCookie } from '../shared/cookie';
 
-function Login() {
+const Login = () => {
     const navigate = useNavigate();
     const [loginData, setLoginData] = useState({
         id: '',
         pw: ''
     });
+
+
 
     function viewSignUp() {
         navigate('../signup')
@@ -30,14 +33,21 @@ function Login() {
     }
     async function handleSubmit() {
 
-        console.log(loginData);
         let ret = await login(loginData.id, loginData.pw)
             .catch(e => { alert("로그인할 수 없습니다."); return; });
-        if (ret !== null) {
+        if (ret === undefined) {
+            return;
+        }
+        else if (ret.result) {
+            let loginUser = await getUserInfo(loginData.id).catch(() => { alert("유저정보를 가져올 수 없습니다."); });
+
+            setUserCookie(loginData.id, loginUser.user_name, loginUser.role);
+            alert("환영합니다.");
             viewMain();
         }
 
     }
+
     return (
         <div className="login-layout" >
             <div className="login-title">

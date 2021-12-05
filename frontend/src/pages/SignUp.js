@@ -143,8 +143,8 @@ function SignUp() {
         }
         else {
             let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email);
-            // console.log(ret);
-            if (ret === OK) {
+            console.log(ret);
+            if (ret.result) {
                 alert("회원가입 성공! 로그인해 주세요.");
                 navigate('../login');
                 return;

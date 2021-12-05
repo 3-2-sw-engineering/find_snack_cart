@@ -5,22 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { Map } from "react-kakao-maps-sdk";
 import { Chip, MenuItem, Button, Menu } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import '../styles/Report.css'
-import { checkCurrentUserID, createMarket, editMarket, getUserInfo } from '../shared/BackendRequests';
+import '../styles/Manage.css'
+import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
+import { withCookies } from 'react-cookie';
+import { getUserCookie, setUserCookie } from '../shared/cookie';
+import { categories as origCategories, paymentList } from '../shared/constantLists'
 
-import { withCookies, Cookies } from 'react-cookie';
-import { instanceOf } from 'prop-types';
-
-function Manage() {
+function Manage({ reportManage }) {
+    // reportManage: 0-report, 1-manage
     const navigate = useNavigate();
-    const paymentList = ['현금', '카드', '계좌이체', '카카오페이'];
-    const categories = [
-        "붕어빵/잉어빵", "타코야끼", "풀빵", "호떡", "군고구마", "꼬치", "분식", "기타"
-    ];
-    const [propTypes, setProp] = useState({
-        cookies: instanceOf(Cookies).isRequired
-    })
-
+    const categories = origCategories.filter((item, idx) => idx > 0);
 
     const [marketData, setMarketData] = useState({
         name: '',
@@ -139,7 +133,7 @@ function Manage() {
 
     }
 
-    const onMarketRegister = () => {
+    const onMarketRegister = async () => {
         var name = marketData.name.replace(/\s|　/gi, ' ');
         if (name.length < 1) {
             alert("가게 이름을 입력해 주세요.");
@@ -153,19 +147,24 @@ function Manage() {
             alert("가게 위치를 1개 이상 입력해 주세요.");
             return;
         }
+        var cate_arr = categories.filter((item, idx) => marketData.categories[idx]);
+        var pay_arr = paymentList.filter((item, idx) => marketData.payments[idx]);
 
         // register on DB
-        let user = getUserInfo(checkCurrentUserID(propTypes.cookies)); // ??
-        if (true) {
-            createMarket(marketData.locations, marketData.categories, null,
-                marketData.payments, marketData.information, marketData.image,
-                1, 0, marketData.phone);
-        } else if (true) {
+        let user = getUserCookie();
+        if (user.managing < 0) {
+            let ret = await createMarket(marketData.locations, marketData.categories, null,
+                marketData.payments, marketData.information, [marketData.image],
+                reportManage, 0, marketData.phone).catch(() => alert("error on creating the market"));
 
-            editMarket(user.managing, marketData.locations, marketData.categories, null,
-                marketData.payments, marketData.information, marketData.image, 1, 0, marketData.phone);
+            // add managing cart on userdata
+            let managing = -1;
+            setUserCookie(user.id, user.name, user.role, managing);
+            if (ret === undefined) return;
+
         } else {
-            viewBack();
+            editMarket(user.managing, marketData.locations, cate_arr, null,
+                pay_arr, marketData.information, marketData.image, reportManage, 0, marketData.phone);
         }
 
 
@@ -177,26 +176,61 @@ function Manage() {
     const onMarketDelete = () => {
         var ret = window.confirm("가게정보가 삭제됩니다. 계속 하시겠습니까?");
         if (ret) {// register on DB
-            let user = getUserInfo(checkCurrentUserID(propTypes.cookies)); // ??
-            if (true) {
-                createMarket(marketData.locations, marketData.categories, null,
-                    marketData.payments, marketData.information, marketData.image,
-                    1, 0, marketData.phone);
-            } else if (true) {
-
-                editMarket(user.managing, marketData.locations, marketData.categories, null,
-                    marketData.payments, marketData.information, marketData.image, 1, 0, marketData.phone);
-            } else {
-                viewBack();
+            let user = getUserCookie();
+            if (user.managing.managing >= 0) {
+                deleteMarket(user.managing);
             }
         }
         return;
 
     }
+
+    const [isFirst, setIsFirst] = useState(true);
+    function FillAuto() {
+        if (!isFirst) return;
+        setIsFirst(false);
+        console.log("first!");
+        let user = getUserCookie();
+        if (user.managing < 0) return;
+        getMarketInfo(user.managing).then((market) => {
+            console.log(market);
+            let food = market.market_food;
+            let pay = market.market_payment_method;
+            var cate_bool = categories.map((item) => (food.includes(item)));
+            var pay_bool = paymentList.map((item) => pay.includes(item));
+            console.log(pay_bool);
+
+            setMarketData({
+                ...marketData,
+                // name: market.name,
+                categories: cate_bool,
+                locations: [market.market_location],
+                phone: market.market_phone_number,
+                information: market.market_explanation,
+                payments: pay_bool
+                //image
+            });
+
+        }
+        );
+    }
+
+    function checkAuthority() {
+        let user = getUserCookie();
+        if (user === undefined) {
+            alert("로그인 후 이용해 주세요.");
+            viewBack();
+        } else if (reportManage === 1 && user.role !== 1) {
+            alert("사장님만 이용하실 수 있습니다.");
+            viewBack();
+        }
+    }
     return (
         <div className="report-layout" >
+            {checkAuthority()}
+            {FillAuto()}
 
-            <div className="title"> 내 가게 관리하기</div>
+            <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
 
 
             <div className="label">
@@ -206,7 +240,7 @@ function Manage() {
             <div className="item">
                 <div className="info">가게 이름 *</div>
                 <div className="content">
-                    <input className="input" name='name' onChange={onInputTextChange} />
+                    <input className="input" value={marketData.name} name='name' onChange={onInputTextChange} />
                 </div>
             </div>
 
@@ -239,21 +273,28 @@ function Manage() {
 
                 </div>
             </div>
-
-            <div className="item">
-                <div className="info">연락처</div>
-                <div className="content">
-                    <input className="input" name='phone' onChange={onInputTextChange} />
+            {reportManage === 0 ? <div /> :
+                <div className="item">
+                    <div className="info">연락처</div>
+                    <div className="content">
+                        <input className="input" value={marketData.phone} name='phone' onChange={onInputTextChange} />
+                    </div>
                 </div>
-            </div>
+
+            }
 
 
-            <div className="item">
-                <div className="info">가게 설명</div>
-                <div className="content">
-                    <textarea className="description" rows="10" name='information' onChange={onInputTextChange} />
+
+            {reportManage === 0 ? <div /> :
+                <div className="item">
+                    <div className="info">가게 설명</div>
+                    <div className="content">
+                        <textarea className="description" value={marketData.information} rows="10" name='information' onChange={onInputTextChange} />
+                    </div>
                 </div>
-            </div>
+            }
+
+
 
             <div className="item">
                 <div className="info">결제 수단</div>
@@ -284,9 +325,12 @@ function Manage() {
                 <div className="register-button" onClick={onMarketRegister}> 등록하기 </div>
             </div>
 
-            <div className="item">
-                <div className="delete-button" onClick={onMarketDelete}> 삭제하기 </div>
-            </div>
+
+            {reportManage === 0 ? <div /> :
+                <div className="item">
+                    <div className="delete-button" onClick={onMarketDelete}> 삭제하기 </div>
+                </div>
+            }
 
         </div >
     );

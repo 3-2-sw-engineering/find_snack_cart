@@ -12,21 +12,27 @@ import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
 import Login from "./Login"
 import SignUp from "./SignUp"
-import Report from "./Report"
 import Manage from "./Manage"
 import { CookiesProvider } from 'react-cookie';
+import { getUserCookie } from '../shared/cookie';
+import { logout } from '../shared/BackendRequests';
+import { categories } from '../shared/constantLists'
 
 function Main(props) {
-    const categories = [
-        "전체", "붕어빵/잉어빵", "타코야끼", "풀빵", "호떡", "군고구마", "꼬치", "분식", "기타"
-    ];
+    // const categories = [
+    //     "전체", "붕어빵/잉어빵", "타코야끼", "풀빵", "호떡", "군고구마", "꼬치", "분식", "기타"
+    // ];
 
     const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
-
     function viewLogin() {
-        navigate("login");
+        if (getUserCookie() === undefined)
+            navigate("login");
+        else {
+            console.log("logout!")
+            logout();
+        }
     }
 
     function viewFavorite() {
@@ -40,6 +46,7 @@ function Main(props) {
     function viewManage() {
         navigate("manage");
     }
+
 
     return (
         <CookiesProvider>
@@ -113,11 +120,12 @@ function Main(props) {
 
                 <div className="main-split">
                     <div className="main-split-element">
-                        <Manage />
+                        <Manage reportManage={0} />
                     </div>
 
                     <div className="main-split-element">
-                        <Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map>
+                        <Manage reportManage={1} />
+                        {/* <Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map> */}
                     </div>
                 </div>
             </div>

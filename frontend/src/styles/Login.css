@@ -1,4 +1,3 @@
-
 .login-layout {
     font-family: "Simplehae" !important;
     font-size: 1rem;
@@ -14,8 +13,9 @@
 }
 
 .login-title {
-    width: 100%;
+    width: 90%;
     font-size: 2rem;
+    align-self: flex-start;
     margin-left: 2.5rem;
     margin-top: 0.7rem;
 }

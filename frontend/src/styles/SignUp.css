@@ -18,12 +18,11 @@
 }
 
 .sign-title {
-    display: flex;
+    width: 90%;
     font-size: 2rem;
     align-self: flex-start;
     margin-left: 2.5rem;
     margin-top: 0.7rem;
-    justify-self: flex-start;
 }
 
 .sign-up-item {
