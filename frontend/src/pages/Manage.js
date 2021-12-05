@@ -189,6 +189,7 @@ function Manage({ reportManage }) {
     function FillAuto() {
         if (!isFirst) return;
         setIsFirst(false);
+        if (reportManage === 0) return;
         console.log("first!");
         let user = getUserCookie();
         if (user.managing < 0) return;
