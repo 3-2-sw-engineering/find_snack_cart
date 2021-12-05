@@ -4,15 +4,15 @@ const CookieManager = require('../shared/cookieManager');
 
 async function CreateUser(req, res) {
 	try {
-		// http request body에 {user_id, user_pw, user_name} 세가지 parameter를 받음.
-		const { user_id, user_pw, user_name, user_email } = req.body;
+		const { user_id, user_pw, user_name, user_email, role } = req.body;
 
-		if (user_id === undefined || user_pw === undefined ||
-			user_name === undefined || user_email === undefined) {
+		if (user_id === undefined || user_pw === undefined || user_name === undefined ||
+			user_email === undefined || role === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
 		}
 
-		await User.create(user_id, user_pw, user_name, user_email);
+		// 초기에는 할당된 Market이 없으므로 null로 설정
+		await User.create(user_id, user_pw, user_name, user_email, role, null);
 		res.status(201).json({ result: true });
 	} catch (err) {
 		console.log(err);
