@@ -3,7 +3,7 @@
 
 import { FormGroup, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import React, { StrictMode, useState } from 'react';
+import React, { useState } from 'react';
 import '../styles/SignUp.css'
 import { createUser } from '../shared/BackendRequests';
 
@@ -20,7 +20,8 @@ function SignUp() {
 
     const [checkData, setCheckData] = useState({
         isIdValid: false,
-        isCodeValid: false,
+        isPwValid: false,
+        isCodeValid: true,
         isOwner: false,
         isConsentient: false,
 
@@ -31,21 +32,36 @@ function SignUp() {
         email: '',
         code: ''
     });
-    const OK = 201, FAILED = 401;
-
 
 
     const checkIdValid = () => {
         const id = signUpData.id;
-        var checkResult = true;
+        var ret = true;
 
+        var guide = ''
+        var num = id.search(/[0-9]/g);
+        var eng = id.search(/[a-z]/ig);
+        if (id.length < 2) {
+            guide += "너무 짧습니다. ";
+            ret = false;
+        } else if (id.search(/\s/) !== -1) {
+            guide += "공백이 없어야 합니다. ";
+            ret = false;
+        } else if (num < 0 && eng < 0) {
+            guide += "영문이나 숫자를 사용해야 합니다."
+            ret = false;
+        }
+        if (ret) {
+            // id 중복 체크
+
+        }
         setCheckData({
             ...checkData,
-            isIdValid: checkResult
+            isIdValid: ret
         });
         setGuideStr({
             ...guideStr,
-            id: checkResult ? '사용할 수 있습니다.' : '사용할 수 없는 ID입니다. 다른 ID를 입력해주세요'
+            id: ret ? '사용할 수 있습니다.' : guide
         });
     }
     const onInputChange = (e) => {
@@ -56,10 +72,10 @@ function SignUp() {
                 isIdValid: false
             });
         } else if (name === 'email') {
-            setCheckData({
-                ...checkData,
-                isCodeValid: false
-            });
+            // setCheckData({
+            //     ...checkData,
+            //     isCodeValid: false
+            // });
         }
         setSignUpData({
             ...signUpData,
@@ -135,14 +151,20 @@ function SignUp() {
     const onSignUpClick = async () => {
         if (!checkData.isIdValid) {
             alert("ID 중복확인해주세요.");
-        }
-        else if (!checkData.isCodeValid) {
+        } else if (!checkData.isPwValid) {
+            alert("비밀번호를 확인해주세요.");
+        } else if (signUpData.nickname.length < 1) {
+            alert("닉네임을 입력해주세요.");
+        } else if (signUpData.email.length < 1) {
+            alert("이메일을 입력해주세요.");
+        } else if (!checkData.isCodeValid) {
             alert("이메일을 인증해주세요.")
         } else if (!checkData.isConsentient) {
             alert("이용약관에 동의해주세요.");
         }
         else {
-            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email);
+            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email).catch(
+                alert("회원가입할 수 없습니다."));
             console.log(ret);
             if (ret.result) {
                 alert("회원가입 성공! 로그인해 주세요.");
@@ -154,7 +176,21 @@ function SignUp() {
         }
     }
 
-
+    function getTerm() {
+        const file = "./src/shared/signUpTerm.txt";
+        var rawFile = new XMLHttpRequest();
+        rawFile.open("GET", file, false);
+        rawFile.onreadystatechange = function () {
+            if (rawFile.readyState === 4) {
+                if (rawFile.status === 200 || rawFile.status == 0) {
+                    var allText = rawFile.responseText;
+                    alert(allText);
+                    return allText;
+                }
+            }
+        };
+        rawFile.send(null);
+    }
 
     return (
         <div className="sign-layout">
@@ -207,18 +243,19 @@ function SignUp() {
                     <input name="email" className="item-input" onChange={onInputChange} />
                     <div className="item-report"> {guideStr.email}</div>
                 </div>
-                <div className="item-button" onClick={sendEmail}>보내기</div>
+                {/* <div className="item-button" onClick={sendEmail}>보내기</div> */}
+                <div className="item-button-none"></div>
             </div>
 
             {/* code */}
-            <div className="sign-up-item">
+            {/* <div className="sign-up-item">
                 <div className="item-info">인증번호</div>
                 <div className="item-input-report">
                     <input name="code" className="item-input" onChange={onInputChange} />
                     <div className="item-report"> {guideStr.code} </div>
                 </div>
                 <div className="item-button" onClick={checkCode}>인증하기</div>
-            </div>
+            </div> */}
 
             {/* owner check */}
             <FormGroup className="check-owner">
@@ -235,6 +272,7 @@ function SignUp() {
 
             {/* contents of regulation? */}
             <div className="agreement">
+                {getTerm()}
                 갑과 을은 어쩌고저쩌고 <br />
                 end<br />
             </div>
