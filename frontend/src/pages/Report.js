@@ -11,18 +11,34 @@ import { useState } from 'react';
 
 function Report() {
 	const navigate = useNavigate();
-	const [searchText, setsearchText] = useState("")
+	const [searchText, setsearchText] = useState("");
+	const [location, setLocation] = useState({
+		lat: 37.413294,
+		lng: 126.79581
+	});
 
 	function viewBack() {
 		navigate('../');
 	}
 	function handleDelete() { }
 
+	const { kakao } = window;
+	var ps = new kakao.maps.services.Places();
+
 	function searchLocation() {
 		if (searchText === "") { return }
-		console.log(searchText)
-		setsearchText("")
+		ps.keywordSearch(searchText, placesSearchCB);
 	}
+
+	function placesSearchCB (data, status) {
+		if (status === kakao.maps.services.Status.OK) {
+			setLocation({
+				lat: data[0].y,
+				lng: data[0].x
+			})
+		} 
+	}
+	
 	return (
 		<div className="layout" >
 

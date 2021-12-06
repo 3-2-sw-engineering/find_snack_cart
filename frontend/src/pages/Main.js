@@ -25,7 +25,11 @@ function Main(props) {
 	const navigate = useNavigate();
 	const [headerText, setHeaderText] = useState("군것질");
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [searchText, setsearchText] = useState("")
+	const [searchText, setsearchText] = useState("");
+	const [location, setLocation] = useState({
+		lat: 37.413294,
+		lng: 126.79581
+	});
 
 	function viewLogin() {
 		navigate("login");
@@ -43,10 +47,21 @@ function Main(props) {
 		navigate("manage");
 	}
 
+	const { kakao } = window;
+	var ps = new kakao.maps.services.Places();
+
 	function searchLocation() {
 		if (searchText === "") { return }
-		console.log(searchText)
-		setsearchText("")
+		ps.keywordSearch(searchText, placesSearchCB);
+	}
+
+	function placesSearchCB (data, status) {
+		if (status === kakao.maps.services.Status.OK) {
+			setLocation({
+				lat: data[0].y,
+				lng: data[0].x
+			})
+		} 
 	}
 
 	return (
@@ -131,7 +146,7 @@ function Main(props) {
 						onCancelSearch={searchLocation}
 						onRequestSearch={searchLocation}
 					/>
-					<Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map>
+					<Map center={location} level={5} className="main-map"></Map>
 				</div>
 			</div>
 		</div>

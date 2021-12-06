@@ -11,7 +11,11 @@ import { useState } from 'react';
 
 function Manage() {
 	const navigate = useNavigate();
-	const [searchText, setsearchText] = useState("")
+	const [searchText, setsearchText] = useState("");
+	const [location, setLocation] = useState({
+		lat: 37.413294,
+		lng: 126.79581
+	});
 
 	function viewBack() {
 		navigate('../');
@@ -21,8 +25,25 @@ function Manage() {
 	function searchLocation() {
 		if (searchText === "") { return }
 		console.log(searchText)
-		setsearchText("")
 	}
+
+	const { kakao } = window;
+	var ps = new kakao.maps.services.Places();
+
+	function searchLocation() {
+		if (searchText === "") { return }
+		ps.keywordSearch(searchText, placesSearchCB);
+	}
+
+	function placesSearchCB (data, status) {
+		if (status === kakao.maps.services.Status.OK) {
+			setLocation({
+				lat: data[0].y,
+				lng: data[0].x
+			})
+		} 
+	}
+	
 	return (
 		<div className="report-layout" >
 
@@ -69,7 +90,7 @@ function Manage() {
 							onCancelSearch={searchLocation}
 							onRequestSearch={searchLocation}
 						/>
-						<Map className="map" center={{ lat: 37.413294, lng: 126.79581 }} level={7}></Map>
+						<Map className="map" center={location} level={7}></Map>
 					</div>
 					<div className="locations">
 						<div className="chip">
