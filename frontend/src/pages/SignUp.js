@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import '../styles/SignUp.css'
 import { createUser } from '../shared/BackendRequests';
+import fs from 'fs';
+import file from '../shared/signUpTerm.js'
 
 function SignUp() {
     const navigate = useNavigate();
@@ -163,9 +165,12 @@ function SignUp() {
             alert("이용약관에 동의해주세요.");
         }
         else {
-            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email).catch(
-                alert("회원가입할 수 없습니다."));
+            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email)
+                .then()
+                .catch(
+                    e => alert("회원가입할 수 없습니다."));
             console.log(ret);
+            if (ret === undefined) return;
             if (ret.result) {
                 alert("회원가입 성공! 로그인해 주세요.");
                 navigate('../login');
@@ -177,19 +182,7 @@ function SignUp() {
     }
 
     function getTerm() {
-        const file = "./src/shared/signUpTerm.txt";
-        var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function () {
-            if (rawFile.readyState === 4) {
-                if (rawFile.status === 200 || rawFile.status == 0) {
-                    var allText = rawFile.responseText;
-                    alert(allText);
-                    return allText;
-                }
-            }
-        };
-        rawFile.send(null);
+        return file;
     }
 
     return (
@@ -272,9 +265,9 @@ function SignUp() {
 
             {/* contents of regulation? */}
             <div className="agreement">
-                {getTerm()}
-                갑과 을은 어쩌고저쩌고 <br />
-                end<br />
+                {file.split('\n').map((line) => {
+                    return (<span className="term"> {line} <br /> </span>);
+                })}
             </div>
 
         </div>

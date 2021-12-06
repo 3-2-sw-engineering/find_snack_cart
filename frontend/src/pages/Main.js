@@ -127,6 +127,7 @@ function Main(props) {
 
                     <div className="main-split-element">
                         {/* <Manage reportManage={1} /> */}
+                        <Login />
 
                         {/* <Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map> */}
                     </div>
