@@ -79,8 +79,6 @@ Comment.statics.delete = async function (comment_id) {
 }
 
 Comment.statics.edit = async function (comment_id, change_review, change_score) {
-    const comment = await this.findOne({"comment_id": comment_id});
-
     this.findOneAndUpdate({"comment_id": comment_id}, {
         $set: {
             comment_review: change_review,
