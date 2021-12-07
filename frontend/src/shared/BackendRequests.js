@@ -108,7 +108,7 @@ export async function logout() {
 // 인자로 전달되는 cookies는 react-cookie 패키지에 포함된 withCookies로 얻을 수 있습니다. (props.cookies)
 // 아래 글을 따라 컴포넌트에 withCookies를 입혀보세요!
 // https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=dilrong&logNo=221450777898
-export async function checkCurrentUserID(cookies) {
+export function checkCurrentUserID(cookies) {
     try {
         const userToken = cookies.get('user');
         const decoded = jwt.decode(userToken);
