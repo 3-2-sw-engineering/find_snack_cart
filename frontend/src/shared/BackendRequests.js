@@ -29,6 +29,21 @@ export async function createUser(id, pw, name, email, isOwner) {
     }
 }
 
+// 특정 아이디가 이미 가입된 아이디인지 확인합니다.
+export async function isIdAvailable(id) {
+    try {
+        await getUserInfo(id);
+        return true;
+    } catch (err) {
+        if (err.response.status === 404) {
+            return false;
+        } else {
+            console.error("In isIdAvailable: " + err?.response?.data);
+            throw err;
+        }
+    }
+}
+
 // 아이디에 해당하는 계정을 삭제합니다.
 export async function deleteUser(id) {
     const reqBody = {
