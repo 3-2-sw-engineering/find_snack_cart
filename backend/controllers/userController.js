@@ -143,7 +143,7 @@ async function AddFavorite(req, res) {
 
 		const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+        if (current === undefined || current !== user_id) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
 			return;
         }
@@ -165,7 +165,7 @@ async function RemoveFavorite(req, res) {
 
 		const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+        if (current === undefined || current !== user_id) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
 			return;
         }
