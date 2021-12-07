@@ -1,13 +1,9 @@
-// Jaesun
-
-
 import { FormGroup, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import '../styles/SignUp.css'
 import { createUser } from '../shared/BackendRequests';
-import fs from 'fs';
-import file from '../shared/signUpTerm.js'
+import { signUpTerm } from '../shared/constantLists.js'
 
 function SignUp() {
     const navigate = useNavigate();
@@ -181,9 +177,6 @@ function SignUp() {
         }
     }
 
-    function getTerm() {
-        return file;
-    }
 
     return (
         <div className="sign-layout">
@@ -265,7 +258,7 @@ function SignUp() {
 
             {/* contents of regulation? */}
             <div className="agreement">
-                {file.split('\n').map((line) => {
+                {signUpTerm.split('\n').map((line) => {
                     return (<span className="term"> {line} <br /> </span>);
                 })}
             </div>

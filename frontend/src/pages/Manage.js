@@ -9,7 +9,7 @@ import '../styles/Manage.css'
 import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
 import { withCookies } from 'react-cookie';
 import { getUserCookie, setUserCookie } from '../shared/cookie';
-import { categories as origCategories, paymentList } from '../shared/constantLists'
+import { categories as origCategories, infoPlaceHolder, paymentList } from '../shared/constantLists'
 
 function Manage({ reportManage }) {
     // reportManage: 0-report, 1-manage
@@ -152,10 +152,12 @@ function Manage({ reportManage }) {
 
         // register on DB
         let user = getUserCookie();
-        if (user.managing < 0) {
-            let ret = await createMarket(marketData.locations, marketData.categories, null,
-                marketData.payments, marketData.information, [marketData.image],
-                reportManage, 0, marketData.phone).catch(() => alert("error on creating the market"));
+        if (user.managing === undefined || user.managing < 0) {
+            let ret = await createMarket(marketData.locations[0], cate_arr, 'cate',
+                pay_arr, marketData.information, [],
+                reportManage, 0, marketData.phone)
+                .then(() => alert("가게 정보가 저장되었습니다."))
+                .catch(() => alert("error on creating the market"));
 
             // add managing cart on userdata
             let managing = -1;
@@ -163,13 +165,12 @@ function Manage({ reportManage }) {
             if (ret === undefined) return;
 
         } else {
-            editMarket(user.managing, marketData.locations, cate_arr, null,
-                pay_arr, marketData.information, marketData.image, reportManage, 0, marketData.phone);
+            editMarket(marketData.locations[0], cate_arr, 'cate',
+                pay_arr, marketData.information, [],
+                reportManage, 0, marketData.phone)
+                .then(() => alert("가게 정보가 저장되었습니다."))
+                .catch(() => alert("error on creating the market"));;
         }
-
-
-
-        alert("가게 정보가 저장되었습니다.");
 
     }
 
@@ -182,7 +183,6 @@ function Manage({ reportManage }) {
             }
         }
         return;
-
     }
 
     const [isFirst, setIsFirst] = useState(true);
@@ -190,16 +190,14 @@ function Manage({ reportManage }) {
         if (!isFirst) return;
         setIsFirst(false);
         if (reportManage === 0) return;
-        console.log("first!");
+
         let user = getUserCookie();
         if (user.managing < 0) return;
         getMarketInfo(user.managing).then((market) => {
-            console.log(market);
             let food = market.market_food;
             let pay = market.market_payment_method;
             var cate_bool = categories.map((item) => (food.includes(item)));
             var pay_bool = paymentList.map((item) => pay.includes(item));
-            console.log(pay_bool);
 
             setMarketData({
                 ...marketData,
@@ -284,13 +282,12 @@ function Manage({ reportManage }) {
 
             }
 
-
-
             {reportManage === 0 ? <div /> :
                 <div className="item">
                     <div className="info">가게 설명</div>
                     <div className="content">
-                        <textarea className="description" value={marketData.information} rows="10" name='information' onChange={onInputTextChange} />
+                        <textarea className="description" value={marketData.information} rows="10" name='information' onChange={onInputTextChange}
+                            placeholder={infoPlaceHolder} />
                     </div>
                 </div>
             }
@@ -313,14 +310,14 @@ function Manage({ reportManage }) {
                 </div>
             </div>
 
-            <div className="item">
+            {/* <div className="item">
                 <div className="info">가게 사진</div>
                 <div className="content">
                     <div className="image-uploader">
                         사진 업로더
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className="item">
                 <div className="register-button" onClick={onMarketRegister}> 등록하기 </div>

@@ -15,7 +15,6 @@ import "../styles/Main.css"
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
-import { CookiesProvider } from 'react-cookie';
 import { getUserCookie } from '../shared/cookie';
 import { logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
@@ -127,19 +126,12 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-                    {detail && <MarketInfoDetailed marketDetailed={marketDetailed} />}
+                    {/* {detail && <MarketInfoDetailed marketDetailed={marketDetailed} />} */}
+                    <SignUp />
                 </div>
                 <div className="main-split-element">
-                    <Map className='main-map'
-                        center={{ lat: 37.55635, lng: 126.795841 }}
-                        lelve={7}
-                    >
-                        <MarketInfoShort
-                            index={1}
-                            isDetail={isDetail}
-                            setMarket={setMarket}
-                        />
-                    </Map>
+                    <Manage reportManage={1} />
+
                 </div>
             </div>
         </div>
