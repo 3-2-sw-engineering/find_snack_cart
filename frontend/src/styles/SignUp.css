@@ -4,7 +4,8 @@
     margin: 2.5%;
     width: 95%;
     height: 95%;
-    max-height: 95%;
+    /* max-height: 95%; */
+    max-width: 95%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -18,20 +19,19 @@
 }
 
 .sign-title {
-    display: flex;
+    width: 90%;
     font-size: 2rem;
     align-self: flex-start;
     margin-left: 2.5rem;
     margin-top: 0.7rem;
-    justify-self: flex-start;
 }
 
 .sign-up-item {
     width: 80%;
     max-width: 100%;
-    height: 6%;
-    min-height: 6%;
-    max-height: 10rem;
+    height: auto;
+    /* min-height: 6%; */
+    /* max-height: 10rem; */
     margin: 0.1rem;
     display: flex;
     justify-content: center;
@@ -69,6 +69,7 @@
 .item-report {
     margin: inherit;
     width: 100%;
+    height: 1.2rem;
     font-size: 0.8em;
     text-align: right;
 }
@@ -118,8 +119,24 @@
 
 .agreement {
     width: 80%;
+    min-height: 10rem;
+    max-width: 80%;
     margin: 0.2rem;
     background: #F9F8FD;
-    overflow: auto;
+    text-overflow: clip;
+    overflow: scroll;
     border-radius: 0.5rem;
+    word-break: break-all;
+}
+
+.term {
+    margin: 2%;
+    width: 95%;
+    max-width: 95%;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    word-wrap: break-all;
+    white-space: normal;
+    line-height: 150%;
+
 }

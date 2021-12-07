@@ -17,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/qf9ar8nv/find_snack_cart/issues"
   },
-  "homepage": "https://github.com/qf9ar8nv/find_snack_cart#readme"
+  "homepage": "https://github.com/qf9ar8nv/find_snack_cart#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "node": "^17.2.0",
+    "react-cookie": "^4.1.1"
+  }
 }
