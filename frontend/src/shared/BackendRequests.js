@@ -207,25 +207,23 @@ export async function getMarketInfo(marketIdx) {
 }
 
 // 새로운 포장마차를 등록합니다.
-// location: 장소 (string) --> 'string의 배열'로 변경 (jaesun comment)
-// food: 파는 음식들 (string의 배열) --> categories로 변경 (jaesun comment)
-// category: 포장마차의 카테고리 (string) --> 삭제 (jaesun comment)
+// location: 장소 (string의 배열)
+// food: 파는 음식들 (string의 배열)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
-// fixed: 0이면 이동형, 1이면 고정형 -->삭제 (jaesun comment)
 // phone: 전화번호 (string)
-export async function createMarket(location, food, category, paymentMethods, explanation, images, authority, fixed, phone) {
+export async function createMarket(locations, food, paymentMethods, explanation, images, authority, phone) {
     const reqBody = {
-        market_location: location,
+        market_location: locations,
         market_food: food,
-        market_category: category,
+        market_category: "",                    // Unused, Legacy
         market_payment_method: paymentMethods,
         market_explanation: explanation,
         market_image: images,
         market_authority: authority,
-        market_fixed: fixed,
+        market_fixed: 0,                        // Unused, Legacy
         market_phone_number: phone
     };
 
