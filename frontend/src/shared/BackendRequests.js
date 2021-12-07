@@ -11,12 +11,13 @@ import jwt from "jsonwebtoken"
     createUser(..., isOwner): add an argument that present whether new user is onwer or not
 */
 // 새 사용자 계정을 생성합니다.
-export async function createUser(id, pw, name, email) {
+export async function createUser(id, pw, name, email, isOwner) {
     const reqBody = {
         user_id: id,
         user_pw: pw,
         user_name: name,
-        user_email: email
+        user_email: email,
+        role: (isOwner ? 1 : 0)
     };
 
     try {
