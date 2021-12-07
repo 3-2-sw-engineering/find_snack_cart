@@ -9,18 +9,31 @@ import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MarketInfoShort from './MarketInfoShort.js';
+import MarketInfoDetailed from './MarketInfoDetailed.js';
 import "../styles/Main.css"
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
+import { CookiesProvider } from 'react-cookie';
 import { getUserCookie } from '../shared/cookie';
 import { logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
 
 function Main(props) {
+
+
     const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
+    const [marketDetailed, setMarket] = useState();
+    const [detail, setDetail] = useState(0);
+
+    function isDetail() {
+        console.log(detail);
+        setDetail(!detail);
+    }
+
     function viewLogin() {
         if (getUserCookie() === undefined)
             navigate("login");
@@ -59,7 +72,7 @@ function Main(props) {
             </AppBar>
 
             <Drawer open={menuOpen} onClose={() => setMenuOpen(false)}>
-                <Box sx={500} role="presentation">
+                <Box role="presentation">
                     <List>
                         <ListItem button>
                             <ListItemAvatar>
@@ -77,7 +90,7 @@ function Main(props) {
 
                             {categories.map(cate => (
                                 <ListItem button sx={{ pl: 10 }}>
-                                    <ListItemText primary={cate}></ListItemText>
+                                    <ListItemText key={cate} primary={cate}></ListItemText>
                                 </ListItem>
                             ))}
                         </List>
@@ -114,16 +127,19 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-                    <Manage reportManage={0} />
-                    {/* <Login /> */}
-                    {/* <Manage /> */}
+                    {detail && <MarketInfoDetailed marketDetailed={marketDetailed} />}
                 </div>
-
                 <div className="main-split-element">
-                    {/* <Manage reportManage={1} /> */}
-                    <Login />
-
-                    {/* <Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map> */}
+                    <Map className='main-map'
+                        center={{ lat: 37.55635, lng: 126.795841 }}
+                        lelve={7}
+                    >
+                        <MarketInfoShort
+                            index={1}
+                            isDetail={isDetail}
+                            setMarket={setMarket}
+                        />
+                    </Map>
                 </div>
             </div>
         </div>
