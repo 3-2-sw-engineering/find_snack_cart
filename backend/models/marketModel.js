@@ -11,7 +11,7 @@ var Market = new Schema({
         unique: true,
     },
     market_location: {
-        type: String,
+        type: [String],
         required: true,
     },
     market_food: {
