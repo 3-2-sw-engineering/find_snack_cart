@@ -13,13 +13,13 @@ async function GetAllMarkets(req, res) {
 async function CreateMarket(req, res) {
     try {
         const {
-            market_location, market_food,
+            market_title, market_location, market_food,
             market_category, market_payment_method, market_explanation,
             market_image, market_authority, market_fixed,
             market_phone_number
         } = req.body;
 
-        if (market_location === undefined || market_food === undefined ||
+        if (market_title === undefined || market_location === undefined || market_food === undefined ||
             market_category === undefined || market_payment_method === undefined || market_food === undefined ||
             market_image === undefined || market_authority === undefined || market_fixed === undefined ||
             market_phone_number === undefined) {
@@ -34,7 +34,7 @@ async function CreateMarket(req, res) {
             return;
         }
 
-        await Market.create(market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
+        await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
         res.status(201).json({ result: true });
     } catch (err) {
         console.log(err);
@@ -69,13 +69,13 @@ async function DeleteMarket(req, res) {
 async function EditMarket(req, res) {
     try {
         const {
-            market_index, market_location, market_food,
+            market_index, market_title, market_location, market_food,
             market_category, market_payment_method, market_explanation,
             market_image, market_authority, market_fixed,
             market_phone_number
         } = req.body;
 
-        if (market_index === undefined || market_location === undefined || market_food === undefined ||
+        if (market_title === undefined || market_index === undefined || market_location === undefined || market_food === undefined ||
             market_category === undefined || market_payment_method === undefined || market_food === undefined ||
             market_image === undefined || market_authority === undefined || market_fixed === undefined ||
             market_phone_number === undefined) {
@@ -90,7 +90,7 @@ async function EditMarket(req, res) {
             return;
         }
 
-        await Market.edit(market_index, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
+        await Market.edit(market_index, market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
         res.status(201).json({result:true});
     } catch (err) {
         console.log(err);
