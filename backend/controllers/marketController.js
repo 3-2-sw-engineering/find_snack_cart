@@ -1,4 +1,5 @@
 const Market = require('../models/marketModel');
+const User = require('../models/userModel');
 const CookieManager = require("../shared/cookieManager");
 
 async function GetAllMarkets(req, res) {
@@ -11,6 +12,8 @@ async function GetAllMarkets(req, res) {
 }
 
 async function CreateMarket(req, res) {
+    // Note: 이 API는 로그인 해야 사용할 수 있으므로, 따로 market_owner를 받을 필요가 없고
+    // 쿠키를 조회해서 ID를 알아낼 수 있음. (생성 후 Owner 수정 불가)
     try {
         const {
             market_title, market_location, market_food,
@@ -34,7 +37,12 @@ async function CreateMarket(req, res) {
             return;
         }
 
-        await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number);
+        const created = await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, current);
+        User.findOneAndUpdate({ "user_id": current }, {
+            $set: {
+                managing: created.market_index
+            }
+        });
         res.status(201).json({ result: true });
     } catch (err) {
         console.log(err);

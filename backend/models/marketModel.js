@@ -113,8 +113,7 @@ Market.statics.edit = async function (market_index, change_title, change_locatio
                 market_image: change_image,
                 market_authority: change_authority,
                 market_fixed: change_fixed,
-                market_phone_number: change_phone_number,
-                market_owner: market_owner,
+                market_phone_number: change_phone_number
             }
         }, {new: true, useFindAndModify: false}, (err, doc) => {
             if(err) {
