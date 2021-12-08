@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Map } from "react-kakao-maps-sdk";
-import { Chip, MenuItem, Button, Menu, TextField } from '@mui/material';
+import { Chip, MenuItem, Button, Menu } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import '../styles/Manage.css'
 import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
@@ -16,33 +16,34 @@ function Manage({ reportManage }) {
     const navigate = useNavigate();
     const categories = origCategories.filter((item, idx) => idx > 0);
 
-	const [searchText, setsearchText] = useState("");
-	const [location, setLocation] = useState({
-		lat: 37.413294,
-		lng: 126.79581
-	});
+    const [searchText, setsearchText] = useState("");
+    const [kmap, setkMap] = useState(null);
 
-	const changeSetLocation = (e) => {
-		setsearchText(e.target.value)
-	}
+    const changeSetLocation = (e) => {
+        setsearchText(e.target.value)
+    }
 
-	const { kakao } = window;
-	var geocoder = new kakao.maps.services.Geocoder();
+    const { kakao } = window;
+    var geocoder = new kakao.maps.services.Geocoder();
+    var placecoder = new kakao.maps.services.Places();
 
-	const searchLocation = () => {
-		// 공백이거나 엔터키가 아니면 검색되지 않도록 설정.
-		if (searchText === "" || window.event.keyCode !==13) { return }
-		geocoder.addressSearch(searchText, function(result, status) {
-			// 정상적으로 검색이 완료됐으면 
-			 if (status === kakao.maps.services.Status.OK) {
-				console.log(result)
-				setLocation({
-					lat: result[0].y,
-					lng: result[0].x
-				})
-			}
-		})
-	}
+    const searchLocation = () => {
+        geocoder.addressSearch(searchText, function (result, status) {
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+                console.log(result)
+                kmap.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
+                return;
+            }
+        })
+        placecoder.keywordSearch(searchText, function (data, status, pagination) {
+            console.log(searchText);
+            console.log(status);
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
+            }
+        })
+    }
 
     const [marketData, setMarketData] = useState({
         name: '',
@@ -55,9 +56,9 @@ function Manage({ reportManage }) {
     });
 
     function viewBack() {
-		if (getUserCookie() === undefined) {
+        if (getUserCookie() === undefined) {
             navigate("login");
-		}
+        }
         navigate('../');
     }
 
@@ -223,7 +224,7 @@ function Manage({ reportManage }) {
         if (reportManage === 0) return;
 
         let user = getUserCookie();
-		if (user === undefined) return;
+        if (user === undefined) return;
         if (user.managing < 0) return;
         getMarketInfo(user.managing).then((market) => {
             let food = market.market_food;
@@ -257,9 +258,22 @@ function Manage({ reportManage }) {
         }
     }
 
-	useEffect(() =>{
-		checkAuthority();
-	}, []);
+    useEffect(() => {
+        checkAuthority();
+    }, []);
+    const addLocClicked = () => {
+        var location = kmap.getCenter();
+        geocoder.coord2Address(location.getLng(), location.getLat(), function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                console.log(result[0].address.address_name);
+                setMarketData({
+                    ...marketData,
+                    locations: marketData.locations.concat(result[0].address.address_name)
+                });
+            }
+        })
+    }
+
 
     return (
         <div className="report-layout" >
@@ -296,8 +310,16 @@ function Manage({ reportManage }) {
                 <div className="info">가게 위치*</div>
                 <div className="content">
                     <div className="map-container">
-					<input className="input" name='search' value={searchText} onChange={changeSetLocation} onKeyPress={searchLocation} />
-                        <Map className="map" center={location} level={7}></Map>
+                        <div className="loc-container">
+                            <input className="loc-input" name='search' value={searchText} onChange={changeSetLocation}
+                                placeholder="장소를 검색하실 수 있습니다." />
+                            <div className="loc-button" onClick={searchLocation}> 검색</div>
+                        </div>
+                        <div>원하는 위치를 지도의 중심에 놓고 버튼을 클릭하세요.</div>
+                        <div className="map-button" onClick={addLocClicked}> 지도 위치 등록하기 </div>
+                        <Map className="map" center={{
+                            lat: 37.58434776307455, lng: 127.05857621599598
+                        }} level={7} onCreate={(map) => setkMap(map)}></Map>
                     </div>
                     <div className="locations" name='locations' >
                         {marketData.locations.map(loc =>
