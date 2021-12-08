@@ -252,14 +252,18 @@ function Manage({ reportManage }) {
         if (user === undefined) {
             alert("로그인 후 이용해 주세요.");
             viewBack();
+            return false;
         } else if (reportManage === 1 && user.role !== 1) {
             alert("사장님만 이용하실 수 있습니다.");
             viewBack();
+            return false;
         }
+        return true;
     }
 
     useEffect(() => {
-        checkAuthority();
+        var ret = checkAuthority();
+        if (ret) FillAuto();
     }, []);
     const addLocClicked = () => {
         var location = kmap.getCenter();
@@ -274,10 +278,8 @@ function Manage({ reportManage }) {
         })
     }
 
-
     return (
         <div className="report-layout" >
-            {FillAuto()}
 
             <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
 
@@ -320,6 +322,7 @@ function Manage({ reportManage }) {
                         <Map className="map" center={{
                             lat: 37.58434776307455, lng: 127.05857621599598
                         }} level={7} onCreate={(map) => setkMap(map)}></Map>
+
                     </div>
                     <div className="locations" name='locations' >
                         {marketData.locations.map(loc =>

@@ -1,4 +1,4 @@
-import { Route } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, List, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
@@ -7,56 +7,126 @@ import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MarketInfoShort from './MarketInfoShort.js';
-import MarketInfoDetailed from './MarketInfoDetailed.js';
 import "../styles/Main.css"
+import { getUserCookie, removeUserCookie } from '../shared/cookie';
+import { logout } from '../shared/BackendRequests';
+import { categories } from '../shared/constantLists'
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
-import { getUserCookie } from '../shared/cookie';
-import { logout } from '../shared/BackendRequests';
-import { categories } from '../shared/constantLists'
 
-function Main(props) {
+function Main() {
 
 
     const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
-    const [detail, setDetail] = useState(0);
+    const [isLogin, setLogin] = useState(false);
+    const [detail, setDetail] = useState();
+    const [level, setLevel] = useState(4);
+    const user = undefined; //여기에다가 유저 담을거에요
 
     function isDetail() {
         console.log(detail);
         setDetail(!detail);
     }
+    function checkLogin() {
+        console.log('check login!');
+        var isLogin = false;
+        if (getUserCookie() !== undefined)
+            isLogin = true;
+        setLogin(isLogin)
+        return isLogin
+
+    }
 
     function viewLogin() {
-        if (getUserCookie() === undefined)
-            navigate("login");
+        if (!isLogin)
+            navigate("/login");
         else {
-            console.log("logout!")
             logout();
+            removeUserCookie();
         }
     }
 
     function viewFavorite() {
-        navigate("favorite");
+        navigate("/favorite");
     }
 
     function viewReport() {
-        navigate("report");
+        navigate("/report");
     }
 
     function viewManage() {
-        navigate("manage");
+        navigate("/manage");
     }
 
+    function MyDrawer() {
 
+        useEffect(() => {
+            checkLogin();
+        })
+
+        return <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} >
+            <Box role="presentation">
+                <List>
+                    <ListItem button>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <LoginIcon></LoginIcon>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText onClick={viewLogin} primary={isLogin ? '로그아웃' : '로그인'}></ListItemText>
+                    </ListItem>
+
+                    <List subheader={
+                        <ListSubheader component="div">
+                            카테고리
+                        </ListSubheader>}>
+
+                        {categories.map(cate => (
+                            <ListItem button sx={{ pl: 10 }}>
+                                <ListItemText key={cate} primary={cate}></ListItemText>
+                            </ListItem>
+                        ))}
+                    </List>
+
+                    <ListItem button sx={{ pr: 10 }}>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <FavoriteIcon></FavoriteIcon>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText onClick={viewFavorite} primary="즐겨찾기"></ListItemText>
+                    </ListItem>
+
+                    <ListItem button sx={{ pr: 10 }}>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <MyLocationIcon></MyLocationIcon>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText onClick={viewReport} primary="제보하기"></ListItemText>
+                    </ListItem>
+
+                    <ListItem button sx={{ pr: 10 }}>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <ManageSearchIcon></ManageSearchIcon>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText onClick={viewManage} primary="내 가게 관리하기"></ListItemText>
+                    </ListItem>
+                </List>
+            </Box>
+        </Drawer>
+
+    }
     return (
-        <div className="main-layout">
+        < div className="main-layout" >
             <AppBar position="static" color="transparent" elevation={0}>
                 <Toolbar>
                     <IconButton size="large" edge="start" color="inherit" sx={{ mr: 2 }}
@@ -70,71 +140,20 @@ function Main(props) {
                 </Toolbar>
             </AppBar>
 
-            <Drawer open={menuOpen} onClose={() => setMenuOpen(false)}>
-                <Box role="presentation">
-                    <List>
-                        <ListItem button>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <LoginIcon></LoginIcon>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText onClick={viewLogin} primary="로그인"></ListItemText>
-                        </ListItem>
+            <MyDrawer />
 
-                        <List subheader={
-                            <ListSubheader component="div">
-                                카테고리
-                            </ListSubheader>}>
-
-                            {categories.map(cate => (
-                                <ListItem button sx={{ pl: 10 }}>
-                                    <ListItemText key={cate} primary={cate}></ListItemText>
-                                </ListItem>
-                            ))}
-                        </List>
-
-                        <ListItem button sx={{ pr: 10 }}>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <FavoriteIcon></FavoriteIcon>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText onClick={viewFavorite} primary="즐겨찾기"></ListItemText>
-                        </ListItem>
-
-                        <ListItem button sx={{ pr: 10 }}>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <MyLocationIcon></MyLocationIcon>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText onClick={viewReport} primary="제보하기"></ListItemText>
-                        </ListItem>
-
-                        <ListItem button sx={{ pr: 10 }}>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <ManageSearchIcon></ManageSearchIcon>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText onClick={viewManage} primary="내 가게 관리하기"></ListItemText>
-                        </ListItem>
-                    </List>
-                </Box>
-            </Drawer>
 
             <div className="main-split">
-                <div className="main-split-element">
-                    {/* {detail && <MarketInfoDetailed marketDetailed={marketDetailed} />} */}
-                    <Login />
-                </div>
-                <div className="main-split-element">
-                    <Manage reportManage={1} />
 
-                </div>
-            </div>
-        </div>
+                <Routes>
+                    <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
+                    <Route path='/signup' element={<div className="main-split-element"><SignUp /></div>} />
+                    <Route path='/report' element={<div className="main-split-element"> <Manage reportManage={0} /> </div>} />
+                    <Route path='/manage' element={<div className="main-split-element"> <Manage reportManage={1} /> </div>} />
+                </Routes>
+            </div >
+        </div >
+
     );
 }
 

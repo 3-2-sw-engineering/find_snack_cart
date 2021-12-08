@@ -148,7 +148,7 @@ export async function addFavorite(id, marketIdx) {
     }
 }
 
-// 사용자의 즐겨찾기 목록에 새 항목을 추가합니다.
+// 사용자의 즐겨찾기 목록에 새 항목을 제거합니다.
 export async function removeFavorite(id, marketIdx) {
     const reqBody = {
         user_id: id,
@@ -314,6 +314,7 @@ export async function createComment(contents, score, reviewer, time, target) {
 
     try {
         let res = await axios.post("/api/comment", reqBody, { withCredentials: true });
+        console.log('done')
         return res.data;
     } catch (err) {
         console.error("In createComment: " + err?.response?.data);
