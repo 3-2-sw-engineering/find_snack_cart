@@ -127,7 +127,7 @@ function Main(props) {
             <div className="main-split">
                 <div className="main-split-element">
                     {/* {detail && <MarketInfoDetailed marketDetailed={marketDetailed} />} */}
-                    <SignUp />
+                    <Login />
                 </div>
                 <div className="main-split-element">
                     <Manage reportManage={1} />
