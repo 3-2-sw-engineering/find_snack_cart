@@ -39,7 +39,7 @@ var User = new Schema({
 		required: true,
 	},
 	managing: {
-		type: String,
+		type: Number, // market index
 	}
 });
 

@@ -4,15 +4,16 @@ const CookieManager = require('../shared/cookieManager');
 
 async function CreateUser(req, res) {
 	try {
-		// http request body에 {user_id, user_pw, user_name} 세가지 parameter를 받음.
-		const { user_id, user_pw, user_name, user_email } = req.body;
+		const { user_id, user_pw, user_name, user_email, role } = req.body;
 
-		if (user_id === undefined || user_pw === undefined ||
-			user_name === undefined || user_email === undefined) {
+		if (user_id === undefined || user_pw === undefined || user_name === undefined ||
+			user_email === undefined || role === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
-		await User.create(user_id, user_pw, user_name, user_email);
+		// 초기에는 할당된 Market이 없으므로 null로 설정
+		await User.create(user_id, user_pw, user_name, user_email, role, null);
 		res.status(201).json({ result: true });
 	} catch (err) {
 		console.log(err);
@@ -65,6 +66,7 @@ async function ChangePassword(req, res) {
 
 		if (user_id === undefined || current_pw === undefined || change_pw === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const user = await User.loginCheck(user_id, current_pw);
@@ -90,6 +92,7 @@ async function Login(req, res) {
 
 		if (user_id === undefined || user_pw === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const user = await User.loginCheck(user_id, user_pw);
@@ -123,6 +126,7 @@ async function GetAllFavorites(req, res) {
 
 		if (user_id === undefined) {
 			res.status(400).json({error: "user_id is required. The params were: " + JSON.stringify(req.params)});
+			return;
 		}
 
 		const user = await User.findUserById(user_id);
@@ -139,11 +143,12 @@ async function AddFavorite(req, res) {
 
 		if (user_id === undefined || market_id === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+        if (current === undefined || current !== user_id) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
 			return;
         }
@@ -161,11 +166,12 @@ async function RemoveFavorite(req, res) {
 
 		if (user_id === undefined || market_id === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+        if (current === undefined || current !== user_id) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
 			return;
         }
