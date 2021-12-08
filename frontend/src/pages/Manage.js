@@ -3,15 +3,13 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Map } from "react-kakao-maps-sdk";
-import { Chip, MenuItem, Button, Menu } from '@mui/material';
+import { Chip, MenuItem, Button, Menu, TextField } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import '../styles/Manage.css'
 import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
 import { withCookies } from 'react-cookie';
 import { getUserCookie, setUserCookie } from '../shared/cookie';
 import { categories as origCategories, infoPlaceHolder, paymentList } from '../shared/constantLists'
-import SearchBar from 'material-ui-search-bar';
-import SearchIcon from '@mui/icons-material/Search'
 
 function Manage({ reportManage }) {
     // reportManage: 0-report, 1-manage
@@ -24,13 +22,17 @@ function Manage({ reportManage }) {
 		lng: 126.79581
 	});
 
+	const changeSetLocation = (e) => {
+		setsearchText(e.target.value)
+	}
+
 	const { kakao } = window;
 	var geocoder = new kakao.maps.services.Geocoder();
 
-	function searchLocation() {
-		if (searchText === "") { return }
+	const searchLocation = () => {
+		// 공백이거나 엔터키가 아니면 검색되지 않도록 설정.
+		if (searchText === "" || window.event.keyCode !==13) { return }
 		geocoder.addressSearch(searchText, function(result, status) {
-			console.log(result)
 			// 정상적으로 검색이 완료됐으면 
 			 if (status === kakao.maps.services.Status.OK) {
 				console.log(result)
@@ -294,16 +296,10 @@ function Manage({ reportManage }) {
                 <div className="info">가게 위치*</div>
                 <div className="content">
                     <div className="map-container">
-						<SearchBar
-							value={searchText}
-							onChange={(text) => setsearchText(text)}
-							closeIcon={<SearchIcon />}
-							onCancelSearch={searchLocation}
-							onRequestSearch={searchLocation}
-						/>
+					<input className="input" name='search' value={searchText} onChange={changeSetLocation} onKeyPress={searchLocation} />
                         <Map className="map" center={location} level={7}></Map>
                     </div>
-                    <div className="locations" name='locations'>
+                    <div className="locations" name='locations' >
                         {marketData.locations.map(loc =>
                             <div className="chip"><Chip label={loc} color="info" onDelete={locationDeleted(loc)} /></div>
                         )}
