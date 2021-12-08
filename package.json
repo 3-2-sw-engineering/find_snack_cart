@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/qf9ar8nv/find_snack_cart/issues"
   },
-  "homepage": "https://github.com/qf9ar8nv/find_snack_cart#readme"
+  "homepage": "https://github.com/qf9ar8nv/find_snack_cart#readme",
+  "dependencies": {
+    "react-icons": "^4.3.1"
+  }
 }
