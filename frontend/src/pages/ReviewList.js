@@ -14,19 +14,11 @@ import Typography from '@mui/material/Typography';
 
 function ReviewList(props) {
 
-	const fullStar = Array.from({length:4}, (v,i) => i);
-	const lineStar = Array.from({length:1}, (v,i) => i);
-	const [reviewList, setReviewList] = useState(true);
+	console.log(props.review.score)
+	const fullStar = Array.from({length:props.review.comment_score}, (v,i) => i);
+	const lineStar = Array.from({length:5 - props.review.comment_score}, (v,i) => i);
 
-	// useEffect(() => {
-	// 	async function fetchAllReview() {
-	// 		const information = await getCommentsByMarketIdx(props.marketIdx);
-	// 		setReviewList(information);
-	// 	} fetchAllReview();
-	// }, []);
-
-	return reviewList? (
-		<div>
+	return (<div>
 			<ListItem alignItems="flex-start">
 				<ListItemAvatar>
 					<Avatar alt="Remy Sharp" src={imgB} />
@@ -36,7 +28,7 @@ function ReviewList(props) {
 					{fullStar.map((index) => <TiStarFullOutline key = {index} size='20' color='#93BDF9' />)}
 					{lineStar.map((index) => <TiStarOutline key = {index} size='20' color='#93BDF9' />)}
 					</div>
-						<p>2021-11-22</p>
+						<p>{props.review.comment_time}</p>
 					</div>}
 					secondary={
 						<React.Fragment>
@@ -46,16 +38,25 @@ function ReviewList(props) {
 								variant="body2"
 								color="text.primary"
 							>
-								Ali Connors
+								{props.review.comment_reviewer}
+								<br/>
 							</Typography>
-							{" — I'll be in your neighborhood doing errands this…"}
+							{props.review.comment_review}
 						</React.Fragment>
 					}
 				/>
 			</ListItem>
 			<Divider variant="inset" component="li" />
-		</div>
-	) : (<div></div>)
+		</div>)
+}
+
+ReviewList.defaultProps = {
+	review : {
+		comment_review: '맛있다... 한입만 더 먹고 싶은 맛',
+		comment_score:4,
+		comment_reviewer: '데리야끼',
+        comment_time: '2100-10-29'
+	}
 }
 
 export default ReviewList;

@@ -1,6 +1,5 @@
 import { CustomOverlayMap } from "react-kakao-maps-sdk";
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import "../styles/MarketInfoShort.css";
 import { motion } from 'framer-motion/dist/es/index';
 import imgA from "../images/background.jpeg";
@@ -22,7 +21,6 @@ function MarketInfoShort(props) {
 	let divWidth = String((11 - props.level)*60) + 'px';
 	let divHeight = String((11 - props.level)*50) + 'px';
 	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coodinate.lat + ','+ props.coodinate.lng;
-	console.log(props)
 
 	useEffect(() => {
 		async function fetchAllMarket() {
@@ -47,11 +45,12 @@ function MarketInfoShort(props) {
 					height: divHeight
 				}}>
 				<img className='short-image' src={imgA} alt="Avatar" />
-				<div className="short-contents">
+				<p>{market.market_explanation}</p>
+				{ props.level < 8 ?(<div className="short-contents">
 					<p>
-						{props.text} <br /> {market.market_explanation} <br /> 영업시간: 10:00 ~ 20:00 <br /> 결제방법: {market.market_payment_method.join('/')}
+						영업시간: 10:00 ~ 20:00 <br /> 결제방법: {market.market_payment_method.join('/')}
 					</p>
-				</div>
+				</div>):(<div></div>)}
 				{props.level < 6 ?(<div className="short-buttons">
 					<motion.button
 						onClick={(e) => { onPhoneNumber(true) }}

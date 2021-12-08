@@ -29,6 +29,7 @@ function Main(props) {
     const [marketDetailed, setMarket] = useState();
     const [detail, setDetail] = useState();
     const [level, setLevel] = useState(4);
+    const user = undefined; //여기에다가 유저 담을거에요
 
     function isDetail() {
         console.log(detail);
@@ -122,7 +123,11 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-                    {detail && <MarketInfoDetailed marketDetailed={marketDetailed}/>}
+                    {detail &&
+                    <MarketInfoDetailed 
+                        marketDetailed={marketDetailed}
+                        user={user}
+                        />}
                 </div>
                 <div className="main-split-element">
                     <Map className='main-map'

@@ -143,7 +143,7 @@ export async function addFavorite(id, marketIdx) {
     }
 }
 
-// 사용자의 즐겨찾기 목록에 새 항목을 추가합니다.
+// 사용자의 즐겨찾기 목록에 새 항목을 제거합니다.
 export async function removeFavorite(id, marketIdx) {
     const reqBody = {
         user_id: id,

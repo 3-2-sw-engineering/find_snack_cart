@@ -9,6 +9,8 @@
   
   /* Add some padding inside the card container */
   .short-contents {
+	margin: 0px;
+	padding: 0px;
 	overflow: scroll;
 	text-align: left;
   }
