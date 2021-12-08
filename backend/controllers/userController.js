@@ -9,6 +9,7 @@ async function CreateUser(req, res) {
 		if (user_id === undefined || user_pw === undefined || user_name === undefined ||
 			user_email === undefined || role === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		// 초기에는 할당된 Market이 없으므로 null로 설정
@@ -65,6 +66,7 @@ async function ChangePassword(req, res) {
 
 		if (user_id === undefined || current_pw === undefined || change_pw === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const user = await User.loginCheck(user_id, current_pw);
@@ -90,6 +92,7 @@ async function Login(req, res) {
 
 		if (user_id === undefined || user_pw === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const user = await User.loginCheck(user_id, user_pw);
@@ -123,6 +126,7 @@ async function GetAllFavorites(req, res) {
 
 		if (user_id === undefined) {
 			res.status(400).json({error: "user_id is required. The params were: " + JSON.stringify(req.params)});
+			return;
 		}
 
 		const user = await User.findUserById(user_id);
@@ -139,6 +143,7 @@ async function AddFavorite(req, res) {
 
 		if (user_id === undefined || market_id === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const current = CookieManager.checkCurrentSession(req, res);
@@ -161,6 +166,7 @@ async function RemoveFavorite(req, res) {
 
 		if (user_id === undefined || market_id === undefined) {
 			res.status(400).json({error: "At least one parameter is not valid. The body was: " + JSON.stringify(req.body)});
+			return;
 		}
 
 		const current = CookieManager.checkCurrentSession(req, res);

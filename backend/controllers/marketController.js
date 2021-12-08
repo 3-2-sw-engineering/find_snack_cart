@@ -37,12 +37,19 @@ async function CreateMarket(req, res) {
             return;
         }
 
-        const created = await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, current);
-        User.findOneAndUpdate({ "user_id": current }, {
-            $set: {
-                managing: created.market_index
-            }
-        });
+        // 1이면 직접 등록이고, 0이면 제보
+        if (market_authority) {
+            // 현재 로그인한 계정으로 owner 등록
+            const created = await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, current);
+            User.findOneAndUpdate({ "user_id": current }, {
+                $set: {
+                    managing: created.market_index
+                }
+            });
+        } else {
+            // owner를 알 수 없으므로 owner를 null로 설정
+            await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, null);
+        }
         res.status(201).json({ result: true });
     } catch (err) {
         console.log(err);
