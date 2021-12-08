@@ -18,29 +18,29 @@ function Manage({ reportManage }) {
     const navigate = useNavigate();
     const categories = origCategories.filter((item, idx) => idx > 0);
 
-	const [searchText, setsearchText] = useState("");
-	const [location, setLocation] = useState({
-		lat: 37.413294,
-		lng: 126.79581
-	});
+    const [searchText, setsearchText] = useState("");
+    const [location, setLocation] = useState({
+        lat: 37.413294,
+        lng: 126.79581
+    });
 
-	const { kakao } = window;
-	var geocoder = new kakao.maps.services.Geocoder();
+    const { kakao } = window;
+    var geocoder = new kakao.maps.services.Geocoder();
 
-	function searchLocation() {
-		if (searchText === "") { return }
-		geocoder.addressSearch(searchText, function(result, status) {
-			console.log(result)
-			// 정상적으로 검색이 완료됐으면 
-			 if (status === kakao.maps.services.Status.OK) {
-				console.log(result)
-				setLocation({
-					lat: result[0].y,
-					lng: result[0].x
-				})
-			}
-		})
-	}
+    function searchLocation() {
+        if (searchText === "") { return }
+        geocoder.addressSearch(searchText, function (result, status) {
+            console.log(result)
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+                console.log(result)
+                setLocation({
+                    lat: result[0].y,
+                    lng: result[0].x
+                })
+            }
+        })
+    }
 
     const [marketData, setMarketData] = useState({
         name: '',
@@ -53,9 +53,9 @@ function Manage({ reportManage }) {
     });
 
     function viewBack() {
-		if (getUserCookie() === undefined) {
+        if (getUserCookie() === undefined) {
             navigate("login");
-		}
+        }
         navigate('../');
     }
 
@@ -221,7 +221,7 @@ function Manage({ reportManage }) {
         if (reportManage === 0) return;
 
         let user = getUserCookie();
-		if (user === undefined) return;
+        if (user === undefined) return;
         if (user.managing < 0) return;
         getMarketInfo(user.managing).then((market) => {
             let food = market.market_food;
@@ -249,19 +249,22 @@ function Manage({ reportManage }) {
         if (user === undefined) {
             alert("로그인 후 이용해 주세요.");
             viewBack();
+            return false;
         } else if (reportManage === 1 && user.role !== 1) {
             alert("사장님만 이용하실 수 있습니다.");
             viewBack();
+            return false;
         }
+        return true;
     }
 
-	useEffect(() =>{
-		checkAuthority();
-	}, []);
+    useEffect(() => {
+        var ret = checkAuthority();
+        if (ret) FillAuto();
+    }, []);
 
     return (
         <div className="report-layout" >
-            {FillAuto()}
 
             <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
 
@@ -294,13 +297,13 @@ function Manage({ reportManage }) {
                 <div className="info">가게 위치*</div>
                 <div className="content">
                     <div className="map-container">
-						<SearchBar
+                        {/* <SearchBar
 							value={searchText}
 							onChange={(text) => setsearchText(text)}
 							closeIcon={<SearchIcon />}
 							onCancelSearch={searchLocation}
 							onRequestSearch={searchLocation}
-						/>
+						/> */}
                         <Map className="map" center={location} level={7}></Map>
                     </div>
                     <div className="locations" name='locations'>
