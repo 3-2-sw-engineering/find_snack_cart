@@ -24,8 +24,10 @@ function Main() {
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
-    const [detail, setDetail] = useState(0);
     const [isLogin, setLogin] = useState(false);
+    const [detail, setDetail] = useState();
+    const [level, setLevel] = useState(4);
+    const user = undefined; //여기에다가 유저 담을거에요
 
     function isDetail() {
         console.log(detail);
@@ -149,7 +151,7 @@ function Main() {
                     <Route path='/report' element={<div className="main-split-element"> <Manage reportManage={0} /> </div>} />
                     <Route path='/manage' element={<div className="main-split-element"> <Manage reportManage={1} /> </div>} />
                 </Routes>
-            </div>
+            </div >
         </div >
 
     );
