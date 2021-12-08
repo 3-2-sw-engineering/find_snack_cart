@@ -33,7 +33,6 @@ function Main() {
         setDetail(!detail);
     }
     function checkLogin() {
-        console.log('check login!');
         var isLogin = false;
         if (getUserCookie() !== undefined)
             isLogin = true;

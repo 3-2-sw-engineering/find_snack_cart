@@ -3,8 +3,9 @@ import { getUserInfo } from './BackendRequests';
 const cookies = new Cookies()
 export async function refreshUserCookie(id) {
     getUserInfo(id)
-        .then((loginUser) =>
+        .then((loginUser) => {
             setUserCookie(id, loginUser.user_name, loginUser.role, loginUser.managing)
+        }
         )
         .catch(() => {
             setUserCookie('', '', 0, -1)
