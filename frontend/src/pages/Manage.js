@@ -1,6 +1,6 @@
 // Jaesun
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Map } from "react-kakao-maps-sdk";
 import { Chip, MenuItem, Button, Menu } from '@mui/material';
@@ -10,11 +10,37 @@ import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared
 import { withCookies } from 'react-cookie';
 import { getUserCookie, setUserCookie } from '../shared/cookie';
 import { categories as origCategories, infoPlaceHolder, paymentList } from '../shared/constantLists'
+import SearchBar from 'material-ui-search-bar';
+import SearchIcon from '@mui/icons-material/Search'
 
 function Manage({ reportManage }) {
     // reportManage: 0-report, 1-manage
     const navigate = useNavigate();
     const categories = origCategories.filter((item, idx) => idx > 0);
+
+	const [searchText, setsearchText] = useState("");
+	const [location, setLocation] = useState({
+		lat: 37.413294,
+		lng: 126.79581
+	});
+
+	const { kakao } = window;
+	var geocoder = new kakao.maps.services.Geocoder();
+
+	function searchLocation() {
+		if (searchText === "") { return }
+		geocoder.addressSearch(searchText, function(result, status) {
+			console.log(result)
+			// 정상적으로 검색이 완료됐으면 
+			 if (status === kakao.maps.services.Status.OK) {
+				console.log(result)
+				setLocation({
+					lat: result[0].y,
+					lng: result[0].x
+				})
+			}
+		})
+	}
 
     const [marketData, setMarketData] = useState({
         name: '',
@@ -27,6 +53,9 @@ function Manage({ reportManage }) {
     });
 
     function viewBack() {
+		if (getUserCookie() === undefined) {
+            navigate("login");
+		}
         navigate('../');
     }
 
@@ -192,6 +221,7 @@ function Manage({ reportManage }) {
         if (reportManage === 0) return;
 
         let user = getUserCookie();
+		if (user === undefined) return;
         if (user.managing < 0) return;
         getMarketInfo(user.managing).then((market) => {
             let food = market.market_food;
@@ -224,9 +254,13 @@ function Manage({ reportManage }) {
             viewBack();
         }
     }
+
+	useEffect(() =>{
+		checkAuthority();
+	}, []);
+
     return (
         <div className="report-layout" >
-            {checkAuthority()}
             {FillAuto()}
 
             <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
@@ -259,9 +293,15 @@ function Manage({ reportManage }) {
             <div className="item">
                 <div className="info">가게 위치*</div>
                 <div className="content">
-                    (  검색창  )
                     <div className="map-container">
-                        <Map className="map" center={{ lat: 37.413294, lng: 126.79581 }} level={7}></Map>
+						<SearchBar
+							value={searchText}
+							onChange={(text) => setsearchText(text)}
+							closeIcon={<SearchIcon />}
+							onCancelSearch={searchLocation}
+							onRequestSearch={searchLocation}
+						/>
+                        <Map className="map" center={location} level={7}></Map>
                     </div>
                     <div className="locations" name='locations'>
                         {marketData.locations.map(loc =>
