@@ -33,10 +33,10 @@ export async function createUser(id, pw, name, email, isOwner) {
 export async function isIdAvailable(id) {
     try {
         await getUserInfo(id);
-        return true;
+        return false;
     } catch (err) {
         if (err.response.status === 404) {
-            return false;
+            return true;
         } else {
             console.error("In isIdAvailable: " + err?.response?.data);
             throw err;
