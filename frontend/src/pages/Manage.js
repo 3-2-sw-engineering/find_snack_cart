@@ -249,19 +249,22 @@ function Manage({ reportManage }) {
         if (user === undefined) {
             alert("로그인 후 이용해 주세요.");
             viewBack();
+            return false;
         } else if (reportManage === 1 && user.role !== 1) {
             alert("사장님만 이용하실 수 있습니다.");
             viewBack();
+            return false;
         }
+        return true;
     }
 
     useEffect(() => {
-        checkAuthority();
+        var ret = checkAuthority();
+        if (ret) FillAuto();
     }, []);
 
     return (
         <div className="report-layout" >
-            {FillAuto()}
 
             <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
 
