@@ -4,12 +4,7 @@ import jwt from "jsonwebtoken"
 /*
  * User 관련
  */
-/* (jaesun comment) neccessary functions
-   isIdAvailable(id) ->boolean : check the new ID is available (Sign Up)
-   sendSignUpCode(email)->(???): send a code for signing up to e-mail, (return: send succeeded, email duplicated, error)
-   checkSignUpCode(code)->boolean: check the code is right
-    createUser(..., isOwner): add an argument that present whether new user is onwer or not
-*/
+
 // 새 사용자 계정을 생성합니다.
 export async function createUser(id, pw, name, email, isOwner) {
     const reqBody = {
