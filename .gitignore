@@ -1,7 +1,3 @@
-<<<<<<< HEAD
 node_modules
 dist/*
 *.log
-=======
-.vscode
->>>>>>> ea3d75cc3cc1e45f40759f0e11cc82832ccf6a05
