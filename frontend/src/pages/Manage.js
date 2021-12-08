@@ -25,20 +25,21 @@ function Manage({ reportManage }) {
 	});
 
 	const { kakao } = window;
-	var ps = new kakao.maps.services.Places();
+	var geocoder = new kakao.maps.services.Geocoder();
 
 	function searchLocation() {
 		if (searchText === "") { return }
-		ps.keywordSearch(searchText, placesSearchCB);
-	}
-
-	function placesSearchCB (data, status) {
-		if (status === kakao.maps.services.Status.OK) {
-			setLocation({
-				lat: data[0].y,
-				lng: data[0].x
-			})
-		} 
+		geocoder.addressSearch(searchText, function(result, status) {
+			console.log(result)
+			// 정상적으로 검색이 완료됐으면 
+			 if (status === kakao.maps.services.Status.OK) {
+				console.log(result)
+				setLocation({
+					lat: result[0].y,
+					lng: result[0].x
+				})
+			}
+		})
 	}
 
     const [marketData, setMarketData] = useState({
