@@ -9,7 +9,9 @@
   
   /* Add some padding inside the card container */
   .short-contents {
-	overflow: hidden;
+	margin: 0px;
+	padding: 0px;
+	overflow: scroll;
 	text-align: left;
   }
 
@@ -19,21 +21,20 @@
 	display: flex;
 	flex-direction: column;
 	font-family: "Gosanja";
-	width: 400px;
-	height: 350px;
 	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 	transition: 0.3s;
 	padding:15px
   }
   .short-buttons{
+	  flex:1 1 0;
 	  display: flex;
+	  width: 100%;
 	  justify-content: space-around;
 	}
 
   .short-buttons button {
 	flex:1;
-	margin:10px;
-	padding: 10px;
+	margin: 10px;
 	background-color:white;
 	color: black; /* White text */
 	font-family: "Gosanja";

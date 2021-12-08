@@ -4,12 +4,7 @@ import jwt from "jsonwebtoken"
 /*
  * User 관련
  */
-/* (jaesun comment) neccessary functions
-   isIdAvailable(id) ->boolean : check the new ID is available (Sign Up)
-   sendSignUpCode(email)->(???): send a code for signing up to e-mail, (return: send succeeded, email duplicated, error)
-   checkSignUpCode(code)->boolean: check the code is right
-    createUser(..., isOwner): add an argument that present whether new user is onwer or not
-*/
+
 // 새 사용자 계정을 생성합니다.
 export async function createUser(id, pw, name, email, isOwner) {
     const reqBody = {
@@ -164,7 +159,7 @@ export async function addFavorite(id, marketIdx) {
     }
 }
 
-// 사용자의 즐겨찾기 목록에 새 항목을 추가합니다.
+// 사용자의 즐겨찾기 목록에 새 항목을 제거합니다.
 export async function removeFavorite(id, marketIdx) {
     const reqBody = {
         user_id: id,
@@ -332,6 +327,7 @@ export async function createComment(contents, score, reviewer, time, target) {
 
     try {
         let res = await axios.post("/api/comment", reqBody, { withCredentials: true });
+        console.log('done')
         return res.data;
     } catch (err) {
         console.error("In createComment: " + err?.response?.data);

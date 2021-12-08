@@ -1,6 +1,6 @@
 // Jaesun
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Map } from "react-kakao-maps-sdk";
 import { Chip, MenuItem, Button, Menu } from '@mui/material';
@@ -8,13 +8,39 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import '../styles/Manage.css'
 import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
 import { withCookies } from 'react-cookie';
-import { getUserCookie, setUserCookie } from '../shared/cookie';
+import { getUserCookie } from '../shared/cookie';
 import { categories as origCategories, infoPlaceHolder, paymentList } from '../shared/constantLists'
 
 function Manage({ reportManage }) {
     // reportManage: 0-report, 1-manage
     const navigate = useNavigate();
     const categories = origCategories.filter((item, idx) => idx > 0);
+
+    const [searchText, setsearchText] = useState("");
+    const [kmap, setkMap] = useState(null);
+
+    const changeSetLocation = (e) => {
+        setsearchText(e.target.value)
+    }
+
+    const { kakao } = window;
+    var geocoder = new kakao.maps.services.Geocoder();
+    var placecoder = new kakao.maps.services.Places();
+
+    const searchLocation = () => {
+        geocoder.addressSearch(searchText, function (result, status) {
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
+                return;
+            }
+        })
+        placecoder.keywordSearch(searchText, function (data, status, pagination) {
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
+            }
+        })
+    }
 
     const [marketData, setMarketData] = useState({
         name: '',
@@ -27,6 +53,9 @@ function Manage({ reportManage }) {
     });
 
     function viewBack() {
+        if (getUserCookie() === undefined) {
+            navigate("login");
+        }
         navigate('../');
     }
 
@@ -152,22 +181,19 @@ function Manage({ reportManage }) {
 
         // register on DB
         let user = getUserCookie();
-        if (user.managing === undefined || user.managing < 0) {
-            let ret = await createMarket(marketData.locations[0], cate_arr, 'cate',
+
+        if (user.role === 0 || user.managing === undefined || user.managing === null || user.managing < 0) {
+            createMarket(marketData.name, marketData.locations, cate_arr, 'cate',
                 pay_arr, marketData.information, [],
                 reportManage, 0, marketData.phone)
                 .then(() => alert("가게 정보가 저장되었습니다."))
                 .catch(() => alert("error on creating the market"));
 
-            // add managing cart on userdata
-            let managing = -1;
-            setUserCookie(user.id, user.name, user.role, managing);
-            if (ret === undefined) return;
-
         } else {
-            editMarket(marketData.locations[0], cate_arr, 'cate',
+            editMarket(user.managing,
+                marketData.name, marketData.locations, cate_arr, 'cate',
                 pay_arr, marketData.information, [],
-                reportManage, 0, marketData.phone)
+                1, 0, marketData.phone)
                 .then(() => alert("가게 정보가 저장되었습니다."))
                 .catch(() => alert("error on creating the market"));;
         }
@@ -192,7 +218,8 @@ function Manage({ reportManage }) {
         if (reportManage === 0) return;
 
         let user = getUserCookie();
-        if (user.managing < 0) return;
+        if (user === undefined) return;
+        if (user.managing === null) return;
         getMarketInfo(user.managing).then((market) => {
             let food = market.market_food;
             let pay = market.market_payment_method;
@@ -219,15 +246,33 @@ function Manage({ reportManage }) {
         if (user === undefined) {
             alert("로그인 후 이용해 주세요.");
             viewBack();
+            return false;
         } else if (reportManage === 1 && user.role !== 1) {
             alert("사장님만 이용하실 수 있습니다.");
             viewBack();
+            return false;
         }
+        return true;
     }
+
+    useEffect(() => {
+        var ret = checkAuthority();
+        if (ret) FillAuto();
+    }, []);
+    const addLocClicked = () => {
+        var location = kmap.getCenter();
+        geocoder.coord2Address(location.getLng(), location.getLat(), function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                setMarketData({
+                    ...marketData,
+                    locations: marketData.locations.concat(result[0].address.address_name)
+                });
+            }
+        })
+    }
+
     return (
         <div className="report-layout" >
-            {checkAuthority()}
-            {FillAuto()}
 
             <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
 
@@ -259,11 +304,20 @@ function Manage({ reportManage }) {
             <div className="item">
                 <div className="info">가게 위치*</div>
                 <div className="content">
-                    (  검색창  )
                     <div className="map-container">
-                        <Map className="map" center={{ lat: 37.413294, lng: 126.79581 }} level={7}></Map>
+                        <div className="loc-container">
+                            <input className="loc-input" name='search' value={searchText} onChange={changeSetLocation}
+                                placeholder="장소를 검색하실 수 있습니다." />
+                            <div className="loc-button" onClick={searchLocation}> 검색</div>
+                        </div>
+                        <div>원하는 위치를 지도의 중심에 놓고 버튼을 클릭하세요.</div>
+                        <div className="map-button" onClick={addLocClicked}> 지도 위치 등록하기 </div>
+                        <Map className="map" center={{
+                            lat: 37.58434776307455, lng: 127.05857621599598
+                        }} level={7} onCreate={(map) => setkMap(map)}></Map>
+
                     </div>
-                    <div className="locations" name='locations'>
+                    <div className="locations" name='locations' >
                         {marketData.locations.map(loc =>
                             <div className="chip"><Chip label={loc} color="info" onDelete={locationDeleted(loc)} /></div>
                         )}

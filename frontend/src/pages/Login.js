@@ -4,8 +4,8 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import '../styles/Login.css'
-import { getUserInfo, login } from '../shared/BackendRequests';
-import { setUserCookie } from '../shared/cookie';
+import { login } from '../shared/BackendRequests';
+import { refreshUserCookie } from '../shared/cookie';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -39,9 +39,7 @@ const Login = () => {
             return;
         }
         else if (ret.result) {
-            let loginUser = await getUserInfo(loginData.id).catch(() => { alert("유저정보를 가져올 수 없습니다."); });
-
-            setUserCookie(loginData.id, loginUser.user_name, loginUser.role);
+            refreshUserCookie(loginData.id);
             alert("환영합니다.");
             viewMain();
         }
