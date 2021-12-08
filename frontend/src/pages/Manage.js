@@ -8,7 +8,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import '../styles/Manage.css'
 import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
 import { withCookies } from 'react-cookie';
-import { getUserCookie, setUserCookie } from '../shared/cookie';
+import { getUserCookie } from '../shared/cookie';
 import { categories as origCategories, infoPlaceHolder, paymentList } from '../shared/constantLists'
 
 function Manage({ reportManage }) {
@@ -31,14 +31,11 @@ function Manage({ reportManage }) {
         geocoder.addressSearch(searchText, function (result, status) {
             // 정상적으로 검색이 완료됐으면 
             if (status === kakao.maps.services.Status.OK) {
-                console.log(result)
                 kmap.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
                 return;
             }
         })
         placecoder.keywordSearch(searchText, function (data, status, pagination) {
-            console.log(searchText);
-            console.log(status);
             if (status === kakao.maps.services.Status.OK) {
                 kmap.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
             }
@@ -184,22 +181,19 @@ function Manage({ reportManage }) {
 
         // register on DB
         let user = getUserCookie();
-        if (user.managing === undefined || user.managing < 0) {
-            let ret = await createMarket(marketData.locations[0], cate_arr, 'cate',
+
+        if (user.role === 0 || user.managing === undefined || user.managing === null || user.managing < 0) {
+            createMarket(marketData.name, marketData.locations, cate_arr, 'cate',
                 pay_arr, marketData.information, [],
                 reportManage, 0, marketData.phone)
                 .then(() => alert("가게 정보가 저장되었습니다."))
                 .catch(() => alert("error on creating the market"));
 
-            // add managing cart on userdata
-            let managing = -1;
-            setUserCookie(user.id, user.name, user.role, managing);
-            if (ret === undefined) return;
-
         } else {
-            editMarket(marketData.locations[0], cate_arr, 'cate',
+            editMarket(user.managing,
+                marketData.name, marketData.locations, cate_arr, 'cate',
                 pay_arr, marketData.information, [],
-                reportManage, 0, marketData.phone)
+                1, 0, marketData.phone)
                 .then(() => alert("가게 정보가 저장되었습니다."))
                 .catch(() => alert("error on creating the market"));;
         }
@@ -225,7 +219,7 @@ function Manage({ reportManage }) {
 
         let user = getUserCookie();
         if (user === undefined) return;
-        if (user.managing < 0) return;
+        if (user.managing === null) return;
         getMarketInfo(user.managing).then((market) => {
             let food = market.market_food;
             let pay = market.market_payment_method;
@@ -269,7 +263,6 @@ function Manage({ reportManage }) {
         var location = kmap.getCenter();
         geocoder.coord2Address(location.getLng(), location.getLat(), function (result, status) {
             if (status === kakao.maps.services.Status.OK) {
-                console.log(result[0].address.address_name);
                 setMarketData({
                     ...marketData,
                     locations: marketData.locations.concat(result[0].address.address_name)

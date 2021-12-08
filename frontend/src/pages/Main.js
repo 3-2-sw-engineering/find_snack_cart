@@ -1,11 +1,10 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, List, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
