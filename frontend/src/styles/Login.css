@@ -1,0 +1,100 @@
+.login-layout {
+    font-family: "Simplehae" !important;
+    font-size: 1rem;
+    margin: 2.5%;
+    width: 95%;
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.4);
+    background-blend-mode: lighten;
+    border-radius: 3rem;
+}
+
+.login-title {
+    width: 90%;
+    font-size: 2rem;
+    align-self: flex-start;
+    margin-left: 2.5rem;
+    margin-top: 0.7rem;
+}
+
+
+.login-container {
+    width: 50%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    place-self: center center;
+}
+
+.login-input-button {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 100%;
+    height: 80%;
+    align-items: flex-end;
+
+}
+
+.input-container {
+    width: 70%;
+    display: flex;
+    margin: 0.1rem;
+    flex-direction: column;
+    align-items: space-around;
+}
+
+.login-input {
+    width: 100%;
+    height: 2rem;
+    margin: 0.2rem;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+}
+
+.login-button {
+    width: 25%;
+    height: 100%;
+    min-width: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.2rem;
+    background: #F9F8FD;
+    border: 1px solid #F9F8FD;
+    box-sizing: border-box;
+    border-radius: 1rem;
+}
+
+.find-signup-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.login-find-signup {
+    width: 60%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0.5rem;
+}
+
+.find {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.signup {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.blank {
+    width: 100%;
+    height: 30%;
+}

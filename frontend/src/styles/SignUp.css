@@ -1,0 +1,142 @@
+.sign-layout {
+    font-family: "Simplehae" !important;
+    font-size: 1rem;
+    margin: 2.5%;
+    width: 95%;
+    height: 95%;
+    /* max-height: 95%; */
+    max-width: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.4);
+    background-blend-mode: lighten;
+    border-radius: 3rem;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+.sign-title {
+    width: 90%;
+    font-size: 2rem;
+    align-self: flex-start;
+    margin-left: 2.5rem;
+    margin-top: 0.7rem;
+}
+
+.sign-up-item {
+    width: 80%;
+    max-width: 100%;
+    height: auto;
+    /* min-height: 6%; */
+    /* max-height: 10rem; */
+    margin: 0.1rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.item-info {
+    width: 20%;
+    display: flex;
+    margin: inherit;
+    min-width: 5rem;
+    justify-content: flex-end;
+    white-space: normal;
+    flex-grow: 2;
+}
+
+.item-input-report {
+    width: 35%;
+    min-width: 35%;
+    margin: inherit;
+    flex-grow: 4;
+}
+
+.item-input {
+    width: 100%;
+    height: 2rem;
+    min-height: 2rem;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    border-radius: 0.5rem 0.0rem 0.5rem 0.5rem;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.item-report {
+    margin: inherit;
+    width: 100%;
+    height: 1.2rem;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.item-button {
+    width: 15%;
+    height: 2rem;
+    min-height: 2rem;
+    min-width: 5rem;
+    margin: inherit;
+    flex-grow: 1;
+    background: #F9F8FD;
+    border-radius: 0.0rem 0.5rem 0.5rem 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: normal;
+}
+
+.item-button-none {
+    width: 15%;
+    height: 2rem;
+    min-width: 5rem;
+    min-height: 2rem;
+    margin: inherit;
+    flex-grow: 1;
+
+}
+
+.check-agree {
+    display: flex;
+    align-self: flex-end;
+}
+
+.sign-up-button {
+    width: 80%;
+    height: 3rem;
+    min-height: 3rem;
+    font-size: 1.5rem;
+    margin: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F8A69B;
+    border-radius: 0.5rem;
+}
+
+.agreement {
+    width: 80%;
+    min-height: 10rem;
+    max-width: 80%;
+    margin: 0.2rem;
+    background: #F9F8FD;
+    text-overflow: clip;
+    overflow: scroll;
+    border-radius: 0.5rem;
+    word-break: break-all;
+}
+
+.term {
+    margin: 2%;
+    width: 95%;
+    max-width: 95%;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    word-wrap: break-all;
+    white-space: normal;
+    line-height: 150%;
+
+}
