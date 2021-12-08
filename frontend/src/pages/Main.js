@@ -27,7 +27,8 @@ function Main(props) {
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
-    const [detail, setDetail] = useState(0);
+    const [detail, setDetail] = useState();
+    const [level, setLevel] = useState(4);
 
     function isDetail() {
         console.log(detail);
@@ -126,10 +127,12 @@ function Main(props) {
                 <div className="main-split-element">
                     <Map className='main-map'
                         center={{ lat: 37.55635, lng: 126.795841 }}
-                        lelve={7}
+                        onZoomChanged = {(target) => setLevel(target.b.H)}
+                        level={4}
                     >
                         <MarketInfoShort
                             index={1}
+                            level={level}
                             isDetail={isDetail}
                             setMarket={setMarket}
                         />

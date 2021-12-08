@@ -309,6 +309,7 @@ export async function createComment(contents, score, reviewer, time, target) {
 
     try {
         let res = await axios.post("/api/comment", reqBody, { withCredentials: true });
+        console.log('done')
         return res.data;
     } catch (err) {
         console.error("In createComment: " + err?.response?.data);

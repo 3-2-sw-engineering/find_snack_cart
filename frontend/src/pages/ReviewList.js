@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/MarketInfoDetailed.css";
 import imgB from "../images/붕어빵.jpg";
 import { TiStarFullOutline, TiStarOutline } from 'react-icons/ti'
+import { getCommentsByMarketIdx } from "../shared/BackendRequests.js";
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
@@ -11,12 +12,20 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 
-function ReviewList() {
+function ReviewList(props) {
 
 	const fullStar = Array.from({length:4}, (v,i) => i);
 	const lineStar = Array.from({length:1}, (v,i) => i);
+	const [reviewList, setReviewList] = useState(true);
 
-	return (
+	// useEffect(() => {
+	// 	async function fetchAllReview() {
+	// 		const information = await getCommentsByMarketIdx(props.marketIdx);
+	// 		setReviewList(information);
+	// 	} fetchAllReview();
+	// }, []);
+
+	return reviewList? (
 		<div>
 			<ListItem alignItems="flex-start">
 				<ListItemAvatar>
@@ -46,7 +55,7 @@ function ReviewList() {
 			</ListItem>
 			<Divider variant="inset" component="li" />
 		</div>
-	)
+	) : (<div></div>)
 }
 
 export default ReviewList;
