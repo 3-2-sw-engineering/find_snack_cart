@@ -41,12 +41,8 @@ export async function isIdAvailable(id) {
 
 // 아이디에 해당하는 계정을 삭제합니다.
 export async function deleteUser(id) {
-    const reqBody = {
-        user_id: id
-    };
-
     try {
-        let res = await axios.delete("/api/user", reqBody, { withCredentials: true });
+        let res = await axios.delete("/api/user/" + id, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In deleteUser: " + err?.response?.data);
@@ -235,12 +231,8 @@ export async function createMarket(title, locations, food, paymentMethods, expla
 
 // 포장마차를 삭제합니다.
 export async function deleteMarket(marketIdx) {
-    const reqBody = {
-        market_index: marketIdx
-    };
-
     try {
-        let res = await axios.delete("/api/market", reqBody, { withCredentials: true });
+        let res = await axios.delete("/api/market/" + marketIdx, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In deleteMarket: " + err?.response?.data);
@@ -335,12 +327,8 @@ export async function createComment(contents, score, reviewer, time, target) {
 
 // 댓글을 삭제합니다.
 export async function deleteComment(commentId) {
-    const reqBody = {
-        comment_id: commentId
-    };
-
     try {
-        let res = await axios.delete("/api/comment", reqBody, { withCredentials: true });
+        let res = await axios.delete("/api/comment/" + commentId, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In deleteComment: " + err?.response?.data);

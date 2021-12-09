@@ -49,7 +49,7 @@ async function CreateComment(req, res) {
 
 async function DeleteComment(req, res) {
     try {
-        const {comment_id} = req.body;
+        const {comment_id} = req.params;
 
         if (comment_id === undefined) {
             res.status(400).json({error: "comment_id is required. The body was: " + JSON.stringify(req.body)});

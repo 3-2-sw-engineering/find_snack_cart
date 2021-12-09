@@ -24,7 +24,7 @@ async function CreateUser(req, res) {
 async function DeleteUser(req, res) {
 	try {
 		// http body에 {user_id} 한가지 parameter를 받음.
-		const { user_id } = req.body;
+		const { user_id } = req.params;
 
 		if (user_id === undefined) {
             res.status(400).json({error: "user_id is required. The body was: " + JSON.stringify(req.body)});

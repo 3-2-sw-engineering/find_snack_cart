@@ -63,7 +63,7 @@ async function CreateMarket(req, res) {
                 $set: {
                     managing: created.market_index
                 }
-            });
+            }).exec();
         } else {
             // owner를 알 수 없으므로 owner를 null로 설정
             await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, null);
@@ -77,7 +77,7 @@ async function CreateMarket(req, res) {
 
 async function DeleteMarket(req, res) {
     try {
-        const {market_index} = req.body;
+        const {market_index} = req.params;
 
         if (market_index === undefined) {
             res.status(400).json({error: "market_index is required. The body was: " + JSON.stringify(req.body)});
@@ -89,6 +89,14 @@ async function DeleteMarket(req, res) {
         if (current === undefined) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
+        }
+
+        if (await User.find({"managing": market_index}).limit(1).size()) {
+            User.findOneAndUpdate({"managing": market_index}, {
+                $set: {
+                    managing: null
+                }
+            }).exec();
         }
 
         await Market.delete(market_index);
