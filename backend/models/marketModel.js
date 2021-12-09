@@ -20,10 +20,10 @@ var Market = new Schema({
     },
     market_food: {
         type: [String],
+        required: true,
     },
     market_category: {
         type: String,
-        required: true,
     },
     market_payment_method: {
         type: [String],
@@ -42,8 +42,7 @@ var Market = new Schema({
     },
     //{이동형:0, 고정형:1}
     market_fixed: {
-        type: Number,
-        required: true,
+        type: Number
     },
     market_phone_number: {
         type: String,

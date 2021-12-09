@@ -26,9 +26,6 @@ export function getUserCookie() {
         return undefined;
     }
 }
-export function setUserCookieLogout() {
-    cookies.remove('user_');
-}
 export function removeUserCookie() {
     try {
         cookies.set('user_', { id: '', name: '', role: 0, managing: -1 });

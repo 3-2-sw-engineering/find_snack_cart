@@ -251,27 +251,25 @@ export async function deleteMarket(marketIdx) {
 // 포장마차 정보를 수정합니다.
 // marketIdx: 포장마차 번호 (int)
 // title: 포장마차 제목 (string)
-// location: 장소 (string)
+// location: 장소 (string의 배열)
 // food: 파는 음식들 (string의 배열)
-// category: 포장마차의 카테고리 (string)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
-// fixed: 0이면 이동형, 1이면 고정형
 // phone: 전화번호 (string)
-export async function editMarket(marketIdx, title, location, food, category, paymentMethods, explanation, images, authority, fixed, phone) {
+export async function editMarket(marketIdx, title, location, food, paymentMethods, explanation, images, authority, phone) {
     const reqBody = {
         market_index: marketIdx,
         market_title: title,
         market_location: location,
         market_food: food,
-        market_category: category,
+        market_category: "",
         market_payment_method: paymentMethods,
         market_explanation: explanation,
         market_image: images,
         market_authority: authority,
-        market_fixed: fixed,
+        market_fixed: 0,
         market_phone_number: phone
     };
 
