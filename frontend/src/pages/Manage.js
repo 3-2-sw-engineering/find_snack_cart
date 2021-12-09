@@ -204,7 +204,8 @@ function Manage({ reportManage }) {
         if (ret) {// register on DB 
             if (localUser.managing >= 0) {
                 deleteMarket(localUser.managing)
-                    .then(() => { refreshUserCookie(localUser.id); alert("가게가 삭제되었습니다.") });
+                    .then(() => { refreshUserCookie(localUser.id); alert("가게가 삭제되었습니다.") })
+                    .catch(() => alert("삭제되지 않았습니다."));
             } else
                 alert("등록된 가게가 없습니다.");
         }
