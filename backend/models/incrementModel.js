@@ -4,10 +4,7 @@ const Schema = mongoose.Schema;
 const IncrementSchema = new Schema({
     model: {
         type: String,
-        required: true,
-        index: { 
-            unique: true
-        }
+        required: true
     },
     index: {
         type: Number,
