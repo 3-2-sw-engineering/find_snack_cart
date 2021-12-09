@@ -9,8 +9,8 @@ import { Box } from '@mui/system';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
-import { getUserCookie, removeUserCookie } from '../shared/cookie';
-import { logout } from '../shared/BackendRequests';
+import { getUserCookie, refreshUserCookie, removeUserCookie } from '../shared/cookie';
+import { checkCurrentUserID, logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
 import { withCookies } from 'react-cookie';
 import Login from "./Login"
@@ -31,15 +31,6 @@ function Main() {
         console.log(detail);
         setDetail(!detail);
     }
-    function checkLogin() {
-        let isLogin = false;
-        if (getUserCookie() !== undefined)
-            isLogin = true;
-        setLogin(isLogin)
-        return isLogin
-
-    }
-
     function viewLogin() {
         if (!isLogin)
             navigate("/login");
@@ -67,7 +58,11 @@ function Main() {
     function MyDrawer() {
 
         useEffect(() => {
-            checkLogin();
+
+            let isLogin = false;
+            if (getUserCookie() !== undefined)
+                isLogin = true;
+            setLogin(isLogin)
         })
 
         return <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} >
