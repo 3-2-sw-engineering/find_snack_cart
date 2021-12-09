@@ -12,13 +12,12 @@ import "../styles/Main.css"
 import { getUserCookie, removeUserCookie } from '../shared/cookie';
 import { logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
+import { withCookies } from 'react-cookie';
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
 
 function Main() {
-
-
     const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
@@ -33,7 +32,7 @@ function Main() {
         setDetail(!detail);
     }
     function checkLogin() {
-        var isLogin = false;
+        let isLogin = false;
         if (getUserCookie() !== undefined)
             isLogin = true;
         setLogin(isLogin)
@@ -44,10 +43,13 @@ function Main() {
     function viewLogin() {
         if (!isLogin)
             navigate("/login");
-        else {
-            logout();
-            removeUserCookie();
-        }
+    }
+
+    function tryLogout() {
+        logout();
+        removeUserCookie();
+        alert("로그아웃 하였습니다.");
+        window.location.reload();
     }
 
     function viewFavorite() {
@@ -77,7 +79,11 @@ function Main() {
                                 <LoginIcon></LoginIcon>
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText onClick={viewLogin} primary={isLogin ? '로그아웃' : '로그인'}></ListItemText>
+                        {isLogin ? (
+                            <ListItemText onClick={tryLogout} primary={'로그아웃'}></ListItemText>
+                        ) : (
+                            <ListItemText onClick={viewLogin} primary={'로그인'}></ListItemText>
+                        )}
                     </ListItem>
 
                     <List subheader={
@@ -155,4 +161,4 @@ function Main() {
     );
 }
 
-export default Main;
+export default withCookies(Main);

@@ -8,7 +8,7 @@ function RefreshCookie(res, user_id) {
     }, SecretKey, {
         expiresIn: '1h'
     });
-    res.cookie('user', token, { sameSite: 'none', secure: false });
+    res.cookie('user', token);
 }
 
 function ClearCookie(res) {

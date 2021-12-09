@@ -182,22 +182,22 @@ function Manage({ reportManage }) {
         // register on DB
         let user = getUserCookie();
 
-        if (user.role === 0 || user.managing === undefined || user.managing === null || user.managing < 0) {
-            createMarket(marketData.name, marketData.locations, cate_arr, 'cate',
-                pay_arr, marketData.information, [],
-                reportManage, 0, marketData.phone)
-                .then(() => alert("가게 정보가 저장되었습니다."))
-                .catch(() => alert("error on creating the market"));
-
-        } else {
-            editMarket(user.managing,
-                marketData.name, marketData.locations, cate_arr, 'cate',
-                pay_arr, marketData.information, [],
-                1, 0, marketData.phone)
-                .then(() => alert("가게 정보가 저장되었습니다."))
-                .catch(() => alert("error on creating the market"));;
+        try {
+            if (user.role === 0 || user.managing === undefined || user.managing === null || user.managing < 0) {
+                await createMarket(marketData.name, marketData.locations, cate_arr,
+                    pay_arr, marketData.information, [],
+                    reportManage, marketData.phone);
+            } else {
+                await editMarket(user.managing,
+                    marketData.name, marketData.locations, cate_arr,
+                    pay_arr, marketData.information, [],
+                    1, marketData.phone)
+            }
+            alert("가게 정보가 저장되었습니다.");
+            navigate("/");
+        } catch (err) {
+            alert("가게 정보를 저장하지 못했습니다. " + err)
         }
-
     }
 
     const onMarketDelete = () => {
