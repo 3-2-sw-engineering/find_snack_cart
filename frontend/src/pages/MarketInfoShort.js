@@ -18,9 +18,9 @@ function MarketInfoShort(props) {
 	const [share, setShare] = useState();
 	const down = 5;
 
-	let divWidth = String((11 - props.level)*60) + 'px';
-	let divHeight = String((11 - props.level)*50) + 'px';
-	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coodinate.lat + ','+ props.coodinate.lng;
+	let divWidth = String((11 - props.level) * 60) + 'px';
+	let divHeight = String((11 - props.level) * 50) + 'px';
+	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coodinate.lat + ',' + props.coodinate.lng;
 
 	useEffect(() => {
 		async function fetchAllMarket() {
@@ -29,13 +29,14 @@ function MarketInfoShort(props) {
 		} fetchAllMarket();
 	}, []);
 
-	console.log(market);
+	// console.log(market);
 
 	async function handleCopyClipBoard(text) {
 		try {
 			await navigator.clipboard.writeText(text);
 		} catch (error) {
-	}}
+		}
+	}
 
 	return market ? (
 		<CustomOverlayMap position={props.coodinate}>
@@ -46,20 +47,20 @@ function MarketInfoShort(props) {
 				}}>
 				<img className='short-image' src={imgA} alt="Avatar" />
 				<p>{market.market_explanation}</p>
-				{ props.level < 8 ?(<div className="short-contents">
+				{props.level < 8 ? (<div className="short-contents">
 					<p>
 						영업시간: 10:00 ~ 20:00 <br /> 결제방법: {market.market_payment_method.join('/')}
 					</p>
-				</div>):(<div></div>)}
-				{props.level < 6 ?(<div className="short-buttons">
+				</div>) : (<div></div>)}
+				{props.level < 6 ? (<div className="short-buttons">
 					<motion.button
 						onClick={(e) => { onPhoneNumber(true) }}
 						whileTap={{ y: down }}>
 						<div><BsTelephone size='20' color='#93BDF9' /></div>전화번호</motion.button>
-					<motion.button onClick={()=>window.open(url,'_blank')} whileTap={{ y: down }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
-					<motion.button onClick={(e) => {setShare(true); handleCopyClipBoard(url);}} whileTap={{ y: down }}><div><BsShare size='20' color='#93BDF9' /></div>공유하기</motion.button>
+					<motion.button onClick={() => window.open(url, '_blank')} whileTap={{ y: down }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
+					<motion.button onClick={(e) => { setShare(true); handleCopyClipBoard(url); }} whileTap={{ y: down }}><div><BsShare size='20' color='#93BDF9' /></div>공유하기</motion.button>
 					<motion.button onClick={() => { props.isDetail(); props.setMarket(market); }} whileTap={{ y: down }}><div><CgArrowsExpandUpLeft size='20' color='#93BDF9' /></div>자세히</motion.button>
-				</div>):<div></div>}
+				</div>) : <div></div>}
 				<Dialog onClose={() => { onPhoneNumber(false); }} open={phoneNumber}>
 					<DialogTitle onClose={() => { onPhoneNumber(false); }}>전화번호</DialogTitle>
 					<DialogContent>
@@ -78,7 +79,7 @@ function MarketInfoShort(props) {
 }
 
 MarketInfoShort.defaultProps = {
-	 coodinate: { lat: 37.55635, lng: 126.795841 }
+	coodinate: { lat: 37.55635, lng: 126.795841 }
 }
 
 export default MarketInfoShort;

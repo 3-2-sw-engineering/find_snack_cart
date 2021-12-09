@@ -35,6 +35,7 @@ function MarketListPanel(props) {
 
     const [markets, setMarkets] = useState([]);
     const [sortBy, setSortBy] = useState(BY_DISTANCE);
+    // const [pressed]
 
     function onMenuClick(menu) {
         let markets;
@@ -50,7 +51,6 @@ function MarketListPanel(props) {
     async function fetchMarkets() {
         try {
             const fetched = await getAllMarkets();
-            console.log(fetched)
             fetched.sort(COMPARER[sortBy]);
             setAllMarkets(fetched);
             setMarkets(fetched);

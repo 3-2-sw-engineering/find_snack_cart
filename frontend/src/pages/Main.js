@@ -61,13 +61,6 @@ function Main() {
         console.log(detail);
         setDetail(!detail);
     }
-    function checkLogin() {
-        var isLogin = false;
-        if (getUserCookie() !== undefined)
-            isLogin = true;
-        setLogin(isLogin);
-        return isLogin;
-    }
 
     function viewLogin() {
         if (!isLogin)
@@ -92,16 +85,18 @@ function Main() {
     function viewManage() {
         navigate("/manage");
     }
+    useEffect(() => {
+        setUser(getUserCookie());
+    }, [])
 
     function MyDrawer() {
 
         useEffect(() => {
-
             let isLogin = false;
-            if (getUserCookie() !== undefined)
+            if (user !== undefined)
                 isLogin = true;
             setLogin(isLogin)
-        })
+        }, [])
 
         return <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} >
             <Box role="presentation">
