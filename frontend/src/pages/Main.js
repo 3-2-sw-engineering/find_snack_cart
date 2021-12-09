@@ -16,6 +16,7 @@ import { withCookies } from 'react-cookie';
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
+import MarketListPanel from "./MarketListPanel"
 
 function Main() {
     const navigate = useNavigate();
@@ -148,12 +149,36 @@ function Main() {
 
 
             <div className="main-split">
-
                 <Routes>
-                    <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
-                    <Route path='/signup' element={<div className="main-split-element"><SignUp /></div>} />
-                    <Route path='/report' element={<div className="main-split-element"> <Manage reportManage={0} /> </div>} />
-                    <Route path='/manage' element={<div className="main-split-element"> <Manage reportManage={1} /> </div>} />
+                    <Route path='/' element={
+                        <div className="main-split-element">
+                            <MarketListPanel />
+                        </div>}
+                    />
+
+                    <Route path='/login' element={
+                        <div className="main-split-element">
+                            <Login />
+                        </div>}
+                    />
+
+                    <Route path='/signup' element={
+                        <div className="main-split-element">
+                            <SignUp />
+                        </div>}
+                    />
+
+                    <Route path='/report' element={
+                        <div className="main-split-element">
+                            <Manage reportManage={0} />
+                        </div>}
+                    />
+
+                    <Route path='/manage' element={
+                        <div className="main-split-element">
+                            <Manage reportManage={1} />
+                        </div>}
+                    />
                 </Routes>
             </div >
         </div >

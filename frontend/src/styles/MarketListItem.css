@@ -1,0 +1,32 @@
+.listitem-root {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    background-color: #FAFAFA;
+    flex-basis: 0;
+    padding: 10px;
+    transition: background-color 0.5s;
+    cursor: pointer;
+}
+
+.listitem-root:hover {
+    background-color: #d8d8d8;
+}
+
+.listitem-image {
+    background-size: cover;
+    background-position: center;
+    flex-grow: 2;
+    margin-right: 10px;
+    border-radius: 1rem;
+}
+
+.listitem-description {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
+}
+
+.listitem-remove {
+    flex-grow: 0;
+}

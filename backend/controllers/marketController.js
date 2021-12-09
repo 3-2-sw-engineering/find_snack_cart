@@ -1,10 +1,28 @@
 const Market = require('../models/marketModel');
 const User = require('../models/userModel');
+const Comment = require('../models/commentModel');
 const CookieManager = require("../shared/cookieManager");
+
+// 평점, 리뷰 수 등은 동적으로 계산
+async function getDynamicInfo(market) {
+    const comments = await Comment.find({comment_target: market.market_index});
+    let ratAcc = 0.0;
+    comments.forEach(c => {
+        ratAcc += c.comment_score;
+    });
+    
+    market.market_rating = comments.length ? ratAcc / comments.length : 0;
+    market.market_comments_count = comments.length;
+    return market;
+}
 
 async function GetAllMarkets(req, res) {
     try {
-        res.status(201).json({markets: (await Market.find())});
+        const markets = await Market.find();
+        const promises = markets.map(market => getDynamicInfo(market));
+        const augmented = await Promise.all(promises);
+
+        res.status(201).json({markets: augmented});
     } catch (err) {
         console.log(err);
         res.status(500).json({error: err});
@@ -41,7 +59,7 @@ async function CreateMarket(req, res) {
         if (market_authority) {
             // 현재 로그인한 계정으로 owner 등록
             const created = await Market.create(market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, current);
-            User.findOneAndUpdate({ "user_id": current }, {
+            User.findOneAndUpdate({"user_id": current}, {
                 $set: {
                     managing: created.market_index
                 }
@@ -124,7 +142,7 @@ async function GetMarketInfo(req, res) {
 		
         const market = await Market.findMarketByIndex(market_index);
         if (market) {
-            res.status(200).json({market: market});
+            res.status(200).json({market: await getDynamicInfo(market)});
         } else {
             res.status(404).json({error: `market with index ${market_index} is not found.`});
         }

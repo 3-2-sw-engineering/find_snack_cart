@@ -1,0 +1,21 @@
+.listpanel-root {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 0;
+}
+
+.listpanel-menubar {
+    display: flex;
+    flex-direction: row;
+    flex-basis: 0;
+}
+
+.listpanel-menu {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 10px 0 10px;
+    padding-bottom: 10px;
+    background-color: #FAFAFA;
+}
