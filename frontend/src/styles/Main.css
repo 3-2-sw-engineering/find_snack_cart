@@ -24,6 +24,7 @@ body {
 
 }
 
+
 .main-split {
     flex-grow: 1;
     display: flex;
@@ -39,9 +40,14 @@ body {
     flex-grow: 1;
 }
 
+.search-panel {
+    display: flex;
+    flex-flow: row;
+}
+
 .main-map {
     width: 95%;
     height: 76%;
-    margin-top: 20vh;
+    /* margin-top: 20vh; */
     border-radius: 5%;
 }

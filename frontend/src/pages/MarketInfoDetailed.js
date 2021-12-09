@@ -103,7 +103,7 @@ function MarketInfoDetailed(props) {
 							onClick={(e) => { stop(e); window.open(url, '_blank'); }}
 							whileTap={{ y: 3 }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 						<motion.button 
-							onClick={(e) => { stop(e); setFavorite(!favorite); favorite ? addFavorite(props.marketDetailed.market_index, props.user.user_id) : removeFavorite(props.marketDetailed.market_index, props.user.user_id)}}
+							onClick={(e) => { stop(e); setFavorite(!favorite); favorite ? addFavorite(props.marketDetailed.market_index, props.user.id) : removeFavorite(props.marketDetailed.market_index, props.user.id)}}
 							whileTap={{ y: 3 }}><div>{favorite ? <TiHeart size='20' color='#93BDF9' /> : <TiHeartOutline size='20' color='#93BDF9' />}</div>즐겨찾기</motion.button>
 						<motion.button 
 							onClick={(e) => { stop(e); setShare(true); handleCopyClipBoard(url); }}
@@ -153,7 +153,7 @@ function MarketInfoDetailed(props) {
 							/>
 						</div>
 						<p>{TextLen}/200</p>
-						<motion.button className='review-confirm' onClick={(e) => { const now = Date.now(); stop(e); writeReview(); createComment(TextInput, starScore, props.user.user_id,now,props.marketDetailed.market_index) }} whileTap={{ y: -3 }}>
+						<motion.button className='review-confirm' onClick={(e) => { const now = Date.now(); console.log(props.user.id); stop(e); writeReview(); createComment(TextInput, starScore, props.user.id,now,props.marketDetailed.market_index) }} whileTap={{ y: -3 }}>
 							완료
 						</motion.button>
 					</motion.div>

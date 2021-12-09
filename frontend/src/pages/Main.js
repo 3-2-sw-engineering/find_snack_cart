@@ -5,14 +5,17 @@ import LoginIcon from '@mui/icons-material/Login';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
 import { getUserCookie, removeUserCookie } from '../shared/cookie';
+import { withCookies } from 'react-cookie';
 import { logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
-import { withCookies } from 'react-cookie';
+import MarketInfoShort from './MarketInfoShort.js';
+import MarketInfoDetailed from './MarketInfoDetailed.js';
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
@@ -26,19 +29,44 @@ function Main() {
     const [isLogin, setLogin] = useState(false);
     const [detail, setDetail] = useState();
     const [level, setLevel] = useState(4);
-    const user = undefined; //여기에다가 유저 담을거에요
+    const [user, setUser] = useState();
+
+    const [searchText, setsearchText] = useState("");
+
+    const changeSetLocation = (e) => {
+        setsearchText(e.target.value)
+    }
+    const [kmap, setkMap] = useState(null);
+
+    const { kakao } = window;
+    var geocoder = new kakao.maps.services.Geocoder();
+    var placecoder = new kakao.maps.services.Places();
+    const searchLocation = () => {
+        geocoder.addressSearch(searchText, function (result, status) {
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
+                return;
+            }
+        })
+        placecoder.keywordSearch(searchText, function (data, status, pagination) {
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
+            }
+        })
+    }
+
 
     function isDetail() {
         console.log(detail);
         setDetail(!detail);
     }
     function checkLogin() {
-        let isLogin = false;
+        var isLogin = false;
         if (getUserCookie() !== undefined)
             isLogin = true;
-        setLogin(isLogin)
-        return isLogin
-
+        setLogin(isLogin);
+        return isLogin;
     }
 
     function viewLogin() {
@@ -68,7 +96,11 @@ function Main() {
     function MyDrawer() {
 
         useEffect(() => {
-            checkLogin();
+
+            let isLogin = false;
+            if (getUserCookie() !== undefined)
+                isLogin = true;
+            setLogin(isLogin)
         })
 
         return <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} >
@@ -151,36 +183,37 @@ function Main() {
             <div className="main-split">
                 <Routes>
                     <Route path='/' element={
-                        <div className="main-split-element">
-                            <MarketListPanel />
-                        </div>}
-                    />
+                        <React.Fragment><div className="main-split-element">
+                            {detail && <MarketInfoDetailed
+                                marketDetailed={marketDetailed}
+                                user={user} />}
+                        </div>
+                            <div className="main-split-element">
+                                <div className="search-panel">
+                                    <input className="loc-input" name='search' value={searchText} onChange={changeSetLocation}
+                                        placeholder="장소를 검색하실 수 있습니다." />
+                                    <div className="loc-button" onClick={searchLocation}> 검색</div>
+                                </div>
+                                <Map className='main-map'
+                                    center={{ lat: 37.55635, lng: 126.795841 }}
+                                    onZoomChanged={(target) => setLevel(target.b.H)}
+                                    level={4}
 
-                    <Route path='/login' element={
-                        <div className="main-split-element">
-                            <Login />
-                        </div>}
-                    />
+                                    onCreate={(map) => setkMap(map)}>
+                                    <MarketInfoShort
+                                        index={1}
+                                        level={level}
+                                        isDetail={isDetail}
+                                        setMarket={setMarket} />
+                                </Map>
+                            </div></React.Fragment>} />
+                    <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
+                    <Route path='/signup' element={<div className="main-split-element"><SignUp /></div>} />
+                    <Route path='/report' element={<div className="main-split-element"> <Manage reportManage={0} /> </div>} />
+                    <Route path='/manage' element={<div className="main-split-element"> <Manage reportManage={1} /> </div>} />
 
-                    <Route path='/signup' element={
-                        <div className="main-split-element">
-                            <SignUp />
-                        </div>}
-                    />
-
-                    <Route path='/report' element={
-                        <div className="main-split-element">
-                            <Manage reportManage={0} />
-                        </div>}
-                    />
-
-                    <Route path='/manage' element={
-                        <div className="main-split-element">
-                            <Manage reportManage={1} />
-                        </div>}
-                    />
                 </Routes>
-            </div >
+            </div>
         </div >
 
     );
