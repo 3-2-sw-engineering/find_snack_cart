@@ -43,11 +43,11 @@ function MarketListItem(props) {
 
     return (
         <div className="listitem-root" onClick={onClick ? handleClick : undefined}>
-            <div className="listitem-image" style={{backgroundImage: `url(${image})`}}></div>
+            <div className="listitem-image" style={{ backgroundImage: `url(${image})` }}></div>
             <div className="listitem-description">
-                <Typography variant="subtitle2">{foodList.join(", ")}</Typography>
-                <Typography variant="subtitle1">{title}</Typography>
-                <Typography variant="subtitle2">{`${dist} km`}</Typography>
+                <Typography variant="subtitle2" noWrap={true}>{foodList.join(", ")}</Typography>
+                <Typography variant="subtitle1" noWrap={true}>{title}</Typography>
+                <Typography variant="subtitle2" noWrap={true}>{`${dist} km`}</Typography>
                 <Rating value={rating} readOnly></Rating>
             </div>
             {removable && (

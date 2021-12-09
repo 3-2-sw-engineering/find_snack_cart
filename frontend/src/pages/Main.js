@@ -131,14 +131,14 @@ function Main() {
                         ))}
                     </List>
 
-                    <ListItem button sx={{ pr: 10 }}>
+                    {/* <ListItem button sx={{ pr: 10 }}>
                         <ListItemAvatar>
                             <Avatar>
                                 <FavoriteIcon></FavoriteIcon>
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText onClick={viewFavorite} primary="즐겨찾기"></ListItemText>
-                    </ListItem>
+                    </ListItem> */}
 
                     <ListItem button sx={{ pr: 10 }}>
                         <ListItemAvatar>
@@ -184,9 +184,9 @@ function Main() {
                 <Routes>
                     <Route path='/' element={
                         <React.Fragment><div className="main-split-element">
-                            {detail && <MarketInfoDetailed
+                            {detail ? <MarketInfoDetailed
                                 marketDetailed={marketDetailed}
-                                user={user} />}
+                                user={user} /> : <MarketListPanel />}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">
