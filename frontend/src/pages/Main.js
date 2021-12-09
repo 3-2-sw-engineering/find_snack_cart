@@ -5,13 +5,16 @@ import LoginIcon from '@mui/icons-material/Login';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
 import { getUserCookie, removeUserCookie } from '../shared/cookie';
 import { logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
+import MarketInfoShort from './MarketInfoShort.js';
+import MarketInfoDetailed from './MarketInfoDetailed.js';
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
@@ -26,7 +29,7 @@ function Main() {
     const [isLogin, setLogin] = useState(false);
     const [detail, setDetail] = useState();
     const [level, setLevel] = useState(4);
-    const user = undefined; //여기에다가 유저 담을거에요
+    const [user, setUser] = useState();
 
     function isDetail() {
         console.log(detail);
@@ -36,9 +39,8 @@ function Main() {
         var isLogin = false;
         if (getUserCookie() !== undefined)
             isLogin = true;
-        setLogin(isLogin)
-        return isLogin
-
+        setLogin(isLogin);
+        return isLogin;
     }
 
     function viewLogin() {
@@ -142,14 +144,35 @@ function Main() {
 
 
             <div className="main-split">
-
                 <Routes>
+                    <Route path='/' element={<React.Fragment><div className="main-split-element">
+                    {detail &&
+                    <MarketInfoDetailed 
+                        marketDetailed={marketDetailed}
+                        user={user}
+                        />}
+                </div>
+                <div className="main-split-element">
+                    <Map className='main-map'
+                        center={{ lat: 37.55635, lng: 126.795841 }}
+                        onZoomChanged = {(target) => setLevel(target.b.H)}
+                        level={4}
+                    >
+                        <MarketInfoShort
+                            index={1}
+                            level={level}
+                            isDetail={isDetail}
+                            setMarket={setMarket}
+                        />
+                    </Map>
+                    <button onClick={() => {setUser(getUserCookie()); console.log(user);}}></button>
+                </div></React.Fragment>}/>
                     <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
                     <Route path='/signup' element={<div className="main-split-element"><SignUp /></div>} />
                     <Route path='/report' element={<div className="main-split-element"> <Manage reportManage={0} /> </div>} />
                     <Route path='/manage' element={<div className="main-split-element"> <Manage reportManage={1} /> </div>} />
                 </Routes>
-            </div >
+            </div>
         </div >
 
     );
