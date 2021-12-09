@@ -10,9 +10,9 @@ import { Box } from '@mui/system';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
-import { getUserCookie, refreshUserCookie, removeUserCookie } from '../shared/cookie';
+import { getUserCookie, removeUserCookie } from '../shared/cookie';
 import { withCookies } from 'react-cookie';
-import { checkCurrentUserID, logout } from '../shared/BackendRequests';
+import { logout } from '../shared/BackendRequests';
 import { categories } from '../shared/constantLists'
 import MarketInfoShort from './MarketInfoShort.js';
 import MarketInfoDetailed from './MarketInfoDetailed.js';
@@ -29,6 +29,32 @@ function Main() {
     const [detail, setDetail] = useState();
     const [level, setLevel] = useState(4);
     const [user, setUser] = useState();
+
+    const [searchText, setsearchText] = useState("");
+
+    const changeSetLocation = (e) => {
+        setsearchText(e.target.value)
+    }
+    const [kmap, setkMap] = useState(null);
+
+    const { kakao } = window;
+    var geocoder = new kakao.maps.services.Geocoder();
+    var placecoder = new kakao.maps.services.Places();
+    const searchLocation = () => {
+        geocoder.addressSearch(searchText, function (result, status) {
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
+                return;
+            }
+        })
+        placecoder.keywordSearch(searchText, function (data, status, pagination) {
+            if (status === kakao.maps.services.Status.OK) {
+                kmap.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
+            }
+        })
+    }
+
 
     function isDetail() {
         console.log(detail);
@@ -155,28 +181,31 @@ function Main() {
 
             <div className="main-split">
                 <Routes>
-                    <Route path='/' element={<React.Fragment><div className="main-split-element">
-                    {detail &&
-                    <MarketInfoDetailed 
-                        marketDetailed={marketDetailed}
-                        user={user}
-                        />}
-                </div>
-                <div className="main-split-element">
-                    <Map className='main-map'
-                        center={{ lat: 37.55635, lng: 126.795841 }}
-                        onZoomChanged = {(target) => setLevel(target.b.H)}
-                        level={4}
-                    >
-                        <MarketInfoShort
-                            index={1}
-                            level={level}
-                            isDetail={isDetail}
-                            setMarket={setMarket}
-                        />
-                    </Map>
-                    <button onClick={() => {setUser(getUserCookie()); console.log(user);}}></button>
-                </div></React.Fragment>}/>
+                    <Route path='/' element={
+                        <React.Fragment><div className="main-split-element">
+                            {detail && <MarketInfoDetailed
+                                marketDetailed={marketDetailed}
+                                user={user} />}
+                        </div>
+                            <div className="main-split-element">
+                                <div className="search-panel">
+                                    <input className="loc-input" name='search' value={searchText} onChange={changeSetLocation}
+                                        placeholder="장소를 검색하실 수 있습니다." />
+                                    <div className="loc-button" onClick={searchLocation}> 검색</div>
+                                </div>
+                                <Map className='main-map'
+                                    center={{ lat: 37.55635, lng: 126.795841 }}
+                                    onZoomChanged={(target) => setLevel(target.b.H)}
+                                    level={4}
+
+                                    onCreate={(map) => setkMap(map)}>
+                                    <MarketInfoShort
+                                        index={1}
+                                        level={level}
+                                        isDetail={isDetail}
+                                        setMarket={setMarket} />
+                                </Map>
+                            </div></React.Fragment>} />
                     <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
                     <Route path='/signup' element={<div className="main-split-element"><SignUp /></div>} />
                     <Route path='/report' element={<div className="main-split-element"> <Manage reportManage={0} /> </div>} />
