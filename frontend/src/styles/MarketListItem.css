@@ -1,12 +1,18 @@
 .listitem-root {
+    width: 95%;
+    min-width: 95%;
+    max-width: 95%;
     display: flex;
     flex-direction: row;
     align-items: stretch;
     background-color: #FAFAFA;
     flex-basis: 0;
-    padding: 10px;
+    padding: 2.5%;
     transition: background-color 0.5s;
     cursor: pointer;
+    margin-top: 2px;
+    margin-bottom: 2px;
+
 }
 
 .listitem-root:hover {
@@ -14,6 +20,8 @@
 }
 
 .listitem-image {
+    min-width: 30%;
+    max-width: 30%;
     background-size: cover;
     background-position: center;
     flex-grow: 2;
@@ -22,9 +30,13 @@
 }
 
 .listitem-description {
+    min-width: 60%;
+    max-width: 70%;
+
     display: flex;
     flex-direction: column;
     flex-grow: 3;
+    text-overflow: ellipsis;
 }
 
 .listitem-remove {
