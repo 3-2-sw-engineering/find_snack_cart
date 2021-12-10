@@ -1,0 +1,33 @@
+version: '3'
+services:
+  findcart-db:
+    image: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: findcart
+      MONGODB_DATA_DIR: db-data
+      MONDODB_LOG_DIR: /dev/null
+    expose:
+      - 27017
+  findcart-backend:
+    build: ./backend
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://findcart-db/findcart
+      - SECRET_KEY=CHANGE_THIS_SECRET_KEY_FOR_SECURITY
+    depends_on:
+      - findcart-db
+    ports:
+      - "5000:5000"
+  findcart-frontend:
+    build: ./frontend
+    environment:
+      - REACT_APP_PROXY=http://findcart-backend:5000
+    restart: always
+    depends_on:
+      - findcart-backend
+    ports:
+      - "3000:3000"
+volumes:
+  db-data:
