@@ -15,11 +15,11 @@ var Market = new Schema({
         default: "포장마차 이름을 입력해주세요"
     },
     market_locx: {
-        type: Float32Array,
+        type: [Number],
         required: true,
     },
     market_locy: {
-        type: Float32Array,
+        type: [Number],
         required: true,
     },
     market_food: {

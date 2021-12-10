@@ -199,17 +199,19 @@ export async function getMarketInfo(marketIdx) {
 
 // 새로운 포장마차를 등록합니다.
 // title: 포장마차 제목 (string)
-// location: 장소 (string의 배열)
+// locx: X 좌표
+// locy: Y 좌표
 // food: 파는 음식들 (string의 배열)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
 // phone: 전화번호 (string)
-export async function createMarket(title, locations, food, paymentMethods, explanation, images, authority, phone) {
+export async function createMarket(title, locx, locy, food, paymentMethods, explanation, images, authority, phone) {
     const reqBody = {
         market_title: title,
-        market_location: locations,
+        market_locx: locx,
+        market_locy: locy,
         market_food: food,
         market_category: "",                    // Unused, Legacy
         market_payment_method: paymentMethods,
@@ -243,18 +245,20 @@ export async function deleteMarket(marketIdx) {
 // 포장마차 정보를 수정합니다.
 // marketIdx: 포장마차 번호 (int)
 // title: 포장마차 제목 (string)
-// location: 장소 (string의 배열)
+// locx: X 좌표
+// locy: Y 좌표
 // food: 파는 음식들 (string의 배열)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
 // phone: 전화번호 (string)
-export async function editMarket(marketIdx, title, location, food, paymentMethods, explanation, images, authority, phone) {
+export async function editMarket(marketIdx, title, locx, locy, food, paymentMethods, explanation, images, authority, phone) {
     const reqBody = {
         market_index: marketIdx,
         market_title: title,
-        market_location: location,
+        market_locx: locx,
+        market_locy: locy,
         market_food: food,
         market_category: "",
         market_payment_method: paymentMethods,
