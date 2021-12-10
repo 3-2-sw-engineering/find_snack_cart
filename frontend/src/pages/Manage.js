@@ -24,6 +24,15 @@ function Manage({ reportManage }) {
     }
     const [localUser, setLocalUser] = useState({ "id": "", "name": "", "role": 0, "managing": -1 });
 
+    const [marketData, setMarketData] = useState({
+        name: '',
+        categories: categories.map(c => false),
+        locations: ["서울특별시 동대문구 서울시립대로163"],
+        phone: '',
+        information: '',
+        payments: paymentList.map(p => false),
+        image: ''
+    });
     const { kakao } = window;
     var geocoder = new kakao.maps.services.Geocoder();
     var placecoder = new kakao.maps.services.Places();
@@ -43,15 +52,7 @@ function Manage({ reportManage }) {
         })
     }
 
-    const [marketData, setMarketData] = useState({
-        name: '',
-        categories: categories.map(c => false),
-        locations: ["서울특별시 동대문구 전농로163"],
-        phone: '',
-        information: '',
-        payments: paymentList.map(p => false),
-        image: ''
-    });
+
 
     function viewBack() {
         navigate('/');
@@ -159,6 +160,18 @@ function Manage({ reportManage }) {
         });
 
     }
+    function addr2Xy(addr_arr) {
+        var xx = []
+        var yy = []
+        var callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                xx.push(result[0].x);
+                yy.push(result[0].y)
+            }
+        }
+        addr_arr.map(item => geocoder.addressSearch(item, callback))
+        return { x: xx, y: yy };
+    }
 
     const onMarketRegister = async () => {
         var name = marketData.name.replace(/\s|　/gi, ' ');
@@ -181,14 +194,15 @@ function Manage({ reportManage }) {
         let user = localUser;
 
         try {
+            let xy = addr2Xy(marketData.locations);
             if (reportManage === 0 || user.managing === null || user.managing < 0) {
-                await createMarket(marketData.name, marketData.locations, cate_arr,
+                await createMarket(marketData.name, xy.x, xy.y, cate_arr,
                     pay_arr, marketData.information, [],
                     reportManage, marketData.phone)
                     .then(refreshUserCookie(user.id));
             } else {
                 await editMarket(user.managing,
-                    marketData.name, marketData.locations, cate_arr,
+                    marketData.name, xy.x, xy.y, cate_arr,
                     pay_arr, marketData.information, [],
                     1, marketData.phone)
             }

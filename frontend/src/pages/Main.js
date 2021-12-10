@@ -83,9 +83,9 @@ function Main() {
 
     useEffect(() => {
         async function fetchAllMarket() {
-			const information = await getAllMarkets();
-			setMarkets(information);
-		} fetchAllMarket();
+            const information = await getAllMarkets();
+            setMarkets(information);
+        } fetchAllMarket();
         setUser(getUserCookie());
     }, [])
 
@@ -166,7 +166,7 @@ function Main() {
                         <MenuIcon></MenuIcon>
                     </IconButton>
 
-                    <Typography className="main-header-text" variant="h5" component="div">
+                    <Typography className="main-header-text" variant="h5" component="div" onClick={() => navigate('/')}>
                         {`${headerText} 사장님, 어디 계세요?!`}
                     </Typography>
                 </Toolbar>
@@ -182,7 +182,7 @@ function Main() {
                             {marketDetailed ? <MarketInfoDetailed
                                 setMarket={setMarket}
                                 marketDetailed={marketDetailed}
-                                user={user} /> : <MarketListPanel setMarket={setMarket}/>}
+                                user={user} /> : <MarketListPanel setMarket={setMarket} />}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">
@@ -195,7 +195,7 @@ function Main() {
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
                                     onCreate={(map) => setkMap(map)}>
-                                   {markets.map(market =>  <MarketInfoShort
+                                    {markets.map(market => <MarketInfoShort
                                         market={market}
                                         level={level}
                                         setMarket={setMarket} />)}

@@ -43,7 +43,10 @@ function MarketListPanel(props) {
             markets = allMarkets;
 
         }
-        else { markets = favMarkets }
+        else {
+            getFavMarkets();
+            markets = favMarkets
+        }
         setMarkets(markets.sort(COMPARER[menu]))
 
     }
@@ -65,6 +68,7 @@ function MarketListPanel(props) {
             if (user.id === '') return;
 
             let fav = await getAllFavorites(user.id);
+            console.log(fav);
             setFavMarkets(fav)
         } catch (err) {
             alert("즐겨찾기한 포장마차목록을 가져오는데 실팼습니다.")
@@ -73,16 +77,16 @@ function MarketListPanel(props) {
 
     useEffect(() => {
         fetchMarkets();
-        getFavMarkets();
     }, []);
 
     return (
         <div className="listpanel-root">
             <div className="listpanel-menubar">
-                {MENUS.map((menu) => (<div className="listpanel-menu"
-                    onClick={() => onMenuClick(menu)}>
-                    <span>{menu}</span>
-                </div>))}
+                {MENUS.map((menu) => (
+                    <div className="listpanel-menu"
+                        onClick={() => onMenuClick(menu)}>
+                        <span>{menu}</span>
+                    </div>))}
             </div>
 
             <div className="listpanel-item-container">

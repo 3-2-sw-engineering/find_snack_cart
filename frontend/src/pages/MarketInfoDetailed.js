@@ -83,8 +83,7 @@ function MarketInfoDetailed(props) {
 		}
 	}
 
-	function handleReviewComplete()
-	{
+	function handleReviewComplete() {
 		setReview(false);
 		setTextInput(undefined);
 		setTextLen(0);
@@ -100,7 +99,7 @@ function MarketInfoDetailed(props) {
 				animate={isOpen2}
 				onClick={onTap2}
 			>
-			<AiOutlineClose className='detailed-back' size='20' onClick={() => props.setMarket(undefined)}></AiOutlineClose>
+				<AiOutlineClose className='detailed-back' size='20' onClick={() => props.setMarket(undefined)}></AiOutlineClose>
 				<p>
 					{props.marketDetailed.market_title}
 				</p>
@@ -114,14 +113,14 @@ function MarketInfoDetailed(props) {
 						onClick={(e) => { stop(e); window.open(url, '_blank'); }}
 						whileTap={{ y: 3 }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 					<motion.button
-						onClick={(e) => { stop(e); if(props.user.id){setFavorite(!favorite); favorite ? addFavorite(props.marketDetailed.market_index, props.user.id) : removeFavorite(props.marketDetailed.market_index, props.user.id)} }}
+						onClick={(e) => { stop(e); if (props.user.id) { setFavorite(!favorite); favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : addFavorite(props.user.id, props.marketDetailed.market_index) } }}
 						whileTap={{ y: 3 }}><div>{favorite ? <TiHeart size='20' color='#93BDF9' /> : <TiHeartOutline size='20' color='#93BDF9' />}</div>즐겨찾기</motion.button>
 					<motion.button
 						onClick={(e) => { stop(e); setShare(true); handleCopyClipBoard(url); }}
 						whileTap={{ y: 3 }}><div><BsShare size='20' color='#93BDF9' /></div>공유하기</motion.button>
 				</motion.div>
 				<p>
-				{props.marketDetailed.market_explanation} <br/> 카테고리: {props.marketDetailed.market_category}<br/> 평점: {props.market_score} <br /> 영업시간: 10:00 ~ 20:00 <br /> 결제방법: {props.marketDetailed.market_payment_method.join('/')}
+					{props.marketDetailed.market_explanation} <br /> 카테고리: {props.marketDetailed.market_category}<br /> 평점: {props.market_score} <br /> 영업시간: 10:00 ~ 20:00 <br /> 결제방법: {props.marketDetailed.market_payment_method.join('/')}
 				</p>
 			</motion.div>
 			<motion.div className="detailed-review"
@@ -136,35 +135,36 @@ function MarketInfoDetailed(props) {
 					onClick={(e) => { stop(e); writeReview(); }}
 					whileTap={{ y: -3 }}>댓글 작성하기</motion.button>
 				<List sx={{ width: '100%', maxWidth: '90%', bgcolor: 'background.paper' }}>
-					{reviewList ? reviewList.comments.map((review) => <ReviewList review={review}/> ) : <div></div>}
+					{reviewList ? reviewList.comments.map((review) => <ReviewList review={review} />) : <div></div>}
 				</List>
 			</motion.div>
 			{
 				isReview &&
 				<motion.div className='review' animate={{ y: "-236%" }}>
-				<AiOutlineClose className='detailed-back' size='20' onClick={() => handleReviewComplete()}></AiOutlineClose>
+					<AiOutlineClose className='detailed-back' size='20' onClick={() => handleReviewComplete()}></AiOutlineClose>
 					<div>
 						<p className='review-head'>
-							{props.marketDetailed.market_explanation}
+							{props.marketDetailed.market_title}
 						</p>
 					</div>
 					<div className='review-star'>
-						{TextFullStar.map((index) =><TiStarFullOutline onClick={() => { TextStarSelect(index + 1)}} key={index} size='60' color='#F9CF93' />)}
-						{TextLineStar.map((index) => <TiStarOutline onClick={() => { TextStarSelect((5 - TextLineStar.length) + index + 1)}} key={index} size='60' color='#F9CF93' />)}
+						{TextFullStar.map((index) => <TiStarFullOutline onClick={() => { TextStarSelect(index + 1) }} key={index} size='60' color='#F9CF93' />)}
+						{TextLineStar.map((index) => <TiStarOutline onClick={() => { TextStarSelect((5 - TextLineStar.length) + index + 1) }} key={index} size='60' color='#F9CF93' />)}
 					</div>
-					<hr/>
+					<hr />
 					<div>
 						<textarea value={TextInput} className='review-textfield' maxLength={200} cols='50' rows='17' onChange={handleChange}
 						/>
 					</div>
 					<p>{TextLen}/200</p>
-					<motion.button className='review-confirm' onClick={(e) => { 
+					<motion.button className='review-confirm' onClick={(e) => {
 						const now = new Date();
 						stop(e);
 						writeReview();
-						if(TextInput&&props.user.id) createComment(TextInput, starScore, props.user.id, now, props.marketDetailed.market_index)
-						handleReviewComplete();}
-						} 
+						if (TextInput && props.user.id) createComment(TextInput, starScore, props.user.id, now, props.marketDetailed.market_index)
+						handleReviewComplete();
+					}
+					}
 						whileTap={{ y: -3 }}>
 						완료
 					</motion.button>

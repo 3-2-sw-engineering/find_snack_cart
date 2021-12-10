@@ -132,6 +132,7 @@ export function checkCurrentUserID(cookies) {
 export async function getAllFavorites(id) {
     try {
         let res = await axios.get("/api/favor/" + id, { withCredentials: true });
+        console.log(res.data.favorites);
         return res.data.favorites;
     } catch (err) {
         console.error("In getAllFavorites: " + err?.response?.data);
@@ -199,8 +200,8 @@ export async function getMarketInfo(marketIdx) {
 
 // 새로운 포장마차를 등록합니다.
 // title: 포장마차 제목 (string)
-// locx: X 좌표
-// locy: Y 좌표
+// locx: X 좌표 경도 longitude
+// locy: Y 좌표 위도 latitude
 // food: 파는 음식들 (string의 배열)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)

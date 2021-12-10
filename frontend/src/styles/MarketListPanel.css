@@ -7,7 +7,7 @@
     padding: 30px;
     width: 40vw;
     height: 83vh;
-	margin: 3% 10% 3% 5%;
+    margin: 3% 10% 3% 5%;
     border-radius: 2rem;
     overflow: hidden;
     background-color: #EDEDED;
@@ -18,7 +18,7 @@
 .listpanel-menubar {
     display: flex;
     width: 95%;
-    height: 10%;
+    height: max-content;
     flex-flow: row wrap;
     justify-content: center;
     flex-basis: 0;
@@ -28,7 +28,7 @@
 .listpanel-menu {
     font-family: "Gosanja";
     width: 20%;
-    min-width: 5.5rem;
+    min-width: 4rem;
     min-height: 2.5rem;
     flex-grow: 1;
     display: flex;
