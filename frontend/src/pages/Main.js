@@ -9,19 +9,37 @@ import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MarketInfoShort from './MarketInfoShort.js';
+import MarketInfoDetailed from './MarketInfoDetailed.js';
 import "../styles/Main.css"
+import Login from "./Login"
+import SignUp from "./SignUp"
+import Manage from "./Manage"
+import { getUserCookie } from '../shared/cookie';
+import { logout } from '../shared/BackendRequests';
+import { categories } from '../shared/constantLists'
 
 function Main(props) {
-    const categories = [
-        "전체", "붕어빵/잉어빵", "타코야끼", "풀빵", "호떡", "군고구마", "꼬치", "분식", "기타"
-    ];
+
 
     const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
+    const [marketDetailed, setMarket] = useState();
+    const [detail, setDetail] = useState(0);
+
+    function isDetail() {
+        console.log(detail);
+        setDetail(!detail);
+    }
 
     function viewLogin() {
-        navigate("login");
+        if (getUserCookie() === undefined)
+            navigate("login");
+        else {
+            console.log("logout!")
+            logout();
+        }
     }
 
     function viewFavorite() {
@@ -35,6 +53,7 @@ function Main(props) {
     function viewManage() {
         navigate("manage");
     }
+
 
     return (
         <div className="main-layout">
@@ -52,7 +71,7 @@ function Main(props) {
             </AppBar>
 
             <Drawer open={menuOpen} onClose={() => setMenuOpen(false)}>
-                <Box sx={500} role="presentation">
+                <Box role="presentation">
                     <List>
                         <ListItem button>
                             <ListItemAvatar>
@@ -67,10 +86,10 @@ function Main(props) {
                             <ListSubheader component="div">
                                 카테고리
                             </ListSubheader>}>
-                            
+
                             {categories.map(cate => (
                                 <ListItem button sx={{ pl: 10 }}>
-                                    <ListItemText primary={cate}></ListItemText>
+                                    <ListItemText key={cate} primary={cate}></ListItemText>
                                 </ListItem>
                             ))}
                         </List>
@@ -107,11 +126,12 @@ function Main(props) {
 
             <div className="main-split">
                 <div className="main-split-element">
-                    
+                    {/* {detail && <MarketInfoDetailed marketDetailed={marketDetailed} />} */}
+                    <Login />
                 </div>
-
                 <div className="main-split-element">
-                    <Map center={{ lat: 37.413294, lng: 126.79581 }} level={7} className="main-map"></Map>
+                    <Manage reportManage={1} />
+
                 </div>
             </div>
         </div>

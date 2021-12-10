@@ -1,0 +1,179 @@
+.detailed {
+	font-family: "Gosanja";
+	width: 40vw;
+	position: absolute;
+	text-align: center;
+	border-radius: 30px;
+	background-color: #EDEDED;
+	height: 83vh;
+	margin: 50px 50px 10px 50px;
+	padding: 30px;
+	box-sizing: border-box;
+	overflow:hidden;
+	-ms-overflow-style: none;
+}
+
+.textfield {
+	width: 90%;
+	background-color: #FCFCFC;
+}
+
+.review {
+	width:100%;
+	height:100%;
+	border-radius: 30px;
+	position: relative;
+	background-color: white;
+	-ms-overflow-style: none;
+	overflow: scroll;
+}
+
+.review::-webkit-scrollbar {
+	display: none;
+}
+
+.review hr {
+	border: 0;
+	width: 90%;
+	margin-top: 20px;
+	margin-bottom: 30px;
+	background-color: #F9CF93;
+	height: 3px;
+}
+
+.review-head {
+	padding-top: 25px;
+}
+
+.review-star {
+	display: flex;
+	overflow: hidden;
+	justify-content: center;
+}
+
+.review-textfield {
+	font-family: "Gosanja";
+	font-size: 20px;
+	background-color: #FCFCFC;
+	border: 0;
+	width: 90%;
+	height: 70%;
+	resize: none;
+}
+
+.review-textfield:focus {
+	outline: none;
+}
+
+
+.review-star-button {
+	display: flex;
+	background-color: white;
+	flex:0 1 0;
+	border-width: 0;
+}
+
+.review-confirm {
+	border-radius: 10px;
+	border-style: none;
+	width: 70%;
+	height: 5%;
+	margin: 0px 20px 20px 20px;
+	background-color: #F9CF93;
+}
+
+.review-confirm:hover {
+	background-color: #EDEDED;
+}
+
+.detailed::-webkit-scrollbar {
+	display: none;
+}
+
+.detailed-image {
+	position: relative;
+	border-radius: 30px 30px 0px 0px;
+	width: 100%;
+	height: 35%;
+}
+
+.detailed-contents {
+	position: relative;
+	border-radius: 30px;
+	top: -10%;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	background-color: #F8ECDC;
+	overflow: hidden;
+}
+
+.detailed-contents p {
+	padding: 20px;
+}
+
+.detailed-contents p:last-child {
+	text-align: left;
+}
+
+
+
+.detailed-buttons{
+	display: flex;
+	justify-content: space-around;
+  }
+
+.detailed-buttons button {
+  flex:1;
+  margin:0px 10px 0px 10px;
+  padding: 10px;
+  background-color:white;
+  color: black; /* White text */
+  font-family: "Gosanja";
+  font-size: 0.8em;
+  cursor: pointer; /* Pointer/hand icon */
+  border-width: 0px;
+  border-radius:5px;
+}
+
+/* Add a background color on hover */
+.detailed-contents button:hover {
+  background-color: #EDEDED;
+}
+
+.detailed-review {
+	position: relative;
+	border-radius: 30px;
+	top: -80%;
+	width: 100%;
+	height: 100%;
+	background-color:white;
+	overflow: scroll;
+}
+
+.detailed-review button {
+	border-radius: 10px;
+	border-style: none;
+	width: 70%;
+	height: 5%;
+	background-color: #F8ECDC;
+}
+
+.detailed-review button:hover{
+	background-color: #EDEDED;
+}
+
+.detailed-review-ministars {
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
+	font-size: 0.3em;
+	flex-direction: row;
+}
+
+
+.detailed-review-stars {
+	flex:1;
+	margin: 20px;
+	justify-content: space-around;
+}
