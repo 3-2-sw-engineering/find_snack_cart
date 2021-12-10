@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { getAllFavorites, getAllMarkets } from '../shared/BackendRequests';
 import ListItem from "../component/MarketListItem"
 import "../styles/MarketListPanel.css"
-import Favorite from '@mui/icons-material/Favorite';
 import { getUserCookie } from '../shared/cookie';
 
 function MarketListPanel(props) {
@@ -13,7 +12,6 @@ function MarketListPanel(props) {
     const BY_FAV = "즐겨찾기";
     const MENUS = [BY_DISTANCE, BY_RATING, BY_COMMENTS, BY_FAV];
     const [allMarkets, setAllMarkets] = useState([]);
-    const [favMarkets, setFavMarkets] = useState([]);
     const COMPARER = {
         BY_DISTANCE: (a, b) => {
             // not implemented
@@ -35,19 +33,20 @@ function MarketListPanel(props) {
 
     const [markets, setMarkets] = useState([]);
     const [sortBy, setSortBy] = useState(BY_DISTANCE);
-    // const [pressed]
 
-    function onMenuClick(menu) {
+    async function onMenuClick(menu) {
+        setSortBy(menu);
         let markets;
         if (menu !== BY_FAV) {
             markets = allMarkets;
-
         }
         else {
-            getFavMarkets();
-            markets = favMarkets
+            markets = await getFavMarkets();
         }
-        setMarkets(markets.sort(COMPARER[menu]))
+        if (markets.length > 2) {
+            markets = markets.sort(COMPARER[menu]);
+        }
+        setMarkets(markets)
 
     }
 
@@ -55,7 +54,8 @@ function MarketListPanel(props) {
         try {
             const fetched = await getAllMarkets();
             fetched.sort(COMPARER[sortBy]);
-            setAllMarkets(fetched);
+            if (markets.length === 0)
+                setAllMarkets(fetched);
             setMarkets(fetched);
         } catch (err) {
             alert("포장마차 목록을 가져오는데 실패하였습니다. " + err);
@@ -64,12 +64,11 @@ function MarketListPanel(props) {
     async function getFavMarkets() {
         try {
             let user = getUserCookie();
-            if (user === undefined) return;
-            if (user.id === '') return;
+            if (user === undefined) return [];
+            if (user.id === '') return [];
 
             let fav = await getAllFavorites(user.id);
-            console.log(fav);
-            setFavMarkets(fav)
+            return fav;
         } catch (err) {
             alert("즐겨찾기한 포장마차목록을 가져오는데 실팼습니다.")
         }

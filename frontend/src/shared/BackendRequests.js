@@ -132,7 +132,6 @@ export function checkCurrentUserID(cookies) {
 export async function getAllFavorites(id) {
     try {
         let res = await axios.get("/api/favor/" + id, { withCredentials: true });
-        console.log(res.data.favorites);
         return res.data.favorites;
     } catch (err) {
         console.error("In getAllFavorites: " + err?.response?.data);
@@ -322,7 +321,6 @@ export async function createComment(contents, score, reviewer, time, target) {
 
     try {
         let res = await axios.post("/api/comment", reqBody, { withCredentials: true });
-        console.log('done')
         return res.data;
     } catch (err) {
         console.error("In createComment: " + err?.response?.data);
