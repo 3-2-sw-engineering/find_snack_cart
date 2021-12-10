@@ -4,19 +4,15 @@ import jwt from "jsonwebtoken"
 /*
  * User 관련
  */
-/* (jaesun comment) neccessary functions
-   isIdAvailable(id) ->boolean : check the new ID is available (Sign Up)
-   sendSignUpCode(email)->(???): send a code for signing up to e-mail, (return: send succeeded, email duplicated, error)
-   checkSignUpCode(code)->boolean: check the code is right
-    createUser(..., isOwner): add an argument that present whether new user is onwer or not
-*/
+
 // 새 사용자 계정을 생성합니다.
-export async function createUser(id, pw, name, email) {
+export async function createUser(id, pw, name, email, isOwner) {
     const reqBody = {
         user_id: id,
         user_pw: pw,
         user_name: name,
-        user_email: email
+        user_email: email,
+        role: (isOwner ? 1 : 0)
     };
 
     try {
@@ -28,14 +24,25 @@ export async function createUser(id, pw, name, email) {
     }
 }
 
+// 특정 아이디가 이미 가입된 아이디인지 확인합니다.
+export async function isIdAvailable(id) {
+    try {
+        await getUserInfo(id);
+        return false;
+    } catch (err) {
+        if (err.response.status === 404) {
+            return true;
+        } else {
+            console.error("In isIdAvailable: " + err?.response?.data);
+            throw err;
+        }
+    }
+}
+
 // 아이디에 해당하는 계정을 삭제합니다.
 export async function deleteUser(id) {
-    const reqBody = {
-        user_id: id
-    };
-
     try {
-        let res = await axios.delete("/api/user", reqBody, { withCredentials: true });
+        let res = await axios.delete("/api/user/" + id, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In deleteUser: " + err?.response?.data);
@@ -107,7 +114,7 @@ export async function logout() {
 // 인자로 전달되는 cookies는 react-cookie 패키지에 포함된 withCookies로 얻을 수 있습니다. (props.cookies)
 // 아래 글을 따라 컴포넌트에 withCookies를 입혀보세요!
 // https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=dilrong&logNo=221450777898
-export async function checkCurrentUserID(cookies) {
+export function checkCurrentUserID(cookies) {
     try {
         const userToken = cookies.get('user');
         const decoded = jwt.decode(userToken);
@@ -148,7 +155,7 @@ export async function addFavorite(id, marketIdx) {
     }
 }
 
-// 사용자의 즐겨찾기 목록에 새 항목을 추가합니다.
+// 사용자의 즐겨찾기 목록에 새 항목을 제거합니다.
 export async function removeFavorite(id, marketIdx) {
     const reqBody = {
         user_id: id,
@@ -191,25 +198,25 @@ export async function getMarketInfo(marketIdx) {
 }
 
 // 새로운 포장마차를 등록합니다.
-// location: 장소 (string) --> 'string의 배열'로 변경 (jaesun comment)
-// food: 파는 음식들 (string의 배열) --> categories로 변경 (jaesun comment)
-// category: 포장마차의 카테고리 (string) --> 삭제 (jaesun comment)
+// title: 포장마차 제목 (string)
+// location: 장소 (string의 배열)
+// food: 파는 음식들 (string의 배열)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
-// fixed: 0이면 이동형, 1이면 고정형 -->삭제 (jaesun comment)
 // phone: 전화번호 (string)
-export async function createMarket(location, food, category, paymentMethods, explanation, images, authority, fixed, phone) {
+export async function createMarket(title, locations, food, paymentMethods, explanation, images, authority, phone) {
     const reqBody = {
-        market_location: location,
+        market_title: title,
+        market_location: locations,
         market_food: food,
-        market_category: category,
+        market_category: "",                    // Unused, Legacy
         market_payment_method: paymentMethods,
         market_explanation: explanation,
         market_image: images,
         market_authority: authority,
-        market_fixed: fixed,
+        market_fixed: 0,                        // Unused, Legacy
         market_phone_number: phone
     };
 
@@ -224,12 +231,8 @@ export async function createMarket(location, food, category, paymentMethods, exp
 
 // 포장마차를 삭제합니다.
 export async function deleteMarket(marketIdx) {
-    const reqBody = {
-        market_index: marketIdx
-    };
-
     try {
-        let res = await axios.delete("/api/market", reqBody, { withCredentials: true });
+        let res = await axios.delete("/api/market/" + marketIdx, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In deleteMarket: " + err?.response?.data);
@@ -239,26 +242,26 @@ export async function deleteMarket(marketIdx) {
 
 // 포장마차 정보를 수정합니다.
 // marketIdx: 포장마차 번호 (int)
-// location: 장소 (string)
+// title: 포장마차 제목 (string)
+// location: 장소 (string의 배열)
 // food: 파는 음식들 (string의 배열)
-// category: 포장마차의 카테고리 (string)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
 // images: 이미지 경로 배열 (string의 배열)
 // authority: 0이면 일반 사용자, 1이면 사장님
-// fixed: 0이면 이동형, 1이면 고정형
 // phone: 전화번호 (string)
-export async function editMarket(marketIdx, location, food, category, paymentMethods, explanation, images, authority, fixed, phone) {
+export async function editMarket(marketIdx, title, location, food, paymentMethods, explanation, images, authority, phone) {
     const reqBody = {
         market_index: marketIdx,
+        market_title: title,
         market_location: location,
         market_food: food,
-        market_category: category,
+        market_category: "",
         market_payment_method: paymentMethods,
         market_explanation: explanation,
         market_image: images,
         market_authority: authority,
-        market_fixed: fixed,
+        market_fixed: 0,
         market_phone_number: phone
     };
 
@@ -314,6 +317,7 @@ export async function createComment(contents, score, reviewer, time, target) {
 
     try {
         let res = await axios.post("/api/comment", reqBody, { withCredentials: true });
+        console.log('done')
         return res.data;
     } catch (err) {
         console.error("In createComment: " + err?.response?.data);
@@ -323,12 +327,8 @@ export async function createComment(contents, score, reviewer, time, target) {
 
 // 댓글을 삭제합니다.
 export async function deleteComment(commentId) {
-    const reqBody = {
-        comment_id: commentId
-    };
-
     try {
-        let res = await axios.delete("/api/comment", reqBody, { withCredentials: true });
+        let res = await axios.delete("/api/comment/" + commentId, { withCredentials: true });
         return res.data;
     } catch (err) {
         console.error("In deleteComment: " + err?.response?.data);

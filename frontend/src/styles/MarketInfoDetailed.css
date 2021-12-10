@@ -47,7 +47,6 @@
 
 .review-star {
 	display: flex;
-	overflow: hidden;
 	justify-content: center;
 }
 
@@ -67,9 +66,7 @@
 
 
 .review-star-button {
-	display: flex;
 	background-color: white;
-	flex:0 1 0;
 	border-width: 0;
 }
 
@@ -151,7 +148,7 @@
 	overflow: scroll;
 }
 
-.detailed-review button {
+.comment {
 	border-radius: 10px;
 	border-style: none;
 	width: 70%;
@@ -165,7 +162,6 @@
 
 .detailed-review-ministars {
 	display: flex;
-	flex: 1;
 	justify-content: space-between;
 	font-size: 0.3em;
 	flex-direction: row;
@@ -173,7 +169,7 @@
 
 
 .detailed-review-stars {
-	flex:1;
+	display: flex;
 	margin: 20px;
-	justify-content: space-around;
+	justify-content: center;
 }

@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.24.0",
     "framer-motion": "^4.1.17",
+    "http-proxy-middleware": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "react": "^17.0.2",
     "react-cookie": "^4.1.1",
@@ -49,7 +50,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000/",
   "devDependencies": {
     "install-peers": "^1.0.3"
   }

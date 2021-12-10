@@ -10,16 +10,20 @@ var Market = new Schema({
         required: true,
         unique: true,
     },
-    market_location: {
+    market_title: {
         type: String,
+        default: "포장마차 이름을 입력해주세요"
+    },
+    market_location: {
+        type: [String],
         required: true,
     },
     market_food: {
         type: [String],
+        required: true,
     },
     market_category: {
         type: String,
-        required: true,
     },
     market_payment_method: {
         type: [String],
@@ -38,10 +42,12 @@ var Market = new Schema({
     },
     //{이동형:0, 고정형:1}
     market_fixed: {
-        type: Number,
-        required: true,
+        type: Number
     },
     market_phone_number: {
+        type: String,
+    },
+    market_owner: {
         type: String,
     }
 });
@@ -60,10 +66,11 @@ Market.statics.findMarketByIndex = async function (market_index) {
     return await this.findOne({"market_index": market_index});
 }
 
-Market.statics.create = async function (market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number){
+Market.statics.create = async function (market_title, market_location, market_food, market_category, market_payment_method, market_explanation, market_image, market_authority, market_fixed, market_phone_number, market_owner){
     const market = new this({
         _id: new mongoose.Types.ObjectId(),
         market_index: 0, // save pre hook에서 설정될 예정이므로 dummy 값 저장.
+        market_title: market_title,
         market_location: market_location,
         market_food: market_food,
         market_category: market_category,
@@ -73,6 +80,7 @@ Market.statics.create = async function (market_location, market_food, market_cat
         market_authority: market_authority,
         market_fixed: market_fixed,
         market_phone_number: market_phone_number,
+        market_owner: market_owner,
     });
 
     return market.save()
@@ -89,13 +97,14 @@ Market.statics.delete = async function (market_index) {
     }
 }
 
-Market.statics.edit = async function (market_index, change_location, change_food, change_category, change_payment_method, change_explanation, change_image, change_authority, change_fixed, change_phone_number) {
+Market.statics.edit = async function (market_index, change_title, change_location, change_food, change_category, change_payment_method, change_explanation, change_image, change_authority, change_fixed, change_phone_number) {
     const market = await this.findOne({"market_index": market_index});
 
     if (market) {
         this.findOneAndUpdate({"market_index": market_index}, {
             $set: {
                 market_location: change_location,
+                market_title: change_title,
                 market_food: change_food,
                 market_category: change_category,
                 market_payment_method: change_payment_method,
@@ -103,7 +112,7 @@ Market.statics.edit = async function (market_index, change_location, change_food
                 market_image: change_image,
                 market_authority: change_authority,
                 market_fixed: change_fixed,
-                market_phone_number: change_phone_number,
+                market_phone_number: change_phone_number
             }
         }, {new: true, useFindAndModify: false}, (err, doc) => {
             if(err) {
@@ -116,5 +125,3 @@ Market.statics.edit = async function (market_index, change_location, change_food
 }
 
 module.exports = mongoose.model('markets', Market);
-
-

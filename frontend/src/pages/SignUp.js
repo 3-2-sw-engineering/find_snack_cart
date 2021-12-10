@@ -2,7 +2,7 @@ import { FormGroup, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import '../styles/SignUp.css'
-import { createUser } from '../shared/BackendRequests';
+import { createUser, isIdAvailable } from '../shared/BackendRequests';
 import { signUpTerm } from '../shared/constantLists.js'
 
 function SignUp() {
@@ -32,7 +32,7 @@ function SignUp() {
     });
 
 
-    const checkIdValid = () => {
+    const checkIdValid = async () => {
         const id = signUpData.id;
         var ret = true;
 
@@ -50,7 +50,9 @@ function SignUp() {
             ret = false;
         }
         if (ret) {
-            // id 중복 체크
+            ret = await isIdAvailable(id);
+            if (!ret)
+                guide += "다른 ID를 이용해 주세요."
 
         }
         setCheckData({
@@ -161,11 +163,10 @@ function SignUp() {
             alert("이용약관에 동의해주세요.");
         }
         else {
-            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email)
+            let ret = await createUser(signUpData.id, signUpData.pw, signUpData.nickname, signUpData.email, checkData.isOwner)
                 .then()
                 .catch(
                     e => alert("회원가입할 수 없습니다."));
-            console.log(ret);
             if (ret === undefined) return;
             if (ret.result) {
                 alert("회원가입 성공! 로그인해 주세요.");

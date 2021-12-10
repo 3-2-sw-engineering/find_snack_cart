@@ -4,6 +4,7 @@
     margin: 2.5%;
     width: 95%;
     height: 95%;
+    max-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -181,6 +182,7 @@
     width: 100%;
     resize: none;
     min-height: 2rem;
+    max-height: 20rem;
     border: 1px solid #000000;
     box-sizing: border-box;
     border-radius: 10px 0px 10px 10px;

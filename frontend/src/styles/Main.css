@@ -21,7 +21,9 @@ body {
 
 .main-header-text {
     font-family: "Simplehae" !important;
+
 }
+
 
 .main-split {
     flex-grow: 1;
@@ -38,9 +40,14 @@ body {
     flex-grow: 1;
 }
 
+.search-panel {
+    display: flex;
+    flex-flow: row;
+}
+
 .main-map {
     width: 95%;
     height: 76%;
-    margin-top: 20vh;
+    /* margin-top: 20vh; */
     border-radius: 5%;
 }

@@ -8,7 +8,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import '../styles/Manage.css'
 import { createMarket, deleteMarket, editMarket, getMarketInfo } from '../shared/BackendRequests';
 import { withCookies } from 'react-cookie';
-import { getUserCookie, setUserCookie } from '../shared/cookie';
+import { getUserCookie, refreshUserCookie } from '../shared/cookie';
 import { categories as origCategories, infoPlaceHolder, paymentList } from '../shared/constantLists'
 
 function Manage({ reportManage }) {
@@ -22,6 +22,7 @@ function Manage({ reportManage }) {
     const changeSetLocation = (e) => {
         setsearchText(e.target.value)
     }
+    const [localUser, setLocalUser] = useState({ "id": "", "name": "", "role": 0, "managing": -1 });
 
     const { kakao } = window;
     var geocoder = new kakao.maps.services.Geocoder();
@@ -31,14 +32,11 @@ function Manage({ reportManage }) {
         geocoder.addressSearch(searchText, function (result, status) {
             // 정상적으로 검색이 완료됐으면 
             if (status === kakao.maps.services.Status.OK) {
-                console.log(result)
                 kmap.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));
                 return;
             }
         })
         placecoder.keywordSearch(searchText, function (data, status, pagination) {
-            console.log(searchText);
-            console.log(status);
             if (status === kakao.maps.services.Status.OK) {
                 kmap.setCenter(new kakao.maps.LatLng(data[0].y, data[0].x));
             }
@@ -56,10 +54,7 @@ function Manage({ reportManage }) {
     });
 
     function viewBack() {
-        if (getUserCookie() === undefined) {
-            navigate("login");
-        }
-        navigate('../');
+        navigate('/');
     }
 
     const onInputTextChange = (e) => {
@@ -183,49 +178,53 @@ function Manage({ reportManage }) {
         var pay_arr = paymentList.filter((item, idx) => marketData.payments[idx]);
 
         // register on DB
-        let user = getUserCookie();
-        if (user.managing === undefined || user.managing < 0) {
-            let ret = await createMarket(marketData.locations[0], cate_arr, 'cate',
-                pay_arr, marketData.information, [],
-                reportManage, 0, marketData.phone)
-                .then(() => alert("가게 정보가 저장되었습니다."))
-                .catch(() => alert("error on creating the market"));
+        let user = localUser;
 
-            // add managing cart on userdata
-            let managing = -1;
-            setUserCookie(user.id, user.name, user.role, managing);
-            if (ret === undefined) return;
-
-        } else {
-            editMarket(marketData.locations[0], cate_arr, 'cate',
-                pay_arr, marketData.information, [],
-                reportManage, 0, marketData.phone)
-                .then(() => alert("가게 정보가 저장되었습니다."))
-                .catch(() => alert("error on creating the market"));;
+        try {
+            if (reportManage === 0 || user.managing === null || user.managing < 0) {
+                await createMarket(marketData.name, marketData.locations, cate_arr,
+                    pay_arr, marketData.information, [],
+                    reportManage, marketData.phone)
+                    .then(refreshUserCookie(user.id));
+            } else {
+                await editMarket(user.managing,
+                    marketData.name, marketData.locations, cate_arr,
+                    pay_arr, marketData.information, [],
+                    1, marketData.phone)
+            }
+            alert("가게 정보가 저장되었습니다.");
+            navigate("/");
+        } catch (err) {
+            alert("가게 정보를 저장하지 못했습니다. " + err)
         }
-
     }
 
     const onMarketDelete = () => {
         var ret = window.confirm("가게정보가 삭제됩니다. 계속 하시겠습니까?");
-        if (ret) {// register on DB
-            let user = getUserCookie();
-            if (user.managing.managing >= 0) {
-                deleteMarket(user.managing);
-            }
+        if (ret) {// register on DB 
+            if (localUser.managing >= 0) {
+                deleteMarket(localUser.managing)
+                    .then(() => { refreshUserCookie(localUser.id); alert("가게가 삭제되었습니다.") })
+                    .catch(() => alert("삭제되지 않았습니다."));
+            } else
+                alert("등록된 가게가 없습니다.");
         }
         return;
     }
 
-    const [isFirst, setIsFirst] = useState(true);
-    function FillAuto() {
-        if (!isFirst) return;
-        setIsFirst(false);
-        if (reportManage === 0) return;
-
-        let user = getUserCookie();
-        if (user === undefined) return;
-        if (user.managing < 0) return;
+    async function FillAuto(user) {
+        if (reportManage === 0 || user === undefined || user.managing === null) {
+            setMarketData({
+                name: '',
+                categories: categories.map(c => false),
+                locations: ["서울특별시 동대문구 전농로163"],
+                phone: '',
+                information: '',
+                payments: paymentList.map(p => false),
+                image: ''
+            });
+            return;
+        }
         getMarketInfo(user.managing).then((market) => {
             let food = market.market_food;
             let pay = market.market_payment_method;
@@ -233,10 +232,9 @@ function Manage({ reportManage }) {
             var pay_bool = paymentList.map((item) => pay.includes(item));
 
             setMarketData({
-                ...marketData,
-                // name: market.name,
+                name: market.market_title,
                 categories: cate_bool,
-                locations: [market.market_location],
+                locations: market.market_location,
                 phone: market.market_phone_number,
                 information: market.market_explanation,
                 payments: pay_bool
@@ -247,37 +245,41 @@ function Manage({ reportManage }) {
         );
     }
 
-    function checkAuthority() {
-        let user = getUserCookie();
+    function checkAuthority(user) {
         if (user === undefined) {
             alert("로그인 후 이용해 주세요.");
             viewBack();
+            return false;
         } else if (reportManage === 1 && user.role !== 1) {
             alert("사장님만 이용하실 수 있습니다.");
             viewBack();
+            return false;
         }
+        return true;
     }
 
     useEffect(() => {
-        checkAuthority();
-    }, []);
+        let user = getUserCookie()
+        setLocalUser(user);
+        var ret = checkAuthority(user);
+        if (ret) FillAuto(user);
+    }, [reportManage]);
     const addLocClicked = () => {
         var location = kmap.getCenter();
         geocoder.coord2Address(location.getLng(), location.getLat(), function (result, status) {
             if (status === kakao.maps.services.Status.OK) {
-                console.log(result[0].address.address_name);
+                var new_loc = result[0].address.address_name;
+                if (marketData.locations.includes(new_loc)) return;
                 setMarketData({
                     ...marketData,
-                    locations: marketData.locations.concat(result[0].address.address_name)
+                    locations: marketData.locations.concat(new_loc)
                 });
             }
         })
     }
 
-
     return (
         <div className="report-layout" >
-            {FillAuto()}
 
             <div className="title">{reportManage === 0 ? '제보하기' : '내 가게 관리하기'}</div>
 
@@ -320,6 +322,7 @@ function Manage({ reportManage }) {
                         <Map className="map" center={{
                             lat: 37.58434776307455, lng: 127.05857621599598
                         }} level={7} onCreate={(map) => setkMap(map)}></Map>
+
                     </div>
                     <div className="locations" name='locations' >
                         {marketData.locations.map(loc =>

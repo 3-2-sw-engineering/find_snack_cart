@@ -24,7 +24,6 @@ var User = new Schema({
 		type: String,
 		required: true,
 		trim: true,
-		unique: true,
 	},
 	favorite: {
 		type: [Number],
@@ -39,7 +38,7 @@ var User = new Schema({
 		required: true,
 	},
 	managing: {
-		type: String,
+		type: Number, // market index
 	}
 });
 

@@ -33,11 +33,12 @@ async function CreateComment(req, res) {
 
         const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+		// 로그인 사용자와 댓글 작성자의 reviewer 정보가 다르면 에러 반환.
+        if (current === undefined || current !== comment_reviewer) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
-
+		
         await Comment.create(comment_review, comment_score, comment_reviewer, comment_time, comment_target);
         res.status(201).json({result: true});
     } catch (err) { 
@@ -48,7 +49,7 @@ async function CreateComment(req, res) {
 
 async function DeleteComment(req, res) {
     try {
-        const {comment_id} = req.body;
+        const {comment_id} = req.params;
 
         if (comment_id === undefined) {
             res.status(400).json({error: "comment_id is required. The body was: " + JSON.stringify(req.body)});
@@ -63,7 +64,8 @@ async function DeleteComment(req, res) {
 
         const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+		// 로그인 사용자와 댓글 작성자의 reviewer 정보가 다르면 에러 반환.
+        if (current === undefined || current !== comment.comment_reviewer) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
@@ -107,9 +109,16 @@ async function EditComment(req, res) {
             return;
         }
 
+		const comment = await this.findOne({"comment_id": comment_id});
+		if (comment === null) {
+            res.status(404).json({error: "comment with id ${comment_id} is not found."});
+            return;
+        }
+		
         const current = CookieManager.checkCurrentSession(req, res);
         // 현재 로그인이 되어있는지 확인.
-        if (current === undefined) {
+		// 로그인 사용자와 댓글 작성자의 reviewer 정보가 다르면 에러 반환.
+        if (current === undefined || current !== comment.comment_reviewer) {
             res.status(401).json({ error: "Unauthorized access. Log in with the appropriate account." });
             return;
         }
