@@ -1,0 +1,53 @@
+@font-face {
+    font-family: "Simplehae";
+    src: url("../fonts/Cafe24Simplehae.ttf");
+}
+
+body {
+    margin: 0;
+}
+
+.main-layout {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.45);
+    background-image: url("../images/background.jpeg");
+    background-blend-mode: lighten;
+}
+
+.main-header-text {
+    font-family: "Simplehae" !important;
+
+}
+
+
+.main-split {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    overflow: hidden;
+
+}
+
+.main-split-element {
+    max-width: 50vw;
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.search-panel {
+    display: flex;
+    flex-flow: row;
+}
+
+.main-map {
+    width: 95%;
+    height: 76%;
+    /* margin-top: 20vh; */
+    border-radius: 5%;
+}

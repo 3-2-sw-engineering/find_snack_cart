@@ -24,10 +24,9 @@ var User = new Schema({
 		type: String,
 		required: true,
 		trim: true,
-		unique: true,
 	},
 	favorite: {
-		type: [String],
+		type: [Number],
 	},
 	role: {
 		type: Number,
@@ -39,14 +38,14 @@ var User = new Schema({
 		required: true,
 	},
 	managing: {
-		type: String,
+		type: Number, // market index
 	}
 });
 
 User.statics.create = async function (user_id, user_pw, user_name, user_email, role, managing) {
 	const find_user = await this.findOne({ "user_id": user_id });
 	if (find_user) {
-		throw 'already user exists';
+		throw new Error('already user exists');
 	}
 
 	const salt = await bcrypt.genSalt(10);
@@ -74,18 +73,12 @@ User.statics.delete = async function (user_id) {
 	if (user) {
 		return this.findOneAndDelete({ "user_id": user_id });
 	} else {
-		throw 'not exist user';
+		throw new Error('not exist user');
 	}
 }
 
 User.statics.findUserById = async function (user_id) {
-	const user = await this.findOne({ "user_id": user_id });
-
-	if (user) {
-		return user;
-	} else {
-		throw "not exist user";
-	}
+	return await this.findOne({ "user_id": user_id });
 }
 
 User.statics.changePw = async function (user_id, change_pw) {
@@ -98,7 +91,7 @@ User.statics.changePw = async function (user_id, change_pw) {
 		}
 	}, { new: true, useFindAndModify: false }, (err, doc) => {
 		if (err) {
-			throw "fail change password";
+			throw new Error("fail change password");
 		}
 	})
 }
@@ -117,7 +110,7 @@ User.statics.loginCheck = async function (user_id, user_pw) {
 
 User.statics.addFavor = async function (user_id, market_id) {
 	const user = await this.findOne({ "user_id": user_id });
-	if (user === null) throw "not exist user";
+	if (user === null) throw new Error("not exist user");
 
 	// market_id를 통해 market_id 조회 후 없으면 throw
 	var markets = user.favorite;
@@ -129,14 +122,14 @@ User.statics.addFavor = async function (user_id, market_id) {
 		}
 	}, { new: true, useFindAndModify: false }, (err, doc) => {
 		if (err) {
-			throw "fail add favorite";
+			throw new Error("fail add favorite");
 		}
 	})
 }
 
 User.statics.removeFavor = async function (user_id, market_id) {
 	const user = await this.findOne({ "user_id": user_id });
-	if (user === null) throw "not exist user";
+	if (user === null) throw new Error("not exist user");
 	
 	// market_id를 통해 market_id 조회 후 없으면 throw
 	var markets = user.favorite;
@@ -148,7 +141,7 @@ User.statics.removeFavor = async function (user_id, market_id) {
 		}
 	}, { new: true, useFindAndModify: false }, (err, doc) => {
 		if (err) {
-			throw "fail remove favorite";
+			throw new Error("fail remove favorite");
 		}
 	})
 }
