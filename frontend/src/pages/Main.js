@@ -20,14 +20,15 @@ import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
 import MarketListPanel from "./MarketListPanel"
+import { getAllMarkets } from "../shared/BackendRequests.js";
 
 function Main() {
     const navigate = useNavigate();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
+    const [markets, setMarkets] = useState([]);
     const [isLogin, setLogin] = useState(false);
-    const [detail, setDetail] = useState();
     const [level, setLevel] = useState(4);
     const [user, setUser] = useState();
 
@@ -56,12 +57,6 @@ function Main() {
         })
     }
 
-
-    function isDetail() {
-        console.log(detail);
-        setDetail(!detail);
-    }
-
     function viewLogin() {
         if (!isLogin)
             navigate("/login");
@@ -85,7 +80,12 @@ function Main() {
     function viewManage() {
         navigate("/manage");
     }
+
     useEffect(() => {
+        async function fetchAllMarket() {
+			const information = await getAllMarkets();
+			setMarkets(information);
+		} fetchAllMarket();
         setUser(getUserCookie());
     }, [])
 
@@ -179,9 +179,10 @@ function Main() {
                 <Routes>
                     <Route path='/' element={
                         <React.Fragment><div className="main-split-element">
-                            {detail ? <MarketInfoDetailed
+                            {marketDetailed ? <MarketInfoDetailed
+                                setMarket={setMarket}
                                 marketDetailed={marketDetailed}
-                                user={user} /> : <MarketListPanel />}
+                                user={user} /> : <MarketListPanel setMarket={setMarket}/>}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">
@@ -193,13 +194,11 @@ function Main() {
                                     center={{ lat: 37.55635, lng: 126.795841 }}
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
-
                                     onCreate={(map) => setkMap(map)}>
-                                    <MarketInfoShort
-                                        index={1}
+                                   {markets.map(market =>  <MarketInfoShort
+                                        market={market}
                                         level={level}
-                                        isDetail={isDetail}
-                                        setMarket={setMarket} />
+                                        setMarket={setMarket} />)}
                                 </Map>
                             </div></React.Fragment>} />
                     <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
