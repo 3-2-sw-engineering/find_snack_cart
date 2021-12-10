@@ -87,7 +87,7 @@ function MarketListPanel(props) {
 
             <div className="listpanel-item-container">
                 {markets.map(market =>
-                    <ListItem market={market}></ListItem>
+                    <ListItem market={market} onClick={props.setMarket}></ListItem>
                 )}
             </div>
         </div>

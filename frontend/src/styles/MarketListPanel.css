@@ -1,12 +1,14 @@
 .listpanel-root {
     display: flex;
+    position: absolute;
+    box-sizing: border-box;
     flex-direction: column;
     flex-basis: 0;
-    width: 95%;
-    height: 95%;
-    margin-top: 2.5%;
-    margin-left: 2.5%;
-    border-radius: 3rem;
+    padding: 30px;
+    width: 40vw;
+    height: 83vh;
+	margin: 3% 10% 3% 5%;
+    border-radius: 2rem;
     overflow: hidden;
     background-color: #EDEDED;
     align-items: center;

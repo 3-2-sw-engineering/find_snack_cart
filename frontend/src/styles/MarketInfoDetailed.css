@@ -3,10 +3,10 @@
 	width: 40vw;
 	position: absolute;
 	text-align: center;
-	border-radius: 30px;
+	border-radius: 2rem;
 	background-color: #EDEDED;
 	height: 83vh;
-	margin: 50px 50px 10px 50px;
+	margin: 3% 10% 3% 5%;
 	padding: 30px;
 	box-sizing: border-box;
 	overflow:hidden;
@@ -16,6 +16,14 @@
 .textfield {
 	width: 90%;
 	background-color: #FCFCFC;
+}
+
+
+.detailed-back {
+	position: absolute;
+	right: 8%;
+	top: 4%;
+	z-index: 1;
 }
 
 .review {
@@ -62,12 +70,6 @@
 
 .review-textfield:focus {
 	outline: none;
-}
-
-
-.review-star-button {
-	background-color: white;
-	border-width: 0;
 }
 
 .review-confirm {
@@ -162,6 +164,7 @@
 
 .detailed-review-ministars {
 	display: flex;
+	min-width: 200px;
 	justify-content: space-between;
 	font-size: 0.3em;
 	flex-direction: row;
