@@ -7,6 +7,12 @@
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   } */
   
+  .short-title {
+	  align-self:center;
+	  margin-bottom:3px;
+	  padding:0px;
+  }
+
   /* Add some padding inside the card container */
   .short-contents {
 	margin: 0px;
@@ -15,8 +21,13 @@
 	text-align: left;
   }
 
+  .short-contents p{
+	  margin-top: 0px;
+  }
+
   .short {
 	border-radius: 20px;
+	overflow: hidden;
 	background-color:#F8ECDC;;
 	display: flex;
 	flex-direction: column;
@@ -25,6 +36,7 @@
 	transition: 0.3s;
 	padding:15px
   }
+
   .short-buttons{
 	  flex:1 1 0;
 	  display: flex;

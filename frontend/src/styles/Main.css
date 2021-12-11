@@ -41,13 +41,16 @@ body {
 }
 
 .search-panel {
+    width: 50vw;
+    margin-top: 7vh;
+    margin-bottom: 5vh;
     display: flex;
     flex-flow: row;
 }
 
+
 .main-map {
-    width: 95%;
-    height: 76%;
-    /* margin-top: 20vh; */
-    border-radius: 5%;
+    width: 48vw;
+    height: 70vh;
+    border-radius: 2rem;
 }

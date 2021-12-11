@@ -14,9 +14,12 @@ import Typography from '@mui/material/Typography';
 
 function ReviewList(props) {
 
-	// console.log(props.review.score)
 	const fullStar = Array.from({ length: props.review.comment_score }, (v, i) => i);
 	const lineStar = Array.from({ length: 5 - props.review.comment_score }, (v, i) => i);
+	const datadate = new Date(props.review.comment_time);
+	const date = datadate.getFullYear() + '-' + datadate.getMonth() + '-' + datadate.getDate()
+	
+	
 
 	return (<div>
 		<ListItem alignItems="flex-start">
@@ -28,7 +31,7 @@ function ReviewList(props) {
 					{fullStar.map((index) => <TiStarFullOutline key={index} size='20' color='#93BDF9' />)}
 					{lineStar.map((index) => <TiStarOutline key={index} size='20' color='#93BDF9' />)}
 				</div>
-					<p>{props.review.comment_time}</p>
+					<p>{date}</p>
 				</div>}
 				secondary={
 					<React.Fragment>
