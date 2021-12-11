@@ -24,6 +24,20 @@ function Manage({ reportManage }) {
     }
     const [localUser, setLocalUser] = useState({ "id": "", "name": "", "role": 0, "managing": -1 });
 
+    const [marketData, setMarketData] = useState({
+        name: '',
+        categories: categories.map(c => false),
+        phone: '',
+        information: '',
+        payments: paymentList.map(p => false),
+        image: ''
+    });
+    const [locXy, setLocXy] = useState({
+        addr: [],
+        x: [],
+        y: []
+
+    })
     const { kakao } = window;
     var geocoder = new kakao.maps.services.Geocoder();
     var placecoder = new kakao.maps.services.Places();
@@ -43,15 +57,7 @@ function Manage({ reportManage }) {
         })
     }
 
-    const [marketData, setMarketData] = useState({
-        name: '',
-        categories: categories.map(c => false),
-        locations: ["서울특별시 동대문구 전농로163"],
-        phone: '',
-        information: '',
-        payments: paymentList.map(p => false),
-        image: ''
-    });
+
 
     function viewBack() {
         navigate('/');
@@ -77,10 +83,8 @@ function Manage({ reportManage }) {
 
     )
     const locationDeleted = (loc) => () => {
-        setMarketData({
-            ...marketData,
-            locations: marketData.locations.filter(l => l !== loc)
-        })
+        var new_locs = locXy.addr.filter(l => l !== loc)
+        addr2Xy(new_locs);
 
     }
 
@@ -159,6 +163,42 @@ function Manage({ reportManage }) {
         });
 
     }
+    function addr2Xy(addr_arr) {
+        var xx = []
+        var yy = []
+        const len = addr_arr.length;
+        var callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                xx.push(result[0].x);
+                if (len === yy.push(result[0].y)) {
+                    setLocXy({
+                        addr: addr_arr,
+                        x: xx, y: yy
+                    })
+                }
+            }
+        }
+        addr_arr.map(item => geocoder.addressSearch(item, callback))
+        return { x: xx, y: yy };
+    }
+    function xy2addr(xx, yy) {
+        var locs = []
+        const len = xx.length;
+
+        var callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                if (len === locs.push(result[0].address.address_name)) {
+                    setLocXy({
+                        addr: locs,
+                        x: xx, y: yy
+                    });
+                }
+                console.log(locs.map(item => item));
+            }
+        };
+        xx.map((x, i) => geocoder.coord2Address(x, yy[i], callback));
+        return locs;
+    }
 
     const onMarketRegister = async () => {
         var name = marketData.name.replace(/\s|　/gi, ' ');
@@ -170,7 +210,7 @@ function Manage({ reportManage }) {
             alert("카테고리를 1개 이상 선택해 주세요");
             return;
         }
-        if (marketData.locations.length === 0) {
+        if (locXy.addr.length === 0) {
             alert("가게 위치를 1개 이상 입력해 주세요.");
             return;
         }
@@ -181,14 +221,15 @@ function Manage({ reportManage }) {
         let user = localUser;
 
         try {
+
             if (reportManage === 0 || user.managing === null || user.managing < 0) {
-                await createMarket(marketData.name, marketData.locations, cate_arr,
+                await createMarket(marketData.name, locXy.x, locXy.y, cate_arr,
                     pay_arr, marketData.information, [],
                     reportManage, marketData.phone)
-                    .then(refreshUserCookie(user.id));
+                    .then(() => refreshUserCookie(user.id));
             } else {
                 await editMarket(user.managing,
-                    marketData.name, marketData.locations, cate_arr,
+                    marketData.name, locXy.x, locXy.y, cate_arr,
                     pay_arr, marketData.information, [],
                     1, marketData.phone)
             }
@@ -217,12 +258,16 @@ function Manage({ reportManage }) {
             setMarketData({
                 name: '',
                 categories: categories.map(c => false),
-                locations: ["서울특별시 동대문구 전농로163"],
+
                 phone: '',
                 information: '',
                 payments: paymentList.map(p => false),
                 image: ''
             });
+            setLocXy({
+                addr: [],
+                x: [], y: []
+            })
             return;
         }
         getMarketInfo(user.managing).then((market) => {
@@ -230,14 +275,16 @@ function Manage({ reportManage }) {
             let pay = market.market_payment_method;
             var cate_bool = categories.map((item) => (food.includes(item)));
             var pay_bool = paymentList.map((item) => pay.includes(item));
-
+            xy2addr(market.market_locx, market.market_locy);
             setMarketData({
+                ...marketData,
                 name: market.market_title,
                 categories: cate_bool,
-                locations: market.market_location,
                 phone: market.market_phone_number,
                 information: market.market_explanation,
-                payments: pay_bool
+                payments: pay_bool,
+                x: market.market_locx,
+                y: market.market_locy
                 //image
             });
 
@@ -264,16 +311,15 @@ function Manage({ reportManage }) {
         var ret = checkAuthority(user);
         if (ret) FillAuto(user);
     }, [reportManage]);
+
     const addLocClicked = () => {
         var location = kmap.getCenter();
         geocoder.coord2Address(location.getLng(), location.getLat(), function (result, status) {
             if (status === kakao.maps.services.Status.OK) {
                 var new_loc = result[0].address.address_name;
-                if (marketData.locations.includes(new_loc)) return;
-                setMarketData({
-                    ...marketData,
-                    locations: marketData.locations.concat(new_loc)
-                });
+                if (locXy.addr.includes(new_loc)) return;
+                new_loc = locXy.addr.concat(new_loc);
+                addr2Xy(new_loc);
             }
         })
     }
@@ -325,9 +371,10 @@ function Manage({ reportManage }) {
 
                     </div>
                     <div className="locations" name='locations' >
-                        {marketData.locations.map(loc =>
-                            <div className="chip"><Chip label={loc} color="info" onDelete={locationDeleted(loc)} /></div>
-                        )}
+                        {
+                            locXy.addr.map(loc =>
+                                <div className="chip"><Chip label={loc} color="info" onDelete={locationDeleted(loc)} /></div>
+                            )}
 
                     </div>
 

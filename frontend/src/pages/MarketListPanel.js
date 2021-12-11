@@ -2,22 +2,17 @@ import { useState, useEffect } from 'react';
 import { getAllFavorites, getAllMarkets } from '../shared/BackendRequests';
 import ListItem from "../component/MarketListItem"
 import "../styles/MarketListPanel.css"
-import Favorite from '@mui/icons-material/Favorite';
 import { getUserCookie } from '../shared/cookie';
 import useQueryParams from "../shared/useQuery";
+import { categories, BY_COMMENTS, BY_DISTANCE, BY_FAV, BY_NEWEST, BY_RATING, MENUS } from '../shared/constantLists'
+
 
 function MarketListPanel(props) {
-    const BY_DISTANCE = "거리순";
-    const BY_RATING = "평점순";
-    const BY_COMMENTS = "리뷰순";
-    const BY_NEWEST = "새로운 가게";
-    const BY_FAV = "즐겨찾기";
-    const MENUS = [BY_DISTANCE, BY_RATING, BY_COMMENTS, BY_FAV];
-
     const [allMarkets, setAllMarkets] = useState([]);
     const [favMarkets, setFavMarkets] = useState([]);
     const query = useQueryParams();
-
+    const activeMenu = props.activeMenu;
+    // props.setActivemenu() 
     const COMPARER = {
         BY_DISTANCE: (a, b) => {
             // not implemented
@@ -38,17 +33,20 @@ function MarketListPanel(props) {
     };
 
     const [markets, setMarkets] = useState([]);
-    const [sortBy, setSortBy] = useState(BY_DISTANCE);
-    // const [pressed]
 
-    function onMenuClick(menu) {
+    async function onMenuClick(menu) {
+        props.setActiveMenu(menu);
         let markets;
         if (menu !== BY_FAV) {
             markets = allMarkets;
-
         }
-        else { markets = favMarkets }
-        setMarkets(markets.sort(COMPARER[menu]))
+        else {
+            markets = await getFavMarkets();
+        }
+        if (markets.length > 2) {
+            markets = markets.sort(COMPARER[menu]);
+        }
+        setMarkets(markets)
 
     }
 
@@ -60,7 +58,7 @@ function MarketListPanel(props) {
                 fetched = fetched.filter(market => market.market_food.includes(food));
             }
 
-            fetched.sort(COMPARER[sortBy]);
+            fetched.sort(COMPARER[activeMenu]);
             setAllMarkets(fetched);
             setMarkets(fetched);
         } catch (err) {
@@ -70,8 +68,8 @@ function MarketListPanel(props) {
     async function getFavMarkets() {
         try {
             let user = getUserCookie();
-            if (user === undefined) return;
-            if (user.id === '') return;
+            if (user === undefined) return [];
+            if (user.id === '') return [];
 
             let fav = await getAllFavorites(user.id);
             const food = query.get("food");
@@ -87,15 +85,18 @@ function MarketListPanel(props) {
     useEffect(() => {
         fetchMarkets();
         getFavMarkets();
-    }, [query.get("food")]);
+        if (!MENUS.includes(activeMenu)) props.setActiveMenu(BY_DISTANCE);
+        onMenuClick(activeMenu)
+    }, [query.get("food"), activeMenu]);
 
     return (
         <div className="listpanel-root">
             <div className="listpanel-menubar">
-                {MENUS.map((menu) => (<div className="listpanel-menu"
-                    onClick={() => onMenuClick(menu)}>
-                    <span>{menu}</span>
-                </div>))}
+                {MENUS.map((menu) => (
+                    <div className={menu === activeMenu ? "listpanel-menu-pressed" : "listpanel-menu"}
+                        onClick={() => onMenuClick(menu)}>
+                        <span>{menu}</span>
+                    </div>))}
             </div>
 
             <div className="listpanel-item-container">

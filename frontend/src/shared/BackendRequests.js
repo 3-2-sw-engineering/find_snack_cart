@@ -199,8 +199,8 @@ export async function getMarketInfo(marketIdx) {
 
 // 새로운 포장마차를 등록합니다.
 // title: 포장마차 제목 (string)
-// locx: X 좌표
-// locy: Y 좌표
+// locx: X 좌표 경도 longitude
+// locy: Y 좌표 위도 latitude
 // food: 파는 음식들 (string의 배열)
 // paymentMethods: 지불 방법 (string의 배열)
 // explanation: 포장마차 설명 (string)
@@ -321,7 +321,6 @@ export async function createComment(contents, score, reviewer, time, target) {
 
     try {
         let res = await axios.post("/api/comment", reqBody, { withCredentials: true });
-        console.log('done')
         return res.data;
     } catch (err) {
         console.error("In createComment: " + err?.response?.data);

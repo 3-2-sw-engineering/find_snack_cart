@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, List, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Map } from "react-kakao-maps-sdk";
@@ -13,7 +12,7 @@ import "../styles/Main.css"
 import { getUserCookie, removeUserCookie } from '../shared/cookie';
 import { withCookies } from 'react-cookie';
 import { logout } from '../shared/BackendRequests';
-import { categories } from '../shared/constantLists'
+import { BY_DISTANCE, categories } from '../shared/constantLists'
 import MarketInfoShort from './MarketInfoShort.js';
 import MarketInfoDetailed from './MarketInfoDetailed.js';
 import Login from "./Login"
@@ -71,10 +70,6 @@ function Main() {
         window.location.reload();
     }
 
-    function viewFavorite() {
-        navigate("/favorite");
-    }
-
     function viewReport() {
         navigate("/report");
     }
@@ -83,16 +78,22 @@ function Main() {
         navigate("/manage");
     }
 
+    const [curMenu, setCurMenu] = useState(BY_DISTANCE);
+    function viewCategory(cate) {
+        navigate('/');
+
+    }
+
     useEffect(() => {
         async function fetchAllMarket() {
-			let information = await getAllMarkets();
+            let information = await getAllMarkets();
             const food = query.get("food");
             if (food && food !== "전체") {
                 information = information.filter(market => market.market_food.includes(food));
             }
 
-			setMarkets(information);
-		} fetchAllMarket();
+            setMarkets(information);
+        } fetchAllMarket();
         setUser(getUserCookie());
     }, [query.get("food")])
 
@@ -169,7 +170,7 @@ function Main() {
                         <MenuIcon></MenuIcon>
                     </IconButton>
 
-                    <Typography className="main-header-text" variant="h5" component="div">
+                    <Typography className="main-header-text" variant="h5" component="div" onClick={() => navigate('/')}>
                         {`${headerText} 사장님, 어디 계세요?!`}
                     </Typography>
                 </Toolbar>
@@ -185,7 +186,7 @@ function Main() {
                             {marketDetailed ? <MarketInfoDetailed
                                 setMarket={setMarket}
                                 marketDetailed={marketDetailed}
-                                user={user} /> : <MarketListPanel setMarket={setMarket}/>}
+                                user={user} /> : <MarketListPanel setMarket={setMarket} activeMenu={curMenu} setActiveMenu={setCurMenu} />}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">
@@ -198,7 +199,7 @@ function Main() {
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
                                     onCreate={(map) => setkMap(map)}>
-                                   {markets.map(market =>  <MarketInfoShort
+                                    {markets.map(market => <MarketInfoShort
                                         market={market}
                                         level={level}
                                         setMarket={setMarket} />)}
