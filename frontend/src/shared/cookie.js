@@ -4,7 +4,8 @@ const cookies = new Cookies()
 export async function refreshUserCookie(id) {
     getUserInfo(id)
         .then((loginUser) => {
-            setUserCookie(id, loginUser.user_name, loginUser.role, loginUser.managing)
+            setUserCookie(id, loginUser.user_name, loginUser.role, loginUser.managing);
+            console.log("refresh cookie");
         }
         )
         .catch(() => {
