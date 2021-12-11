@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, List, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Map } from "react-kakao-maps-sdk";
@@ -13,24 +12,27 @@ import "../styles/Main.css"
 import { getUserCookie, removeUserCookie } from '../shared/cookie';
 import { withCookies } from 'react-cookie';
 import { logout } from '../shared/BackendRequests';
-import { categories } from '../shared/constantLists'
+import { BY_DISTANCE, categories } from '../shared/constantLists'
 import MarketInfoShort from './MarketInfoShort.js';
 import MarketInfoDetailed from './MarketInfoDetailed.js';
 import Login from "./Login"
 import SignUp from "./SignUp"
 import Manage from "./Manage"
 import MarketListPanel from "./MarketListPanel"
+import { getAllMarkets } from "../shared/BackendRequests.js";
+import useQueryParams from "../shared/useQuery";
 
 function Main() {
     const navigate = useNavigate();
+    const query = useQueryParams();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
+    const [coordinate, setCoordinate] = useState();
+    const [markets, setMarkets] = useState([]);
     const [isLogin, setLogin] = useState(false);
-    const [detail, setDetail] = useState();
     const [level, setLevel] = useState(4);
     const [user, setUser] = useState();
-
     const [searchText, setsearchText] = useState("");
 
     const changeSetLocation = (e) => {
@@ -55,12 +57,7 @@ function Main() {
             }
         })
     }
-
-
-    function isDetail() {
-        console.log(detail);
-        setDetail(!detail);
-    }
+console.log(user)
 
     function viewLogin() {
         if (!isLogin)
@@ -74,10 +71,6 @@ function Main() {
         window.location.reload();
     }
 
-    function viewFavorite() {
-        navigate("/favorite");
-    }
-
     function viewReport() {
         navigate("/report");
     }
@@ -85,9 +78,25 @@ function Main() {
     function viewManage() {
         navigate("/manage");
     }
+
+    const [curMenu, setCurMenu] = useState(BY_DISTANCE);
+    function viewCategory(cate) {
+        navigate('/');
+
+    }
+
     useEffect(() => {
+        async function fetchAllMarket() {
+            let information = await getAllMarkets();
+            const food = query.get("food");
+            if (food && food !== "전체") {
+                information = information.filter(market => market.market_food.includes(food));
+            }
+
+            setMarkets(information);
+        } fetchAllMarket();
         setUser(getUserCookie());
-    }, [])
+    }, [query.get("food")])
 
     function MyDrawer() {
 
@@ -101,17 +110,13 @@ function Main() {
         return <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} >
             <Box role="presentation">
                 <List>
-                    <ListItem button>
+                    <ListItem button onClick={isLogin ? tryLogout : viewLogin}>
                         <ListItemAvatar>
                             <Avatar>
                                 <LoginIcon></LoginIcon>
                             </Avatar>
                         </ListItemAvatar>
-                        {isLogin ? (
-                            <ListItemText onClick={tryLogout} primary={'로그아웃'}></ListItemText>
-                        ) : (
-                            <ListItemText onClick={viewLogin} primary={'로그인'}></ListItemText>
-                        )}
+                        <ListItemText primary={isLogin ? '로그아웃' : '로그인'}></ListItemText>
                     </ListItem>
 
                     <List subheader={
@@ -120,7 +125,7 @@ function Main() {
                         </ListSubheader>}>
 
                         {categories.map(cate => (
-                            <ListItem button sx={{ pl: 10 }}>
+                            <ListItem button sx={{ pl: 10 }} onClick={() => navigate(`/?food=${cate}`)}>
                                 <ListItemText key={cate} primary={cate}></ListItemText>
                             </ListItem>
                         ))}
@@ -166,7 +171,7 @@ function Main() {
                         <MenuIcon></MenuIcon>
                     </IconButton>
 
-                    <Typography className="main-header-text" variant="h5" component="div">
+                    <Typography className="main-header-text" variant="h5" component="div" onClick={() => navigate('/')}>
                         {`${headerText} 사장님, 어디 계세요?!`}
                     </Typography>
                 </Toolbar>
@@ -179,9 +184,11 @@ function Main() {
                 <Routes>
                     <Route path='/' element={
                         <React.Fragment><div className="main-split-element">
-                            {detail ? <MarketInfoDetailed
+                            {marketDetailed ? <MarketInfoDetailed
+                                setMarket={setMarket}
+                                coordinate={coordinate}
                                 marketDetailed={marketDetailed}
-                                user={user} /> : <MarketListPanel />}
+                                user={user} /> : <MarketListPanel setMarket={setMarket} activeMenu={curMenu} setActiveMenu={setCurMenu} />}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">
@@ -193,13 +200,17 @@ function Main() {
                                     center={{ lat: 37.55635, lng: 126.795841 }}
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
-
                                     onCreate={(map) => setkMap(map)}>
-                                    <MarketInfoShort
-                                        index={1}
+                                    {markets.map(market => {return market.market_locx.map((number,index,source) => {
+                                        return <MarketInfoShort
+                                        market={market}
+                                        setCoordinate={setCoordinate}
+                                        coodinate={
+                                            {lat: market.market_locy[index],
+                                            lng: market.market_locx[index]}
+                                        }
                                         level={level}
-                                        isDetail={isDetail}
-                                        setMarket={setMarket} />
+                                        setMarket={setMarket} />})})}
                                 </Map>
                             </div></React.Fragment>} />
                     <Route path='/login' element={<div className="main-split-element"><Login /></div>} />

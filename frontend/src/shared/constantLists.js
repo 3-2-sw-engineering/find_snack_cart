@@ -3,6 +3,15 @@ export const categories = [
 ];
 
 export const paymentList = ['현금', '카드', '계좌이체', '카카오페이'];
+
+
+export const BY_DISTANCE = "거리순";
+export const BY_RATING = "평점순";
+export const BY_COMMENTS = "리뷰순";
+export const BY_NEWEST = "새로운 가게";
+export const BY_FAV = "즐겨찾기";
+export const MENUS = [BY_DISTANCE, BY_RATING, BY_COMMENTS, BY_FAV];
+
 export const infoPlaceHolder = `가게의 상세 정보를 입력해 주세요.
 가게 운영 시간: 오전 10시~오후 5시
 휴일: 매주 화, 토
