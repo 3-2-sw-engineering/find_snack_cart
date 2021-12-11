@@ -28,11 +28,11 @@ function Main() {
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
+    const [coordinate, setCoordinate] = useState();
     const [markets, setMarkets] = useState([]);
     const [isLogin, setLogin] = useState(false);
     const [level, setLevel] = useState(4);
     const [user, setUser] = useState();
-
     const [searchText, setsearchText] = useState("");
 
     const changeSetLocation = (e) => {
@@ -57,6 +57,7 @@ function Main() {
             }
         })
     }
+console.log(user)
 
     function viewLogin() {
         if (!isLogin)
@@ -185,6 +186,7 @@ function Main() {
                         <React.Fragment><div className="main-split-element">
                             {marketDetailed ? <MarketInfoDetailed
                                 setMarket={setMarket}
+                                coordinate={coordinate}
                                 marketDetailed={marketDetailed}
                                 user={user} /> : <MarketListPanel setMarket={setMarket} activeMenu={curMenu} setActiveMenu={setCurMenu} />}
                         </div>
@@ -199,10 +201,16 @@ function Main() {
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
                                     onCreate={(map) => setkMap(map)}>
-                                    {markets.map(market => <MarketInfoShort
+                                    {markets.map(market => {return market.market_locx.map((number,index,source) => {
+                                        return <MarketInfoShort
                                         market={market}
+                                        setCoordinate={setCoordinate}
+                                        coodinate={
+                                            {lat: market.market_locy[index],
+                                            lng: market.market_locx[index]}
+                                        }
                                         level={level}
-                                        setMarket={setMarket} />)}
+                                        setMarket={setMarket} />})})}
                                 </Map>
                             </div></React.Fragment>} />
                     <Route path='/login' element={<div className="main-split-element"><Login /></div>} />

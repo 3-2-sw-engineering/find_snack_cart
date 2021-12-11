@@ -27,6 +27,7 @@
 
   .short {
 	border-radius: 20px;
+	overflow: hidden;
 	background-color:#F8ECDC;;
 	display: flex;
 	flex-direction: column;
