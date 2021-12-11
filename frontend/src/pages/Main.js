@@ -21,9 +21,11 @@ import SignUp from "./SignUp"
 import Manage from "./Manage"
 import MarketListPanel from "./MarketListPanel"
 import { getAllMarkets } from "../shared/BackendRequests.js";
+import useQueryParams from "../shared/useQuery";
 
 function Main() {
     const navigate = useNavigate();
+    const query = useQueryParams();
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
@@ -83,11 +85,16 @@ function Main() {
 
     useEffect(() => {
         async function fetchAllMarket() {
-			const information = await getAllMarkets();
+			let information = await getAllMarkets();
+            const food = query.get("food");
+            if (food && food !== "전체") {
+                information = information.filter(market => market.market_food.includes(food));
+            }
+
 			setMarkets(information);
 		} fetchAllMarket();
         setUser(getUserCookie());
-    }, [])
+    }, [query.get("food")])
 
     function MyDrawer() {
 
@@ -101,17 +108,13 @@ function Main() {
         return <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} >
             <Box role="presentation">
                 <List>
-                    <ListItem button>
+                    <ListItem button onClick={isLogin ? tryLogout : viewLogin}>
                         <ListItemAvatar>
                             <Avatar>
                                 <LoginIcon></LoginIcon>
                             </Avatar>
                         </ListItemAvatar>
-                        {isLogin ? (
-                            <ListItemText onClick={tryLogout} primary={'로그아웃'}></ListItemText>
-                        ) : (
-                            <ListItemText onClick={viewLogin} primary={'로그인'}></ListItemText>
-                        )}
+                        <ListItemText primary={isLogin ? '로그아웃' : '로그인'}></ListItemText>
                     </ListItem>
 
                     <List subheader={
@@ -120,7 +123,7 @@ function Main() {
                         </ListSubheader>}>
 
                         {categories.map(cate => (
-                            <ListItem button sx={{ pl: 10 }}>
+                            <ListItem button sx={{ pl: 10 }} onClick={() => navigate(`/?food=${cate}`)}>
                                 <ListItemText key={cate} primary={cate}></ListItemText>
                             </ListItem>
                         ))}
