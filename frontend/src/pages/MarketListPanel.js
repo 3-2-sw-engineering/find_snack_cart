@@ -4,6 +4,7 @@ import ListItem from "../component/MarketListItem"
 import "../styles/MarketListPanel.css"
 import Favorite from '@mui/icons-material/Favorite';
 import { getUserCookie } from '../shared/cookie';
+import useQueryParams from "../shared/useQuery";
 
 function MarketListPanel(props) {
     const BY_DISTANCE = "거리순";
@@ -12,8 +13,11 @@ function MarketListPanel(props) {
     const BY_NEWEST = "새로운 가게";
     const BY_FAV = "즐겨찾기";
     const MENUS = [BY_DISTANCE, BY_RATING, BY_COMMENTS, BY_FAV];
+
     const [allMarkets, setAllMarkets] = useState([]);
     const [favMarkets, setFavMarkets] = useState([]);
+    const query = useQueryParams();
+
     const COMPARER = {
         BY_DISTANCE: (a, b) => {
             // not implemented
@@ -50,7 +54,12 @@ function MarketListPanel(props) {
 
     async function fetchMarkets() {
         try {
-            const fetched = await getAllMarkets();
+            let fetched = await getAllMarkets();
+            const food = query.get("food");
+            if (food && food !== "전체") {
+                fetched = fetched.filter(market => market.market_food.includes(food));
+            }
+
             fetched.sort(COMPARER[sortBy]);
             setAllMarkets(fetched);
             setMarkets(fetched);
@@ -65,6 +74,10 @@ function MarketListPanel(props) {
             if (user.id === '') return;
 
             let fav = await getAllFavorites(user.id);
+            const food = query.get("food");
+            if (food && food !== "전체") {
+                fav = fav.filter(market => market.market_food.includes(food));
+            }
             setFavMarkets(fav)
         } catch (err) {
             alert("즐겨찾기한 포장마차목록을 가져오는데 실팼습니다.")
@@ -74,7 +87,7 @@ function MarketListPanel(props) {
     useEffect(() => {
         fetchMarkets();
         getFavMarkets();
-    }, []);
+    }, [query.get("food")]);
 
     return (
         <div className="listpanel-root">
