@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { ListItem, ListSubheader, AppBar, Drawer, Toolbar, Typography, IconButton, List, ListItemText, Avatar, ListItemAvatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Map } from "react-kakao-maps-sdk";
@@ -13,7 +12,7 @@ import "../styles/Main.css"
 import { getUserCookie, removeUserCookie } from '../shared/cookie';
 import { withCookies } from 'react-cookie';
 import { logout } from '../shared/BackendRequests';
-import { categories } from '../shared/constantLists'
+import { BY_DISTANCE, categories } from '../shared/constantLists'
 import MarketInfoShort from './MarketInfoShort.js';
 import MarketInfoDetailed from './MarketInfoDetailed.js';
 import Login from "./Login"
@@ -69,16 +68,18 @@ function Main() {
         window.location.reload();
     }
 
-    function viewFavorite() {
-        navigate("/favorite");
-    }
-
     function viewReport() {
         navigate("/report");
     }
 
     function viewManage() {
         navigate("/manage");
+    }
+
+    const [curMenu, setCurMenu] = useState(BY_DISTANCE);
+    function viewCategory(cate) {
+        navigate('/');
+
     }
 
     useEffect(() => {
@@ -121,7 +122,7 @@ function Main() {
 
                         {categories.map(cate => (
                             <ListItem button sx={{ pl: 10 }}>
-                                <ListItemText key={cate} primary={cate}></ListItemText>
+                                <ListItemText key={cate} primary={cate} ></ListItemText>
                             </ListItem>
                         ))}
                     </List>
@@ -182,7 +183,7 @@ function Main() {
                             {marketDetailed ? <MarketInfoDetailed
                                 setMarket={setMarket}
                                 marketDetailed={marketDetailed}
-                                user={user} /> : <MarketListPanel setMarket={setMarket} />}
+                                user={user} /> : <MarketListPanel setMarket={setMarket} activeMenu={curMenu} setActiveMenu={setCurMenu} />}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">

@@ -3,14 +3,11 @@ import { getAllFavorites, getAllMarkets } from '../shared/BackendRequests';
 import ListItem from "../component/MarketListItem"
 import "../styles/MarketListPanel.css"
 import { getUserCookie } from '../shared/cookie';
+import { categories, BY_COMMENTS, BY_DISTANCE, BY_FAV, BY_NEWEST, BY_RATING, MENUS } from '../shared/constantLists'
 
 function MarketListPanel(props) {
-    const BY_DISTANCE = "거리순";
-    const BY_RATING = "평점순";
-    const BY_COMMENTS = "리뷰순";
-    const BY_NEWEST = "새로운 가게";
-    const BY_FAV = "즐겨찾기";
-    const MENUS = [BY_DISTANCE, BY_RATING, BY_COMMENTS, BY_FAV];
+    const activeMenu = props.activeMenu;
+    // props.setActivemenu()
     const [allMarkets, setAllMarkets] = useState([]);
     const COMPARER = {
         BY_DISTANCE: (a, b) => {
@@ -32,10 +29,9 @@ function MarketListPanel(props) {
     };
 
     const [markets, setMarkets] = useState([]);
-    const [sortBy, setSortBy] = useState(BY_DISTANCE);
 
     async function onMenuClick(menu) {
-        setSortBy(menu);
+        props.setActiveMenu(menu);
         let markets;
         if (menu !== BY_FAV) {
             markets = allMarkets;
@@ -52,10 +48,9 @@ function MarketListPanel(props) {
 
     async function fetchMarkets() {
         try {
-            const fetched = await getAllMarkets();
-            fetched.sort(COMPARER[sortBy]);
-            if (markets.length === 0)
-                setAllMarkets(fetched);
+            let fetched = await getAllMarkets();
+            fetched.sort(COMPARER[activeMenu]);
+            setAllMarkets(fetched);
             setMarkets(fetched);
         } catch (err) {
             alert("포장마차 목록을 가져오는데 실패하였습니다. " + err);
@@ -76,13 +71,15 @@ function MarketListPanel(props) {
 
     useEffect(() => {
         fetchMarkets();
-    }, []);
+        if (!MENUS.includes(activeMenu)) props.setActiveMenu(BY_DISTANCE);
+        onMenuClick(activeMenu)
+    }, [activeMenu]);
 
     return (
         <div className="listpanel-root">
             <div className="listpanel-menubar">
                 {MENUS.map((menu) => (
-                    <div className="listpanel-menu"
+                    <div className={menu === activeMenu ? "listpanel-menu-pressed" : "listpanel-menu"}
                         onClick={() => onMenuClick(menu)}>
                         <span>{menu}</span>
                     </div>))}

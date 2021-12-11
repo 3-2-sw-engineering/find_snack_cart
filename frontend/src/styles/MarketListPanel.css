@@ -44,6 +44,25 @@
     transition: background-color 0.5s;
 }
 
+.listpanel-menu-pressed {
+    font-family: "Gosanja";
+    width: 20%;
+    min-width: 4rem;
+    min-height: 2.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    justify-content: center;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+
+    padding-bottom: 10px;
+    background-color: #b9c8dd;
+    border-radius: 2rem 2rem 0 0;
+    transition: background-color 0.5s;
+}
+
 .listpanel-menu:hover {
     background-color: #cfdff5;
 
