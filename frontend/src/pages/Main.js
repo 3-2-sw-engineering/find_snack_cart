@@ -57,7 +57,7 @@ function Main() {
             }
         })
     }
-console.log(coordinate)
+console.log(user)
 
     function viewLogin() {
         if (!isLogin)

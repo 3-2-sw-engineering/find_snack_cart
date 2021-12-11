@@ -8,7 +8,7 @@ import { TiStarFullOutline, TiStarOutline, TiHeart, TiHeartOutline } from 'react
 import { BiNavigation } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai"
 import { motion, useCycle } from 'framer-motion/dist/es/index'
-import { createComment, getCommentsByMarketIdx, addFavorite, removeFavorite } from "../shared/BackendRequests.js";
+import { createComment, getCommentsByMarketIdx, addFavorite, removeFavorite, getAllFavorites } from "../shared/BackendRequests.js";
 import List from '@mui/material/List';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle'
@@ -37,14 +37,18 @@ function MarketInfoDetailed(props) {
 		{ y: "-26%" }
 	)
 
+
 	useEffect(() => {
 		async function fetchAllMarket() {
 			const information = await getCommentsByMarketIdx(props.marketDetailed.market_index);
+			if(props.user){
+				console.log(props.user)
+				const data = await getAllFavorites(props.user.id);
+				data.map((market) => {if(market&&(market.market_index === props.marketDetailed.market_index)) setFavorite(1);});
+			}
 			setReviewList(information);
 		} fetchAllMarket();
 	}, []);
-
-	console.log(props.coordinate)
 
 	const fullStar = Array.from({ length: props.market_score }, (v, i) => i);
 	const lineStar = Array.from({ length: 5 - props.market_score }, (v, i) => i);
@@ -115,7 +119,7 @@ function MarketInfoDetailed(props) {
 						onClick={(e) => { stop(e); window.open(url, '_blank'); }}
 						whileTap={{ y: 3 }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 					<motion.button
-						onClick={(e) => { stop(e); if (props.user.id) { setFavorite(!favorite); favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : addFavorite(props.user.id, props.marketDetailed.market_index) } }}
+						onClick={(e) => { stop(e); if(props.user){(!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
 						whileTap={{ y: 3 }}><div>{favorite ? <TiHeart size='20' color='#93BDF9' /> : <TiHeartOutline size='20' color='#93BDF9' />}</div>즐겨찾기</motion.button>
 					<motion.button
 						onClick={(e) => { stop(e); setShare(true); handleCopyClipBoard(url); }}
