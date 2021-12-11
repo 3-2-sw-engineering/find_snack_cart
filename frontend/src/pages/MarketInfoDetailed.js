@@ -44,9 +44,11 @@ function MarketInfoDetailed(props) {
 		} fetchAllMarket();
 	}, []);
 
+	console.log(props.coordinate)
+
 	const fullStar = Array.from({ length: props.market_score }, (v, i) => i);
 	const lineStar = Array.from({ length: 5 - props.market_score }, (v, i) => i);
-	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coodinate.lat + ',' + props.coodinate.lng;
+	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coordinate.lat + ',' + props.coordinate.lng;
 
 	function writeReview() {
 		if (isOpen2.y === "-0%")
@@ -189,7 +191,7 @@ function MarketInfoDetailed(props) {
 MarketInfoDetailed.defaultProps = {
 	market_score: 4
 	,
-	coodinate: { lat: 37.55635, lng: 126.795841 }
+	coordinate: { lat: 37.55635, lng: 126.795841 }
 }
 
 export default MarketInfoDetailed;
