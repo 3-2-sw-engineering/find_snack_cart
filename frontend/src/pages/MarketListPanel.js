@@ -73,10 +73,11 @@ function MarketListPanel(props) {
 
             let fav = await getAllFavorites(user.id);
             const food = query.get("food");
-            if (food && food !== "전체") {
-                fav = fav.filter(market => market.market_food.includes(food));
-            }
+            // if (food && food !== "전체") {
+            //     fav = fav.filter(market => market.market_food.includes(food));
+            // }
             setFavMarkets(fav)
+            return fav;
         } catch (err) {
             alert("즐겨찾기한 포장마차목록을 가져오는데 실팼습니다.")
         }
