@@ -13,28 +13,26 @@ function MarketListPanel(props) {
     const query = useQueryParams();
     const activeMenu = props.activeMenu;
     // props.setActivemenu() 
+
     const COMPARER = {
-        BY_DISTANCE: (a, b) => {
+        "거리순": (a, b) =>
             // not implemented
-            return a.market_index < b.market_index;
-        },
-        BY_RATING: (a, b) => {
-            return a.market_rating > b.market_rating;
-        },
-        BY_COMMENTS: (a, b) => {
-            return a.market_comments_count > b.market_comments_count;
-        },
-        BY_NEWEST: (a, b) => {
-            return a.market_index > b.market_index;
-        },
-        BY_FAV: (a, b) => { // actually equals to BY_NEWEST
-            return a.market_index > b.market_index;
-        }
+            (a.market_index < b.market_index)
+        ,
+        "평점순": (a, b) => (-a.market_rating + b.market_rating)
+        ,
+        "리뷰순": (a, b) => (-a.market_comments_count + b.market_comments_count)
+        ,
+        "최신순": (a, b) => (a.market_index > b.market_index)
+        ,
+        "즐겨찾기": (a, b) => (-a.market_index + b.market_index)
+
     };
 
     const [markets, setMarkets] = useState([]);
 
     async function onMenuClick(menu) {
+        console.log(menu);
         props.setActiveMenu(menu);
         let markets;
         if (menu !== BY_FAV) {
@@ -43,9 +41,10 @@ function MarketListPanel(props) {
         else {
             markets = await getFavMarkets();
         }
-        if (markets.length > 2) {
-            markets = markets.sort(COMPARER[menu]);
-        }
+        console.log(markets);
+        markets = markets.sort(COMPARER[menu]);
+        console.log(markets);
+
         setMarkets(markets)
     }
 
@@ -56,10 +55,22 @@ function MarketListPanel(props) {
             if (food && food !== "전체") {
                 fetched = fetched.filter(market => market.market_food.includes(food));
             }
-
-            fetched.sort(COMPARER[activeMenu]);
             setAllMarkets(fetched);
-            setMarkets(fetched);
+
+            let actMenu = activeMenu
+            if (!MENUS.includes(activeMenu)) { props.setActiveMenu(BY_DISTANCE); actMenu = BY_DISTANCE }
+
+            let markets;
+            if (actMenu !== BY_FAV) {
+                markets = fetched;
+            }
+            else {
+                markets = await getFavMarkets();
+            }
+            if (markets.length > 2) {
+                markets = markets.sort(COMPARER[actMenu]);
+            }
+            setMarkets(markets)
         } catch (err) {
             alert("포장마차 목록을 가져오는데 실패하였습니다. " + err);
         }
@@ -71,10 +82,6 @@ function MarketListPanel(props) {
             if (user.id === '') return [];
 
             let fav = await getAllFavorites(user.id);
-            const food = query.get("food");
-            // if (food && food !== "전체") {
-            //     fav = fav.filter(market => market.market_food.includes(food));
-            // }
             setFavMarkets(fav)
             return fav;
         } catch (err) {
@@ -84,9 +91,6 @@ function MarketListPanel(props) {
 
     useEffect(() => {
         fetchMarkets();
-        getFavMarkets();
-        if (!MENUS.includes(activeMenu)) props.setActiveMenu(BY_DISTANCE);
-        onMenuClick(activeMenu)
     }, [query.get("food"), activeMenu]);
 
     return (
