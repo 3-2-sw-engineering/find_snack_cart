@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const Market = require('../models/marketModel');
 const CookieManager = require('../shared/cookieManager');
+const getDynamicInfo = require("../shared/marketDynamicInfo");
 
 async function CreateUser(req, res) {
 	try {
@@ -131,7 +132,8 @@ async function GetAllFavorites(req, res) {
 
 		const user = await User.findUserById(user_id);
 		const promises = user.favorite.map((mIdx) => Market.findMarketByIndex(mIdx));
-		res.status(201).json({ favorites: (await Promise.all(promises)) });
+		const results = (await Promise.all(promises)).map((market) => getDynamicInfo(market));
+		res.status(201).json({ favorites: (await Promise.all(results)) });
 	} catch (err) {
 		res.status(500).json({ error: err })
 	}
