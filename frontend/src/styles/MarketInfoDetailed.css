@@ -22,7 +22,7 @@
 .detailed-back {
 	position: absolute;
 	right: 8%;
-	top: 4%;
+	top: 2%;
 	z-index: 1;
 }
 
@@ -111,8 +111,13 @@
 	display: none;
 }
 
-.detailed-contents p {
-	padding: 20px;
+
+.detailed-contents-title {
+	margin: 25px;
+}
+
+.detailed-contents-text {
+	padding: 0px 20px 10px 20px;
 }
 
 .detailed-contents p:last-child {

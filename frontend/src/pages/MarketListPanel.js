@@ -47,7 +47,6 @@ function MarketListPanel(props) {
             markets = markets.sort(COMPARER[menu]);
         }
         setMarkets(markets)
-
     }
 
     async function fetchMarkets() {
@@ -102,7 +101,15 @@ function MarketListPanel(props) {
 
             <div className="listpanel-item-container">
                 {markets.map(market =>
-                    <ListItem market={market} onClick={props.setMarket}></ListItem>
+                    <ListItem
+                        market={market}
+                        onClick={() => {
+                            props.setMarket(market);
+                            props.setCoordinate({
+                                lat: market.market_locy[0],
+                                lng: market.market_locx[0]
+                            })
+                        }}></ListItem>
                 )}
             </div>
         </div>
