@@ -19,7 +19,7 @@ function MarketInfoDetailed(props) {
 	const [isReview, setReview] = useState(false);
 	const [phoneNumber, setPhoneNumber] = useState();
 	const [share, setShare] = useState();
-	const [favorite, setFavorite] = useState();
+	const [favorite, setFavorite] = useState(0);
 	const [TextFullStar, setTextFullStar] = useState([0, 1, 2, 3, 4]);
 	const [TextLineStar, setTextLineStar] = useState([]);
 	const [starScore, setStarScore] = useState(5);
@@ -41,16 +41,16 @@ function MarketInfoDetailed(props) {
 	useEffect(() => {
 		async function fetchAllMarket() {
 			const information = await getCommentsByMarketIdx(props.marketDetailed.market_index);
-			if(props.user){
+			if (props.user) {
 				console.log(props.user)
 				const data = await getAllFavorites(props.user.id);
-				data.map((market) => {if(market&&(market.market_index === props.marketDetailed.market_index)) setFavorite(1);});
+				data.map((market) => { if (market && (market.market_index === props.marketDetailed.market_index)) setFavorite(1); });
 			}
 			setReviewList(information);
 		} fetchAllMarket();
 	}, []);
-	const fullStar = Array.from({ length: props.market_score }, (v, i) => i);
-	const lineStar = Array.from({ length: 5 - props.market_score }, (v, i) => i);
+	const fullStar = Array.from({ length: props.marketDetailed.market_rating }, (v, i) => i);
+	const lineStar = Array.from({ length: 5 - props.marketDetailed.market_rating }, (v, i) => i);
 	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coordinate.lat + ',' + props.coordinate.lng;
 
 	function writeReview() {
@@ -105,7 +105,7 @@ function MarketInfoDetailed(props) {
 				onClick={onTap2}
 			>
 				<AiOutlineClose className='detailed-back' size='20' onClick={() => props.setMarket(undefined)}></AiOutlineClose>
-				<p>
+				<p className='detailed-contents-title'>
 					{props.marketDetailed.market_title}
 				</p>
 				<motion.div className='detailed-buttons'
@@ -118,14 +118,14 @@ function MarketInfoDetailed(props) {
 						onClick={(e) => { stop(e); window.open(url, '_blank'); }}
 						whileTap={{ y: 3 }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 					<motion.button
-						onClick={(e) => { stop(e); if(props.user){(!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
+						onClick={(e) => { stop(e); if (props.user) { (!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
 						whileTap={{ y: 3 }}><div>{favorite ? <TiHeart size='20' color='#93BDF9' /> : <TiHeartOutline size='20' color='#93BDF9' />}</div>즐겨찾기</motion.button>
 					<motion.button
 						onClick={(e) => { stop(e); setShare(true); handleCopyClipBoard(url); }}
 						whileTap={{ y: 3 }}><div><BsShare size='20' color='#93BDF9' /></div>공유하기</motion.button>
 				</motion.div>
-				<p>
-					{props.marketDetailed.market_explanation} <br /> 카테고리: {props.marketDetailed.market_category}<br /> 평점: {props.market_score} <br /> 영업시간: 10:00 ~ 20:00 <br /> 결제방법: {props.marketDetailed.market_payment_method.join('/')}
+				<p className='detailed-contents-text'>
+					{props.marketDetailed.market_explanation} <br /> 카테고리: {props.marketDetailed.market_food.join('/')}<br /> 평점: {props.marketDetailed.market_rating} <br /> 결제방법: {props.marketDetailed.market_payment_method.join('/')}
 				</p>
 			</motion.div>
 			<motion.div className="detailed-review"
@@ -166,7 +166,7 @@ function MarketInfoDetailed(props) {
 						const now = new Date();
 						stop(e);
 						writeReview();
-						if (TextInput && props.user.id) createComment(TextInput, starScore, props.user.id, now, props.marketDetailed.market_index)
+						if (TextInput && props.user) createComment(TextInput, starScore, props.user.id, now, props.marketDetailed.market_index)
 						handleReviewComplete();
 					}
 					}
@@ -192,8 +192,6 @@ function MarketInfoDetailed(props) {
 }
 
 MarketInfoDetailed.defaultProps = {
-	market_score: 4
-	,
 	coordinate: { lat: 37.55635, lng: 126.795841 }
 }
 

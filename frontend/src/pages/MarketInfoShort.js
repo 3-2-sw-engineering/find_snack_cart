@@ -16,8 +16,8 @@ function MarketInfoShort(props) {
 	const [share, setShare] = useState();
 	const down = 5;
 
-	let divWidth = String((11 - props.level) * 60) + 'px';
-	let divHeight = String((11 - props.level) * 50) + 'px';
+	let divWidth = String((9 - props.level) * 60) + 'px';
+	let divHeight = String((9 - props.level) * 50) + 'px';
 	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coodinate.lat + ',' + props.coodinate.lng;
 
 	async function handleCopyClipBoard(text) {
@@ -36,12 +36,12 @@ function MarketInfoShort(props) {
 				}}>
 				<img className='short-image' src={imgA} alt="Avatar" />
 				<p className='short-title'>{props.market.market_title}</p>
-				{props.level < 8 ? (<div className="short-contents">
+				{props.level < 6 ? (<div className="short-contents">
 					<p>
-					{props.market.market_explanation}<br/> 카테고리: {props.market.market_category} 영업시간: 10:00 ~ 20:00 <br /> 결제방법: {props.market.market_payment_method.join('/')}
+					{props.market.market_explanation}<br/> 카테고리: {props.market.market_food.join('/')}<br /> 결제방법: {props.market.market_payment_method.join('/')}
 					</p>
 				</div>) : (<div></div>)}
-				{props.level < 6 ? (<div className="short-buttons">
+				{props.level < 4 ? (<div className="short-buttons">
 					<motion.button
 						onClick={(e) => { onPhoneNumber(true) }}
 						whileTap={{ y: down }}>

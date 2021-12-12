@@ -28,7 +28,7 @@ function Main() {
     const [headerText, setHeaderText] = useState("군것질");
     const [menuOpen, setMenuOpen] = useState(false);
     const [marketDetailed, setMarket] = useState();
-    const [coordinate, setCoordinate] = useState();
+    const [coordinate, setCoordinate] = useState({ lat: 37.58376, lng: 127.05865 });
     const [markets, setMarkets] = useState([]);
     const [isLogin, setLogin] = useState(false);
     const [level, setLevel] = useState(4);
@@ -39,7 +39,6 @@ function Main() {
         setsearchText(e.target.value)
     }
     const [kmap, setkMap] = useState(null);
-
     const { kakao } = window;
     var geocoder = new kakao.maps.services.Geocoder();
     var placecoder = new kakao.maps.services.Places();
@@ -57,7 +56,6 @@ function Main() {
             }
         })
     }
-console.log(user)
 
     function viewLogin() {
         if (!isLogin)
@@ -188,7 +186,12 @@ console.log(user)
                                 setMarket={setMarket}
                                 coordinate={coordinate}
                                 marketDetailed={marketDetailed}
-                                user={user} /> : <MarketListPanel setMarket={setMarket} activeMenu={curMenu} setActiveMenu={setCurMenu} />}
+                                user={user} /> :
+                                <MarketListPanel
+                                    setMarket={setMarket}
+                                    setCoordinate={setCoordinate}
+                                    activeMenu={curMenu}
+                                    setActiveMenu={setCurMenu} />}
                         </div>
                             <div className="main-split-element">
                                 <div className="search-panel">
@@ -197,20 +200,25 @@ console.log(user)
                                     <div className="loc-button" onClick={searchLocation}> 검색</div>
                                 </div>
                                 <Map className='main-map'
-                                    center={{ lat: 37.55635, lng: 126.795841 }}
+                                    center={{ lat: coordinate.lat, lng: coordinate.lng }}
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
                                     onCreate={(map) => setkMap(map)}>
-                                    {markets.map(market => {return market.market_locx.map((number,index,source) => {
-                                        return <MarketInfoShort
-                                        market={market}
-                                        setCoordinate={setCoordinate}
-                                        coodinate={
-                                            {lat: market.market_locy[index],
-                                            lng: market.market_locx[index]}
-                                        }
-                                        level={level}
-                                        setMarket={setMarket} />})})}
+                                    {markets.map(market => {
+                                        return market.market_locx.map((number, index, source) => {
+                                            return <MarketInfoShort
+                                                market={market}
+                                                setCoordinate={setCoordinate}
+                                                coodinate={
+                                                    {
+                                                        lat: market.market_locy[index],
+                                                        lng: market.market_locx[index]
+                                                    }
+                                                }
+                                                level={level}
+                                                setMarket={setMarket} />
+                                        })
+                                    })}
                                 </Map>
                             </div></React.Fragment>} />
                     <Route path='/login' element={<div className="main-split-element"><Login /></div>} />
