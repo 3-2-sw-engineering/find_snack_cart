@@ -94,10 +94,10 @@ function MarketInfoDetailed(props) {
 		setTextLen(0);
 		TextStarSelect(5);
 	}
-
+console.log(props.image)
 	return (
 		<div className="detailed">
-			<motion.img className='detailed-image' src={imgA} alt="Avatar"
+			<motion.img className='detailed-image' src={props.image} alt="Avatar"
 				whileTap={{ y: 10 }}
 			/>
 			<motion.div class="detailed-contents"

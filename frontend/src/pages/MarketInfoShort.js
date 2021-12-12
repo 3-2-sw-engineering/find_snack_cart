@@ -34,7 +34,7 @@ function MarketInfoShort(props) {
 					width: divWidth,
 					height: divHeight
 				}}>
-				<img className='short-image' src={imgA} alt="Avatar" />
+				<img className='short-image' src={props.image} alt="Avatar" />
 				<p className='short-title'>{props.market.market_title}</p>
 				{props.level < 6 ? (<div className="short-contents">
 					<p>
@@ -48,7 +48,13 @@ function MarketInfoShort(props) {
 						<div><BsTelephone size='20' color='#93BDF9' /></div>전화번호</motion.button>
 					<motion.button onClick={() => window.open(url, '_blank')} whileTap={{ y: down }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 					<motion.button onClick={(e) => { setShare(true); handleCopyClipBoard(url); }} whileTap={{ y: down }}><div><BsShare size='20' color='#93BDF9' /></div>공유하기</motion.button>
-					<motion.button onClick={() => { props.setMarket(props.market); props.setCoordinate(props.coodinate);}} whileTap={{ y: down }}><div><CgArrowsExpandUpLeft size='20' color='#93BDF9' /></div>자세히</motion.button>
+					<motion.button onClick={() => {
+						props.setMarket(props.market);
+						props.setCoordinate(props.coodinate);
+						props.setImageMarket(props.index)}}
+						whileTap={{ y: down }}
+						>
+						<div><CgArrowsExpandUpLeft size='20' color='#93BDF9' /></div>자세히</motion.button>
 				</div>) : <div></div>}
 				<Dialog onClose={() => { onPhoneNumber(false); }} open={phoneNumber}>
 					<DialogTitle onClose={() => { onPhoneNumber(false); }}>전화번호</DialogTitle>

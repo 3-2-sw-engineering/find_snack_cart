@@ -104,10 +104,12 @@ function MarketListPanel(props) {
             </div>
 
             <div className="listpanel-item-container">
-                {markets.map(market =>
+                {markets.map((market,index) =>
                     <ListItem
                         market={market}
+                        image={props.image[index % 7]}
                         onClick={() => {
+                            props.setImageMarket(index)
                             props.setMarket(market);
                             props.setCoordinate({
                                 lat: market.market_locy[0],
