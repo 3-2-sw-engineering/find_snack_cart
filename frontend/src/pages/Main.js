@@ -39,7 +39,6 @@ function Main() {
         setsearchText(e.target.value)
     }
     const [kmap, setkMap] = useState(null);
-    console.log(coordinate)
     const { kakao } = window;
     var geocoder = new kakao.maps.services.Geocoder();
     var placecoder = new kakao.maps.services.Places();

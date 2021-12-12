@@ -125,7 +125,7 @@ function MarketInfoDetailed(props) {
 						whileTap={{ y: 3 }}><div><BsShare size='20' color='#93BDF9' /></div>공유하기</motion.button>
 				</motion.div>
 				<p className='detailed-contents-text'>
-					{props.marketDetailed.market_explanation} <br /> 카테고리: {props.marketDetailed.market_category}<br /> 평점: {props.marketDetailed.market_rating} <br /> 영업시간: 10:00 ~ 20:00 <br /> 결제방법: {props.marketDetailed.market_payment_method.join('/')}
+					{props.marketDetailed.market_explanation} <br /> 카테고리: {props.marketDetailed.market_food.join('/')}<br /> 평점: {props.marketDetailed.market_rating} <br /> 결제방법: {props.marketDetailed.market_payment_method.join('/')}
 				</p>
 			</motion.div>
 			<motion.div className="detailed-review"
