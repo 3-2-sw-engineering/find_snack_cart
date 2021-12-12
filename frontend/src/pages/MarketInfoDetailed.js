@@ -37,18 +37,21 @@ function MarketInfoDetailed(props) {
 		{ y: "-26%" }
 	)
 
+
 	useEffect(() => {
 		async function fetchAllMarket() {
 			const information = await getCommentsByMarketIdx(props.marketDetailed.market_index);
-			const data = await getAllFavorites(props.user.id);
-			console.log(data);
-			data.map((market) => {if(market.market_index === props.marketDetailed.market_index) setFavorite(1);});
+			if(props.user){
+				console.log(props.user)
+				const data = await getAllFavorites(props.user.id);
+				data.map((market) => {if(market&&(market.market_index === props.marketDetailed.market_index)) setFavorite(1);});
+			}
 			setReviewList(information);
 		} fetchAllMarket();
 	}, []);
 	const fullStar = Array.from({ length: props.market_score }, (v, i) => i);
 	const lineStar = Array.from({ length: 5 - props.market_score }, (v, i) => i);
-	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coodinate.lat + ',' + props.coodinate.lng;
+	let url = 'https://map.kakao.com/link/to/포장마차,' + props.coordinate.lat + ',' + props.coordinate.lng;
 
 	function writeReview() {
 		if (isOpen2.y === "-0%")
@@ -115,7 +118,7 @@ function MarketInfoDetailed(props) {
 						onClick={(e) => { stop(e); window.open(url, '_blank'); }}
 						whileTap={{ y: 3 }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 					<motion.button
-						onClick={(e) => { stop(e); if(props.user.id){(!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
+						onClick={(e) => { stop(e); if(props.user){(!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
 						whileTap={{ y: 3 }}><div>{favorite ? <TiHeart size='20' color='#93BDF9' /> : <TiHeartOutline size='20' color='#93BDF9' />}</div>즐겨찾기</motion.button>
 					<motion.button
 						onClick={(e) => { stop(e); setShare(true); handleCopyClipBoard(url); }}
@@ -191,7 +194,7 @@ function MarketInfoDetailed(props) {
 MarketInfoDetailed.defaultProps = {
 	market_score: 4
 	,
-	coodinate: { lat: 37.55635, lng: 126.795841 }
+	coordinate: { lat: 37.55635, lng: 126.795841 }
 }
 
 export default MarketInfoDetailed;
