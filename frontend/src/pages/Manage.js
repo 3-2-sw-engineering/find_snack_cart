@@ -193,7 +193,6 @@ function Manage({ reportManage }) {
                         x: xx, y: yy
                     });
                 }
-                console.log(locs.map(item => item));
             }
         };
         xx.map((x, i) => geocoder.coord2Address(x, yy[i], callback));
