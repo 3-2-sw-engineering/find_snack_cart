@@ -6,6 +6,13 @@ import MyLocationIcon from '@mui/icons-material/MyLocation';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Map } from "react-kakao-maps-sdk";
 import { Box } from '@mui/system';
+import imgA from "../images/background.jpeg";
+import imgB from "../images/background2.jpg";
+import imgC from "../images/background3.jpg";
+import imgD from "../images/background4.jpg";
+import imgE from "../images/background5.jpg";
+import imgF from "../images/background6.jpg";
+import imgG from "../images/background7.jpg";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../styles/Main.css"
@@ -34,12 +41,14 @@ function Main() {
     const [level, setLevel] = useState(4);
     const [user, setUser] = useState();
     const [searchText, setsearchText] = useState("");
+    const [imageMarket, setImageMarket] = useState();
 
     const changeSetLocation = (e) => {
         setsearchText(e.target.value)
     }
     const [kmap, setkMap] = useState(null);
     const { kakao } = window;
+    const image = [imgA,imgB,imgC,imgD,imgE,imgF,imgG]
     var geocoder = new kakao.maps.services.Geocoder();
     var placecoder = new kakao.maps.services.Places();
     const searchLocation = () => {
@@ -183,13 +192,16 @@ function Main() {
                     <Route path='/' element={
                         <React.Fragment><div className="main-split-element">
                             {marketDetailed ? <MarketInfoDetailed
+                                image={image[imageMarket % 7]}
                                 setMarket={setMarket}
                                 coordinate={coordinate}
                                 marketDetailed={marketDetailed}
                                 user={user} /> :
                                 <MarketListPanel
+                                    image={image}
                                     setMarket={setMarket}
                                     setCoordinate={setCoordinate}
+                                    setImageMarket={setImageMarket}
                                     activeMenu={curMenu}
                                     setActiveMenu={setCurMenu} />}
                         </div>
@@ -204,9 +216,12 @@ function Main() {
                                     onZoomChanged={(target) => setLevel(target.b.H)}
                                     level={4}
                                     onCreate={(map) => setkMap(map)}>
-                                    {markets.map(market => {
+                                    {markets.map((market,i) => {
                                         return market.market_locx.map((number, index, source) => {
                                             return <MarketInfoShort
+                                                image={image[i % 7]}
+                                                index={i}
+                                                setImageMarket={setImageMarket}
                                                 market={market}
                                                 setCoordinate={setCoordinate}
                                                 coodinate={
