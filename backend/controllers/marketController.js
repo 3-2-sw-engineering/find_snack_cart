@@ -11,9 +11,10 @@ async function getDynamicInfo(market) {
         ratAcc += c.comment_score;
     });
     
-    market.market_rating = comments.length ? ratAcc / comments.length : 0;
-    market.market_comments_count = comments.length;
-    return market;
+    const augmented = market.toObject();
+    augmented.market_rating = comments.length ? ratAcc / comments.length : 0;
+    augmented.market_comments_count = comments.length;
+    return augmented;
 }
 
 async function GetAllMarkets(req, res) {
