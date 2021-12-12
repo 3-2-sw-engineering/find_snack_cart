@@ -19,7 +19,7 @@ function MarketInfoDetailed(props) {
 	const [isReview, setReview] = useState(false);
 	const [phoneNumber, setPhoneNumber] = useState();
 	const [share, setShare] = useState();
-	const [favorite, setFavorite] = useState();
+	const [favorite, setFavorite] = useState(0);
 	const [TextFullStar, setTextFullStar] = useState([0, 1, 2, 3, 4]);
 	const [TextLineStar, setTextLineStar] = useState([]);
 	const [starScore, setStarScore] = useState(5);
@@ -41,10 +41,10 @@ function MarketInfoDetailed(props) {
 	useEffect(() => {
 		async function fetchAllMarket() {
 			const information = await getCommentsByMarketIdx(props.marketDetailed.market_index);
-			if(props.user){
+			if (props.user) {
 				console.log(props.user)
 				const data = await getAllFavorites(props.user.id);
-				data.map((market) => {if(market&&(market.market_index === props.marketDetailed.market_index)) setFavorite(1);});
+				data.map((market) => { if (market && (market.market_index === props.marketDetailed.market_index)) setFavorite(1); });
 			}
 			setReviewList(information);
 		} fetchAllMarket();
@@ -118,7 +118,7 @@ function MarketInfoDetailed(props) {
 						onClick={(e) => { stop(e); window.open(url, '_blank'); }}
 						whileTap={{ y: 3 }}><div><BiNavigation size='20' color='#93BDF9' /></div>길찾기</motion.button>
 					<motion.button
-						onClick={(e) => { stop(e); if(props.user){(!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
+						onClick={(e) => { stop(e); if (props.user) { (!favorite ? addFavorite(props.user.id, props.marketDetailed.market_index) : removeFavorite(props.user.id, props.marketDetailed.market_index)); setFavorite(!favorite); } }}
 						whileTap={{ y: 3 }}><div>{favorite ? <TiHeart size='20' color='#93BDF9' /> : <TiHeartOutline size='20' color='#93BDF9' />}</div>즐겨찾기</motion.button>
 					<motion.button
 						onClick={(e) => { stop(e); setShare(true); handleCopyClipBoard(url); }}
